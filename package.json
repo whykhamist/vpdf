@@ -1,0 +1,63 @@
+{
+  "name": "@whykhamist/vpdf",
+  "private": true,
+  "version": "0.0.1",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "type": "module",
+  "main": "./dist/index.umd.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs",
+      "types": "./dist/types/index.d.ts"
+    },
+    "./dist/style.css": "./dist/style.css",
+    "./src/*": "./src/*",
+    "./composables": "./src/composables"
+  },
+  "scripts": {
+    "dev": "vite --force --config vite.preview.ts",
+    "build": "vue-tsc -b && npm run build:lib && npm run build:dts",
+    "build:lib": "vite build",
+    "build:dts": "vue-tsc --declaration --emitDeclarationOnly -p tsconfig.build.json",
+    "build:preview": "vite build --config vite.preview.ts",
+    "build:preview:dts": "vue-tsc --declaration --emitDeclarationOnly -p tsconfig.build.preview.json",
+    "preview": "vite preview --config vite.preview.ts"
+  },
+  "keywords": [
+    "pdf",
+    "vue",
+    "pdfjs",
+    "pdfjs-dist",
+    "viewer",
+    "tailwindcss"
+  ],
+  "peerDependencies": {
+    "vue": "^3.4.31"
+  },
+  "dependencies": {
+    "pdfjs-dist": "^4.4.168"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "postcss-import": "^16.1.0",
+    "prettier": "2.8.8",
+    "prettier-plugin-tailwindcss": "0.4.1",
+    "sass": "^1.77.8",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.2.2",
+    "vite": "^5.3.4",
+    "vue-tsc": "^2.0.24"
+  },
+  "resolutions": {
+    "prettier": "2.8.8",
+    "prettier-plugin-tailwindcss": "0.4.1"
+  }
+}

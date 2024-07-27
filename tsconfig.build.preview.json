@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.preview.json",
+  "compilerOptions": {
+    "outDir": "docs/types"
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "docs"]
+}
