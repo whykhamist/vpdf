@@ -34,7 +34,7 @@ const humanFileSize = (bytes: number, si = false, dp = 1) => {
 
 <template>
   <div
-    class="relative flex select-none flex-col justify-center gap-0.5 overflow-hidden p-2"
+    class="relative flex select-none flex-col justify-center gap-0.5 overflow-hidden px-2 py-1"
     :class="{
       'bg-blue-500 text-blue-100': active,
     }"
