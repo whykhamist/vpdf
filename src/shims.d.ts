@@ -34,7 +34,7 @@ declare module "*.svg" {
   export default filePath;
 }
 
-declare module "*.pdf" {
+declare module "@files/*.pdf" {
   const filePath: string;
   export default filePath;
 }

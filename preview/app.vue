@@ -3,14 +3,15 @@ import { ref } from "vue";
 
 import vpdf from "../src/components/vPdf.vue";
 
-import pdf from "./pdf_sample_attachments.pdf";
+import pdf from "@files/attachments.pdf";
 
 const onlineSrc =
-  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/acrobat_reference.pdf";
+  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference.pdf";
 const onlineSrcSecured =
-  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/acrobat_reference_secured.pdf";
+  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference_secured.pdf";
 
 const src = ref(pdf);
+// const src = ref({ url: pdf, enableXfa: true }); // xfa enabled
 const smoothJump = ref(false);
 const textLayer = ref(false);
 </script>
