@@ -13,6 +13,6 @@
     "outDir": "./docs",
     "declarationDir": "./docs/types"
   },
-  "include": ["src/**/*.ts", "src/**/*.vue", "src/shims.d.ts"],
+  "include": ["preview/**/*.ts", "preview/**/*.vue", "preview/env.d.ts"],
   "exclude": ["node_modules", "dist", "docs"]
 }
