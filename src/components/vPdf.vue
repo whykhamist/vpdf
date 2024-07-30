@@ -142,6 +142,7 @@ const onMouseWheel = (e: any) => {
 watch(
   () => props.src,
   () => {
+    progress.value = undefined;
     dialog.value.show = false;
   }
 );
