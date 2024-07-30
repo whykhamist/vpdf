@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
-import { pdfattachment } from "../../../types/pdf";
+import { pdfattachment, pdfattachmentFile } from "../../../types/pdf";
+import { getMime } from "@whykhamist/mime-types";
 
-const Button = defineAsyncComponent(() => import("../../button/index.vue"));
 const AttachmentItem = defineAsyncComponent(
   () => import("./attachmentItem.vue")
 );
@@ -11,21 +11,24 @@ const props = defineProps<{
   attachments?: pdfattachment | null;
 }>();
 
-const selected = ref<Array<string>>([]);
+// TODO: Create multiple file selection & download feature
 
-const selectFile = (file: string) => {
-  if (isSelected(file)) {
-    selected.value = selected.value?.filter((f) => f !== file);
-  } else {
-    selected.value.push(file);
-  }
+const downloadFile = (filename: string) => {
+  const blob = binaryToBlob(
+    props.attachments![filename].content as Uint8Array,
+    getMime(filename) as string
+  );
+  download(blob, filename);
 };
 
-const isSelected = (file: string) => {
-  return !!selected.value?.includes(file);
+const download = (blob: Blob, fileName: string) => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  window.URL.revokeObjectURL(url);
 };
-
-const downloadFiles = () => {};
 
 const binaryToBlob = (data: Uint8Array, type: string) => {
   const blob = new Blob([data], {
@@ -33,20 +36,34 @@ const binaryToBlob = (data: Uint8Array, type: string) => {
   });
   return blob;
 };
+
+const humanFileSize = (bytes: number, si = false, dp = 1) => {
+  const thresh = si ? 1000 : 1024;
+
+  if (Math.abs(bytes) < thresh) {
+    return bytes + " B";
+  }
+
+  const units = si
+    ? ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"]
+    : ["KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"];
+  let u = -1;
+  const r = 10 ** dp;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (
+    Math.round(Math.abs(bytes) * r) / r >= thresh &&
+    u < units.length - 1
+  );
+
+  return bytes.toFixed(dp) + " " + units[u];
+};
 </script>
 
 <template>
   <div class="flex max-h-full flex-col gap-0.5">
-    <div
-      class="flex items-center justify-end gap-2 border-b border-gray-400/25 px-2 py-1"
-    >
-      <Button
-        label="Download"
-        class="rounded-lg border border-gray-400/25 bg-blue-600 px-3 py-1 text-white disabled:bg-gray-400/25 disabled:text-gray-400"
-        :disabled="selected.length <= 0"
-        @click="downloadFiles"
-      />
-    </div>
     <div class="min-h-0 flex-auto overflow-auto">
       <template v-if="!attachments || Object.keys(attachments).length <= 0">
         <div
@@ -61,8 +78,8 @@ const binaryToBlob = (data: Uint8Array, type: string) => {
       >
         <AttachmentItem
           :attachment="attachment"
-          :active="isSelected(index)"
-          @click="selectFile(index)"
+          :size="humanFileSize(attachment.content.length)"
+          @click="downloadFile(index)"
           class="mb-0.5"
         />
       </template>
