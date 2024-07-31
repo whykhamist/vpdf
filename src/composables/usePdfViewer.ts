@@ -1,4 +1,13 @@
-import { Ref, computed, onMounted, ref, watch } from "vue";
+import {
+  Ref,
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
+import { useSizeObserver } from "./useSizeObserver";
 import type { PageViewport } from "pdfjs-dist";
 import type {
   OnProgressParameters,
@@ -29,6 +38,7 @@ export function usePdfViewer(
     textLayer: options?.textLayer ?? false,
     smoothJump: options?.smoothJump ?? false,
     renderDelay: options?.renderDelay ?? 50,
+    renderOffset: options?.renderOffset ?? 256,
     downScale: options?.downScale ?? 0.87,
   }));
 
@@ -64,6 +74,13 @@ export function usePdfViewer(
   );
   const viewMode = computed(() => props.value.view.toLowerCase());
   const gap = computed(() => options?.gap ?? 10);
+
+  const { observe, unobserve } = useSizeObserver((els) => {
+    visiblePages.value = getVisiblePages(
+      scrollState.value.state,
+      els[0].target as HTMLElement
+    );
+  });
 
   const readPDF = async () => {
     if (!!props.value.pdf) {
@@ -120,13 +137,6 @@ export function usePdfViewer(
         scale: scale.value * props.value.downScale,
         rotation: rotation.value,
       });
-      const _v =
-        scale.value == 1
-          ? viewport
-          : page.getViewport({
-              scale: 1 * props.value.downScale,
-              rotation: rotation.value,
-            });
       const pos = {
         x: 0,
         y: 0,
@@ -150,7 +160,6 @@ export function usePdfViewer(
         rotation: rotation.value,
         page: pageNum,
         viewport,
-        v1: _v,
         pos,
       });
 
@@ -249,20 +258,11 @@ export function usePdfViewer(
   ): Array<pdfPageInfo> => {
     const { lastY, lastX } = sState;
     const { clientHeight, clientWidth } = container;
-    let offset = Math.max(clientHeight, clientWidth);
-
-    offset = Math.max(
-      Math.min(offset * scale.value, offset * 2),
-      offset * 0.75
-    );
-
-    console.log(offset);
-
     const bounds: Bounds = {
-      top: lastY - offset,
-      left: lastX - offset,
-      right: lastX + offset * 2,
-      bottom: lastY + offset * 2,
+      top: lastY - props.value.renderOffset,
+      left: lastX - props.value.renderOffset,
+      right: lastX + clientWidth + props.value.renderOffset,
+      bottom: lastY + clientHeight + props.value.renderOffset,
     };
 
     const filtered = pageInfo.value.filter((p) =>
@@ -282,22 +282,23 @@ export function usePdfViewer(
     );
   };
 
-  const onContainerScroll = (e: any) => {
+  const onContainerScroll = (e: Event) => {
     if (!scrollState.value.rAF) {
+      const target = e.target as HTMLElement;
       scrollState.value.rAF = window.requestAnimationFrame(() => {
         if (scrollState.value.timer !== null) {
           clearTimeout(scrollState.value.timer);
           render.value = false;
         }
         scrollState.value.rAF = null;
-        const currentX = e.target.scrollLeft;
+        const currentX = target!.scrollLeft;
         const lastX = scrollState.value.state.lastX;
         if (currentX !== lastX) {
           scrollState.value.state.right = currentX > lastX;
         }
         scrollState.value.state.lastX = currentX;
 
-        const currentY = e.target.scrollTop;
+        const currentY = target!.scrollTop;
         const lastY = scrollState.value.state.lastY;
         if (currentY !== lastY) {
           scrollState.value.state.down = currentY > lastY;
@@ -305,15 +306,15 @@ export function usePdfViewer(
         scrollState.value.state.lastY = currentY;
 
         scrollState.value.covered.y = Math.round(
-          ((currentY + e.target.clientHeight) / e.target.scrollHeight) * 100
+          ((currentY + target.clientHeight) / target.scrollHeight) * 100
         );
         scrollState.value.covered.x = Math.round(
-          ((currentX + e.target.clientWidth) / e.target.scrollWidth) * 100
+          ((currentX + target.clientWidth) / target.scrollWidth) * 100
         );
-        visiblePages.value = getVisiblePages(scrollState.value.state, e.target);
+        visiblePages.value = getVisiblePages(scrollState.value.state, target);
 
         scrollState.value.timer = setTimeout(() => {
-          let p = getCurrentPage(scrollState.value.state, e.target);
+          let p = getCurrentPage(scrollState.value.state, target);
           if (currentPage.value != p) {
             currentPage.value = p;
           }
@@ -414,28 +415,14 @@ export function usePdfViewer(
       : 0;
   };
 
-  const getFitRatio = (size: number, parentSize: number): number => {
-    const { dGap } = getGaps();
-    return (parentSize - dGap) / size;
-  };
-
   const fitPage = (mode: "width" | "height" | "fit" = "fit") => {
     const page = pageInfo.value.find((p) => p.page == currentPage.value);
-    const viewport = page?.v1;
-    const containerSize = container.value;
-    const w = getFitRatio(
-      viewport?.width ?? 1,
-      containerSize?.clientWidth ?? 0
-    );
-    const h = getFitRatio(
-      viewport?.height ?? 1,
-      containerSize?.clientHeight ?? 0
-    );
-    const fit = {
-      width: w,
-      height: h,
-      fit: Math.min(w, h),
-    };
+    const viewport = page!.viewport;
+    const { dGap } = getGaps();
+    let sf = page!.scale;
+    const hsf = ((container.value!.clientHeight - dGap) / viewport.height) * sf;
+    const wsf = ((container.value!.clientWidth - dGap) / viewport.width) * sf;
+    const fit = { width: wsf, height: hsf, fit: Math.min(wsf, hsf) };
     return fit[mode];
   };
 
@@ -443,11 +430,19 @@ export function usePdfViewer(
     deep: true,
   });
 
+  watch(container, (val) => {
+    if (!!val) {
+      observe(val);
+    } else {
+      unobserve();
+    }
+  });
+
   onMounted(async () => {
+    await nextTick();
     scrollState.value.state.lastX = container.value?.scrollLeft ?? 0;
     scrollState.value.state.lastY = container.value?.scrollTop ?? 0;
     container.value?.addEventListener("scroll", onContainerScroll, true);
-
     if (!!props.value.pdf) {
       await readPDF();
 
@@ -455,6 +450,11 @@ export function usePdfViewer(
         changePage(props.value.page);
       }
     }
+  });
+
+  onBeforeUnmount(() => {
+    container.value?.removeEventListener("scroll", onContainerScroll, true);
+    unobserve();
   });
 
   return {
@@ -485,7 +485,6 @@ export function usePdfViewer(
     nextPage,
     prevPage,
     changePage,
-    getFitRatio,
     fitWidth: () => fitPage("width"),
     fitHeight: () => fitPage("height"),
     fitPage,

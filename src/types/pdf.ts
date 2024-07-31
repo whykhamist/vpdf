@@ -71,6 +71,7 @@ type pdfViewerOptions = {
   textLayer: boolean;
   smoothJump: boolean;
   renderDelay: number;
+  renderOffset: number;
   downScale?: number;
 };
 
@@ -80,7 +81,6 @@ type pdfPageInfo = {
   rotation: number;
   page: number;
   viewport: PageViewport;
-  v1: PageViewport;
   pos: Point;
   bounds: pdfPageBounds;
 };
