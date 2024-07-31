@@ -58,7 +58,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:page", "update:scale"]);
+const emit = defineEmits(["update:page", "update:scale", "progress"]);
 
 const container = ref<HTMLElement>();
 
@@ -105,7 +105,6 @@ const {
   // getHBounds,
   // getInnerBounds,
   // getGaps,
-  // updateProgress,
   // getVisiblePages,
   // boundsIntersecting,
   // onContainerScroll,
@@ -116,6 +115,7 @@ const {
 
 watch(progress, (val) => {
   props.onProgress(val);
+  emit("progress", val);
 });
 
 watch(currentPage, (val) => {

@@ -33,7 +33,10 @@ const props = withDefaults(
 
 const viewer = ref<typeof PDFViewer>();
 const menu = ref<typeof PDFMenu>();
-const progress = ref<OnProgressParameters>();
+const progress = ref({
+  loader: 0,
+  viewer: 0,
+});
 const viewerOptions = ref<{
   mode: "vertical" | "horizontal";
   scale: number;
@@ -88,7 +91,7 @@ const { pdf, pages, loading, outline, attachments } = usePdf(
       }
     },
     onProgress: (e: OnProgressParameters) => {
-      progress.value = e;
+      progress.value.loader = (e.loaded / e.total) * 85;
     },
   }
 );
@@ -100,6 +103,10 @@ const sidebarOptions = computed(() => ({
   },
   attachments: true,
 }));
+
+const onViewerProgress = (e: OnProgressParameters) => {
+  progress.value.viewer = (e.loaded / e.total) * 15;
+};
 
 const changePage = (page: number, offset: Point | null = null) => {
   viewer.value?.changePage(page, offset);
@@ -142,7 +149,10 @@ const onMouseWheel = (e: any) => {
 watch(
   () => props.src,
   () => {
-    progress.value = undefined;
+    progress.value = {
+      loader: 0,
+      viewer: 0,
+    };
     dialog.value.show = false;
   }
 );
@@ -165,9 +175,8 @@ watch(
       <template #prepend>
         <div class="absolute inset-x-0 bottom-0">
           <Progress
-            v-if="loading"
-            :total="progress?.total ?? 0"
-            :loaded="progress?.loaded ?? 0"
+            v-if="progress.loader + progress.viewer < 100"
+            :value="+(progress.loader + progress.viewer).toFixed(2)"
             class="h-0.5 w-full"
           />
         </div>
@@ -190,6 +199,7 @@ watch(
         :view="viewerOptions.mode"
         :textLayer="textLayer"
         :rotation="viewerOptions.rotation"
+        @progress="onViewerProgress"
         v-model:scale="viewerOptions.scale"
         class="max-h-full min-h-0 min-w-0 flex-auto transition-all"
         :class="{

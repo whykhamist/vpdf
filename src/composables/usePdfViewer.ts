@@ -53,7 +53,7 @@ export function usePdfViewer(
     timer: null,
   });
   const currentPage = ref(props.value.page ?? 1);
-  const progress = ref(0);
+  const progress = ref<OnProgressParameters>();
   const render = ref(true);
   const bypassSmooth = ref(false);
 
@@ -69,8 +69,10 @@ export function usePdfViewer(
     if (!!props.value.pdf) {
       const { docId, promise } = props.value.pdf;
       let pdf = await promise;
+      const { numPages } = pdf;
 
-      await getPageInfo(pdf, docId);
+      updateProgress({ loaded: 0, total: 1 });
+      await getPageInfo(pdf, docId, numPages);
       if (!!container.value) {
         currentPage.value = getCurrentPage(
           scrollState.value.state,
@@ -94,10 +96,10 @@ export function usePdfViewer(
 
   const getPageInfo = async (
     pdf: PDFDocumentProxy,
-    docId: string
+    docId: string,
+    numPages: number
   ): Promise<void> => {
     const { gap, dGap } = getGaps();
-    const { numPages } = pdf;
     const isVertical = viewMode.value == "vertical";
 
     let pages = [],
@@ -150,7 +152,6 @@ export function usePdfViewer(
         viewport,
         v1: _v,
         pos,
-        bounds: emptyBounds(),
       });
 
       lastViewport = viewport.clone();
@@ -163,7 +164,7 @@ export function usePdfViewer(
       });
     }
 
-    pages.forEach((p) => {
+    (pages as Array<pdfPageInfo>).forEach((p) => {
       if (isVertical) {
         p.pos.x = Math.round(max.width / 2 - p.viewport.width / 2);
       } else {
@@ -172,29 +173,12 @@ export function usePdfViewer(
       p.bounds = getBounds(p, isVertical);
     });
 
-    pageInfo.value = pages;
+    pageInfo.value = pages as Array<pdfPageInfo>;
     containerBounds.value = max;
   };
 
-  const emptyBounds = (): pdfPageBounds => {
-    return {
-      inner: {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-      },
-      outer: {
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-      },
-    };
-  };
-
   const getBounds = (
-    pageInfo: Pick<pdfPageInfo, "page" | "pos" | "viewport">,
+    pageInfo: pdfPageInfo,
     vertical: boolean = true
   ): pdfPageBounds => {
     const { gap, hGap } = getGaps();
@@ -256,7 +240,7 @@ export function usePdfViewer(
   };
 
   const updateProgress = (e: OnProgressParameters): void => {
-    progress.value = (e.loaded / e.total) * 100;
+    progress.value = e;
   };
 
   const getVisiblePages = (
@@ -271,6 +255,8 @@ export function usePdfViewer(
       Math.min(offset * scale.value, offset * 2),
       offset * 0.75
     );
+
+    console.log(offset);
 
     const bounds: Bounds = {
       top: lastY - offset,
@@ -491,7 +477,6 @@ export function usePdfViewer(
     getHBounds,
     getInnerBounds,
     getGaps,
-    updateProgress,
     getVisiblePages,
     boundsIntersecting,
     onContainerScroll,
