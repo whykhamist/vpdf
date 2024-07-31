@@ -188,6 +188,7 @@ defineExpose({
     <div
       class="relative h-full w-full rounded-lg bg-white leading-none text-gray-800"
     >
+      <slot name="prepend" />
       <canvas
         ref="canva"
         class="box-border h-full w-full rounded-lg border border-gray-400 bg-white text-gray-800 outline-none"
@@ -216,6 +217,7 @@ defineExpose({
           </div>
         </div>
       </Transition>
+      <slot name="append" />
     </div>
   </div>
 </template>
