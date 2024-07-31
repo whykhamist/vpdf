@@ -19,6 +19,12 @@ const changePage = (page: number | null, offset: Point | null = null) => {
 
 <template>
   <div class="px-3 py-1">
+    <div
+      v-if="!outline || outline?.length <= 0"
+      class="select-none text-center font-semibold italic text-gray-400/50"
+    >
+      No Bookmarks
+    </div>
     <template v-for="outl in outline" :key="`${outl.page}_${outl.title}`">
       <BookmarkItem
         :outline="outl"
