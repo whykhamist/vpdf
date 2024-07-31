@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { ref, computed, defineAsyncComponent } from "vue";
 import { pdfattachment, pdfOutlinePairs, Point } from "../../types/pdf";
+import { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
 
 const Button = defineAsyncComponent(() => import("../button/index.vue"));
+const Thumbnails = defineAsyncComponent(() => import("./thumbnails/index.vue"));
+const Bookmarks = defineAsyncComponent(() => import("./bookmarks/index.vue"));
+const Attachments = defineAsyncComponent(
+  () => import("./attachments/index.vue")
+);
 const props = withDefaults(
   defineProps<{
     modelValue: boolean;
     options: Record<string, Object>;
     outline?: Array<pdfOutlinePairs>;
     attachments?: pdfattachment | null;
+    pdf: PDFDocumentLoadingTask | undefined;
+    page: number;
+    rotation: number;
   }>(),
   {
     modelValue: false,
@@ -17,6 +26,8 @@ const props = withDefaults(
       bookmarks: true,
       attachments: true,
     }),
+    page: 1,
+    rotation: 0,
   }
 );
 const emit = defineEmits(["update:modelValue", "changePage"]);
@@ -28,6 +39,10 @@ type itemType = {
   bind: Object;
   events: Object;
 };
+type IPage = {
+  page: number;
+  offset: Point | null;
+};
 
 const items = computed<Record<string, itemType>>(() => {
   let result = {};
@@ -36,9 +51,6 @@ const items = computed<Record<string, itemType>>(() => {
       thumbnails: {
         label: "Page Thumbnails",
         icon: "file_copy",
-        component: defineAsyncComponent(() => import("./thumbnails/index.vue")),
-        bind: props.options.thumbnails,
-        events: {},
       },
     });
   }
@@ -48,14 +60,6 @@ const items = computed<Record<string, itemType>>(() => {
       bookmarks: {
         label: "Bookmarks",
         icon: "bookmark_border",
-        component: defineAsyncComponent(() => import("./bookmarks/index.vue")),
-        bind: {
-          outline: props.outline,
-        },
-        events: {
-          changePage: (e: { page: number | null; offset: Point | null }) =>
-            changePage(e.page, e.offset),
-        },
       },
     });
   }
@@ -65,13 +69,6 @@ const items = computed<Record<string, itemType>>(() => {
       attachments: {
         label: "Attachments",
         icon: "attachment",
-        component: defineAsyncComponent(
-          () => import("./attachments/index.vue")
-        ),
-        bind: {
-          attachments: props.attachments,
-        },
-        events: {},
       },
     });
   }
@@ -79,13 +76,10 @@ const items = computed<Record<string, itemType>>(() => {
 });
 
 const activeItemName = ref<string>("bookmarks");
-const activeItem = computed<itemType>(
-  () => items.value[activeItemName.value] ?? null
-);
 
-const changePage = (page: number | null, offset: Point | null = null) => {
-  if (!!page) {
-    emit("changePage", { page, offset });
+const changePage = (e: IPage) => {
+  if (!!e) {
+    emit("changePage", { page: e.page, offset: e.offset });
   }
 };
 </script>
@@ -128,10 +122,21 @@ const changePage = (page: number | null, offset: Point | null = null) => {
       </div>
     </div>
     <div class="flex-auto overflow-auto border-r border-gray-700/25">
-      <component
-        :is="activeItem.component"
-        v-bind="activeItem.bind"
-        v-on="activeItem.events"
+      <Thumbnails
+        v-if="!!options.thumbnails && activeItemName == 'thumbnails' && !!pdf"
+        :pdf="pdf"
+        :page="page"
+        :rotation="rotation"
+        @changePage="changePage"
+      />
+      <Bookmarks
+        v-if="activeItemName == 'bookmarks'"
+        :outline="outline"
+        @changePage="changePage"
+      />
+      <Attachments
+        v-if="activeItemName == 'attachments'"
+        :attachments="attachments"
       />
     </div>
   </div>
