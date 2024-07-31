@@ -70,15 +70,12 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options: pdfOptions) {
         fingerprint: doc.value.fingerprints,
       });
     } catch (e: any) {
-      console.log(e);
       onPdfProgress({
         loaded: 1,
         total: 1,
       });
       if (!!options.onError && typeof options.onError === "function") {
         options.onError(e);
-      } else {
-        throw new Error(e);
       }
     } finally {
       _loading.value = false;
