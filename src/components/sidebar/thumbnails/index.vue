@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, watch } from "vue";
-import { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
+import type { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
 
 const VPdfPageRenderer = defineAsyncComponent(
   () => import("../../vPdfPageRenderer.vue")
