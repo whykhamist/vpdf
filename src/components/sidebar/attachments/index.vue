@@ -63,7 +63,7 @@ const humanFileSize = (bytes: number, si = false, dp = 1) => {
 </script>
 
 <template>
-  <div class="flex max-h-full flex-col gap-0.5">
+  <div class="flex max-h-full flex-col gap-0.5 py-1">
     <div class="min-h-0 flex-auto overflow-auto">
       <template v-if="!attachments || Object.keys(attachments).length <= 0">
         <div
