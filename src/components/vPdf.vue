@@ -16,45 +16,51 @@ const PDFPassword = defineAsyncComponent(() => import("./password/index.vue"));
 const PDFSideBar = defineAsyncComponent(() => import("./sidebar/index.vue"));
 const Progress = defineAsyncComponent(() => import("./progress/index.vue"));
 
-const props = withDefaults(
-  defineProps<{
-    src: pdfSource;
-    workerSrc?: string;
-    smoothJump?: boolean;
-    textLayer?: boolean;
-    password?: string;
-    onPassword?: (callback: Function, reason: number) => {};
-  }>(),
-  {
-    smoothJump: false,
-    textLayer: false,
-  }
-);
+type IProps = {
+  src: pdfSource;
+  workerSrc?: string;
+  smoothJump?: boolean;
+  textLayer?: boolean;
+  password?: string;
+  onPassword?: (callback: Function, reason: number) => {};
+};
 
-const viewer = ref<typeof PDFViewer>();
-const menu = ref<typeof PDFMenu>();
-const progress = ref({
-  loader: 0,
-  viewer: 0,
-});
-const viewerOptions = ref<{
+type IViewerOptions = {
   mode: "vertical" | "horizontal";
   scale: number;
   sidebar: boolean;
   rotation: number;
-}>({
-  mode: "vertical",
-  scale: 1,
-  sidebar: false,
-  rotation: 0,
-});
+  page: number;
+};
 
-const dialog = ref<{
+type IDialog = {
   show: boolean;
   data: any;
   type: string;
   persistent: boolean;
-}>({
+};
+
+const props = withDefaults(defineProps<IProps>(), {
+  smoothJump: false,
+  textLayer: false,
+});
+
+const viewer = ref<typeof PDFViewer>();
+const menu = ref<typeof PDFMenu>();
+const error = ref();
+const progress = ref({
+  loader: 0,
+  viewer: 0,
+});
+const viewerOptions = ref<IViewerOptions>({
+  mode: "vertical",
+  scale: 1,
+  sidebar: false,
+  rotation: 0,
+  page: 1,
+});
+
+const dialog = ref<IDialog>({
   show: false,
   data: undefined,
   type: "",
@@ -93,14 +99,15 @@ const { pdf, pages, loading, outline, attachments } = usePdf(
     onProgress: (e: OnProgressParameters) => {
       progress.value.loader = (e.loaded / e.total) * 85;
     },
+    onError: (e) => {
+      error.value = e;
+    },
   }
 );
 
 const sidebarOptions = computed(() => ({
   thumbnails: true,
-  bookmarks: {
-    outline: outline.value,
-  },
+  bookmarks: true,
   attachments: true,
 }));
 
@@ -180,16 +187,25 @@ watch(
             class="h-0.5 w-full"
           />
         </div>
+        <div
+          v-if="!!error"
+          class="absolute top-full z-20 w-full bg-rose-600 px-2 py-1 text-sm font-semibold leading-none text-rose-50"
+        >
+          {{ error.message }}
+        </div>
       </template>
     </PDFMenu>
     <div class="relative flex min-h-0 min-w-0 flex-auto">
       <PDFSideBar
+        v-if="!error"
         v-model="viewerOptions.sidebar"
+        :pdf="pdf"
         :options="sidebarOptions"
         :outline="outline"
         :attachments="attachments"
-        class="absolute inset-y-0 left-0 z-10"
-        @changePage="(e) => changePage(e.page, e.offset)"
+        :page="viewerOptions.page"
+        :rotation="viewerOptions.rotation"
+        class="absolute inset-y-0 left-0 z-10 backdrop-blur-sm"
       />
       <PDFViewer
         v-if="!!pdf && !loading"
@@ -199,11 +215,12 @@ watch(
         :view="viewerOptions.mode"
         :textLayer="textLayer"
         :rotation="viewerOptions.rotation"
+        v-model:page="viewerOptions.page"
         @progress="onViewerProgress"
         v-model:scale="viewerOptions.scale"
         class="max-h-full min-h-0 min-w-0 flex-auto transition-all"
         :class="{
-          'md:ml-64': viewerOptions.sidebar,
+          'md:ml-64': viewerOptions.sidebar && !error,
         }"
         @wheel="onMouseWheel"
         @mousewheel="onMouseWheel"
