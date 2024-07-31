@@ -10,6 +10,7 @@ const props = withDefaults(
       show: boolean;
       label?: string;
     }>;
+    disabled?: boolean;
   }>(),
   {
     scale: 1,
@@ -75,15 +76,13 @@ defineExpose({
     <Button
       icon="zoom_out"
       class="group rounded-lg px-1 py-0.5"
-      iconClass="aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500"
-      :disabled="scaleIndex == 0"
+      :disabled="scaleIndex == 0 || disabled"
       @click="prevScale"
     />
     <Button
       icon="zoom_in"
       class="group rounded-lg px-1 py-0.5"
-      iconClass="aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500 group-disabled:fill-gray-400"
-      :disabled="scaleIndex == _scales.length - 1"
+      :disabled="scaleIndex == _scales.length - 1 || disabled"
       @click="nextScale"
     />
     <label
@@ -94,6 +93,7 @@ defineExpose({
         id="__PDF_SCALE_SELECT__"
         class="max-w-full bg-gray-300/25 text-center leading-none outline-none"
         :value="scale"
+        :disabled="disabled"
         @change="onScaleSelect"
       >
         <template v-if="scaleIndex <= -1">

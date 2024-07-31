@@ -54,21 +54,26 @@ watch(
         icon="arrow_circle_up"
         class="group rounded-lg px-1 py-0.5"
         :iconClass="{
-          'aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500 transition-transform': true,
           '-rotate-90': mode != 'vertical',
         }"
+        :disabled="disabled"
       />
       <Button
         @click="changePage(1)"
         icon="arrow_circle_down"
         class="group rounded-lg px-1 py-0.5"
         :iconClass="{
-          'aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500 transition-transform': true,
           '-rotate-90': mode != 'vertical',
         }"
+        :disabled="disabled"
       />
     </div>
-    <div class="flex select-none items-center justify-stretch gap-1">
+    <div
+      class="hidden select-none items-center justify-stretch gap-1 md:flex"
+      :class="{
+        'text-gray-400': disabled,
+      }"
+    >
       <label
         for="__PDF__PAGER_INPUT__"
         class="group relative max-w-10 leading-none before:absolute before:inset-x-0 before:top-full before:h-0.5 before:bg-gray-400/25"

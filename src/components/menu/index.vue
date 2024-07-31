@@ -5,18 +5,9 @@ const Pager = defineAsyncComponent(() => import("./pager.vue"));
 const Zoomer = defineAsyncComponent(() => import("./zoomer.vue"));
 
 const props = defineProps({
-  page: {
-    type: Number,
-    default: 1,
-  },
-  pages: {
-    type: Number,
-    default: 0,
-  },
-  scale: {
-    type: Number,
-    default: 1.0,
-  },
+  page: { type: Number, default: 1 },
+  pages: { type: Number, default: 0 },
+  scale: { type: Number, default: 1.0 },
   rotation: {
     type: Number,
     default: 0,
@@ -26,14 +17,9 @@ const props = defineProps({
     type: String as PropType<"vertical" | "horizontal">,
     default: "vertical",
   },
-  sidebar: {
-    type: Boolean,
-    default: false,
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
+  sidebar: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
+  disabled: { type: Boolean, default: false },
 });
 
 const emit = defineEmits([
@@ -90,9 +76,10 @@ const rotate = (deg: number) => {
     <div class="flex-auto">
       <div class="px-2">
         <Button
-          class="group w-8 rounded-lg px-1 py-0.5"
+          class="w-8 rounded-lg px-1 py-0.5"
           :icon="sidebar ? 'menu_open' : 'menu'"
-          iconClass="aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500"
+          :disabled="disabled"
+          iconClass="aspect-square w-6"
           @click="_sidebar = !_sidebar"
         />
       </div>
@@ -104,21 +91,22 @@ const rotate = (deg: number) => {
         <Button
           class="group w-8 rounded-lg px-1 py-0.5"
           :icon="mode == 'vertical' ? 'table_rows' : 'view_column'"
-          iconClass="aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500"
+          :disabled="disabled"
           @click="toggleViewMode"
         />
       </div>
-      <Pager v-model="_page" :pages="pages" :mode="mode" />
+      <Pager v-model="_page" :pages="pages" :mode="mode" :disabled="disabled" />
       <Zoomer
         ref="zoomer"
         v-model:scale="_scale"
+        :disabled="disabled"
         @fitPage="(e) => emit('fitPage', e)"
       />
       <div class="px-2">
         <Button
           class="group w-8 rounded-lg px-1 py-0.5"
           icon="rotate_90_degrees_ccw"
-          iconClass="aspect-square w-6 fill-gray-600 transition-colors group-hover:fill-blue-500"
+          :disabled="disabled"
           @click="rotate(-90)"
         />
       </div>
