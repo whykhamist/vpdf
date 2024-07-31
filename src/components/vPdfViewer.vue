@@ -52,6 +52,11 @@ const props = defineProps({
     default: 50,
   },
 
+  renderOffset: {
+    type: Number,
+    default: 256,
+  },
+
   onProgress: {
     type: Function,
     default: () => {},
