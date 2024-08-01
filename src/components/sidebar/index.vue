@@ -93,6 +93,7 @@ const changePage = (e: IPage) => {
     }"
   >
     <div
+      v-if="modelValue"
       class="flex items-center gap-2 border-b border-r border-gray-700/25 bg-white/25"
     >
       <div class="flex flex-auto items-center gap-0.5 px-2 py-1">
@@ -121,7 +122,10 @@ const changePage = (e: IPage) => {
         />
       </div>
     </div>
-    <div class="flex-auto overflow-auto border-r border-gray-700/25">
+    <div
+      v-if="modelValue"
+      class="flex-auto overflow-auto border-r border-gray-700/25"
+    >
       <Thumbnails
         v-if="!!options.thumbnails && activeItemName == 'thumbnails' && !!pdf"
         :pdf="pdf"
