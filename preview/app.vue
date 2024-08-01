@@ -4,6 +4,7 @@ import { ref } from "vue";
 import vpdf from "../src/components/vPdf.vue";
 
 import pdf from "@files/attachments.pdf";
+import small from "@files/small_file.pdf";
 
 const onlineSrc =
   "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference.pdf";
@@ -64,6 +65,7 @@ div#app,
           v-model="src"
           class="w-full bg-transparent bg-none outline-none"
         >
+          <option :value="small">Small File</option>
           <option :value="pdf">Local</option>
           <option :value="onlineSrc">Online</option>
           <option :value="onlineSrcSecured">Online Secured (password)</option>
