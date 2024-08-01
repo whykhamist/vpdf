@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   computed,
+  defineAsyncComponent,
   nextTick,
   onBeforeUnmount,
   onMounted,
@@ -9,13 +10,14 @@ import {
   watch,
 } from "vue";
 import {
-  TextLayer,
   type PDFDocumentLoadingTask,
   type PDFDocumentProxy,
   type PDFPageProxy,
   type PageViewport,
 } from "pdfjs-dist";
 import type { pdfPageInfo, RenderParameters } from "../types/pdf";
+
+const TextLayer = defineAsyncComponent(() => import("./layers/textLayer.vue"));
 
 type RenderArgs = {
   canvas: HTMLCanvasElement;
@@ -42,8 +44,6 @@ const rendering = ref(false);
 const canva = ref<HTMLCanvasElement>();
 const renderer = shallowRef();
 const renderedPage = shallowRef<PDFPageProxy>();
-
-const _textLayer = ref<HTMLElement>();
 
 const ctx = computed(() =>
   canva.value?.getContext("2d", {
@@ -76,10 +76,6 @@ const renderPage = async () => {
           doc,
         });
       }
-
-      if (props.textLayer) {
-        await renderTextContent();
-      }
     } catch (e: any) {
       props.onError?.(e);
       if (e.name != "RenderingCancelledException") {
@@ -90,60 +86,6 @@ const renderPage = async () => {
     }
   }
 };
-
-const renderTextContent = async () => {
-  if (!!_textLayer.value && !!renderedPage.value) {
-    const { viewport } = props.pageInfo;
-    const { rotation, scale } = viewport;
-    const textContent = await renderedPage.value.getTextContent();
-    const tlRenderer = new TextLayer({
-      textContentSource: textContent,
-      container: _textLayer.value,
-      viewport,
-    });
-    let rat = viewport.width / viewport.height;
-    let r = "";
-
-    if (Math.abs(rotation) == 90) {
-      r += `translateY(${100 / rat}%)`;
-    }
-
-    if (Math.abs(rotation) == 180) {
-      r += `translate(100%, 100%)`;
-    }
-
-    if (Math.abs(rotation) == 270) {
-      r += `translateX(${100 * rat}%)`;
-    }
-
-    r += `rotate(${rotation}deg)`;
-    let s: CSSStyleDeclaration = _textLayer.value.style;
-    s.setProperty("--scale-factor", `${scale}`);
-    [
-      "webkitTransform",
-      "mozTransform",
-      "msTransform",
-      "oTransform",
-      "transform",
-    ].forEach((e) => {
-      if (s.hasOwnProperty(e)) {
-        Object.assign(s, { [e]: r });
-      }
-    });
-    await tlRenderer.render();
-  }
-};
-
-watch(
-  () => props.textLayer,
-  (val) => {
-    nextTick(() => {
-      if (val) {
-        renderTextContent();
-      }
-    });
-  }
-);
 
 watch(
   () => props.render,
@@ -173,32 +115,24 @@ defineExpose({
 });
 </script>
 
-<style lang="scss">
-@use "pdfjs-dist/web/pdf_viewer.css";
-
-.textlayer {
-  span {
-    line-height: 1;
-  }
-}
-</style>
-
 <template>
   <div class="leading-none">
-    <div
-      class="relative h-full w-full rounded-lg bg-white leading-none text-gray-800"
-    >
+    <div class="relative h-full w-full bg-white leading-none text-gray-800">
       <slot name="prepend" />
       <canvas
         ref="canva"
-        class="box-border h-full w-full rounded-lg border border-gray-400 bg-white text-gray-800 outline-none"
+        class="box-border h-full w-full border border-gray-400 bg-white text-gray-800 outline-none"
         :class="{
           hidden: rendering,
         }"
         :width="pageInfo.viewport.width"
         :height="pageInfo.viewport.height"
       />
-      <div ref="_textLayer" v-if="textLayer" class="textLayer" />
+      <TextLayer
+        v-if="textLayer && renderedPage"
+        :page="renderedPage!"
+        :pageInfo="pageInfo"
+      />
       <Transition
         enter-from-class="opacity-0 blur-sm"
         leave-to-class="opacity-0 blur-sm"
@@ -207,7 +141,7 @@ defineExpose({
       >
         <div
           v-if="rendering"
-          class="absolute inset-0 flex items-center rounded-lg bg-black/5"
+          class="absolute inset-0 flex items-center bg-black/5"
         >
           <div class="mx-auto">
             <span
