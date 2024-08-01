@@ -4,11 +4,6 @@ import { pdfSource, Point } from "../types/pdf";
 import { usePdf } from "../composables/usePdf";
 import type { OnProgressParameters } from "pdfjs-dist/types/src/display/api";
 
-// import PDFViewer from "./vPdfViewer.vue";
-// import PDFMenu from "./menu/index.vue";
-// import PDFDialog from "./dialog/index.vue";
-// import PDFPassword from "./password/index.vue";
-// import PDFSideBar from "./sidebar/index.vue";
 const PDFViewer = defineAsyncComponent(() => import("./vPdfViewer.vue"));
 const PDFMenu = defineAsyncComponent(() => import("./menu/index.vue"));
 const PDFDialog = defineAsyncComponent(() => import("./dialog/index.vue"));
@@ -30,7 +25,6 @@ type IViewerOptions = {
   scale: number;
   sidebar: boolean;
   rotation: number;
-  page: number;
 };
 
 type IDialog = {
@@ -57,7 +51,6 @@ const viewerOptions = ref<IViewerOptions>({
   scale: 1,
   sidebar: false,
   rotation: 0,
-  page: 1,
 });
 
 const dialog = ref<IDialog>({
@@ -203,8 +196,9 @@ watch(
         :options="sidebarOptions"
         :outline="outline"
         :attachments="attachments"
-        :page="viewerOptions.page"
+        :page="viewer?.currentPage ?? 1"
         :rotation="viewerOptions.rotation"
+        @changePage="(e) => changePage(e.page, e.offset)"
         class="absolute inset-y-0 left-0 z-10 backdrop-blur-sm"
       />
       <PDFViewer
@@ -215,7 +209,6 @@ watch(
         :view="viewerOptions.mode"
         :textLayer="textLayer"
         :rotation="viewerOptions.rotation"
-        v-model:page="viewerOptions.page"
         @progress="onViewerProgress"
         v-model:scale="viewerOptions.scale"
         class="max-h-full min-h-0 min-w-0 flex-auto transition-all"

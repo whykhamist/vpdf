@@ -15,14 +15,12 @@ const props = defineProps<{
 
 const emit = defineEmits(["changePage"]);
 
-const viewer = ref<typeof PDFViewer>();
+const thumbs = ref<typeof PDFViewer>();
 
 watch(
   () => props.page,
   (val) => {
-    if (val !== props.page) {
-      viewer.value?.changePage(val);
-    }
+    thumbs.value?.changePage(val);
   }
 );
 </script>
@@ -30,7 +28,7 @@ watch(
 <template>
   <PDFViewer
     v-if="!!pdf"
-    ref="viewer"
+    ref="thumbs"
     :pdf="pdf"
     :scale="0.18"
     :gap="15"
@@ -43,7 +41,7 @@ watch(
         :render="render"
         :textLayer="false"
         :rotation="rotation"
-        class="absolute cursor-pointer rounded-lg border border-dashed px-1 py-0.5 hover:border-blue-500"
+        class="absolute cursor-pointer select-none rounded-lg border border-dashed px-1 py-0.5 transition-colors hover:border-blue-500 hover:bg-gray-400/25"
         :class="{
           'border-blue-500': pageInfo.page === page,
         }"
@@ -57,7 +55,7 @@ watch(
       >
         <template #append>
           <div
-            class="absolute -bottom-5 w-full text-center text-sm font-semibold"
+            class="pointer-events-none absolute -bottom-5 w-full text-center text-sm font-semibold"
           >
             {{ pageInfo.page }}
           </div>
