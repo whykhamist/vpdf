@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import vpdf from "../src/components/vPdf.vue";
-
 import pdf from "@files/attachments.pdf";
 
 const onlineSrc =
@@ -57,7 +55,7 @@ div#app,
       </label>
       <label
         for="__PDF_PREVIEW_SRC_SELECT__"
-        class="w-32 rounded-lg bg-gray-400/25"
+        class="w-32 rounded-lg bg-gray-400/25 px-3 py-1"
       >
         <select
           id="__PDF_PREVIEW_SRC_SELECT__"
@@ -70,7 +68,7 @@ div#app,
         </select>
       </label>
     </div>
-    <vpdf
+    <VPdf
       :src="src"
       :smoothJump="smoothJump"
       :textLayer="textLayer"
