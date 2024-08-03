@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, defineAsyncComponent } from "vue";
 import { pdfattachment, pdfOutlinePairs, Point } from "../../types/pdf";
-import { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
+import type { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
 
 const Button = defineAsyncComponent(() => import("../button/index.vue"));
 const Thumbnails = defineAsyncComponent(() => import("./thumbnails/index.vue"));
@@ -99,15 +99,11 @@ const changePage = (e: IPage) => {
       <div class="flex flex-auto items-center gap-0.5 px-2 py-1">
         <template v-for="(item, index) in items" :key="item.label">
           <Button
-            class="group w-8 rounded-lg px-1 py-0.5"
-            :class="{
-              'bg-gray-400/25': activeItemName === index,
-            }"
             :icon="item.icon"
-            :iconClass="{
-              'aspect-square w-6 fill-gray-700 transition-colors ': true,
-              'group-hover:fill-blue-500': activeItemName !== index,
-              'fill-blue-700': activeItemName === index,
+            class="rounded-lg px-1 py-0.5 text-2xl text-gray-700"
+            :class="{
+              'bg-gray-400/25 text-blue-700': activeItemName === index,
+              'hover:fill-blue-500': activeItemName !== index,
             }"
             @click="activeItemName = index"
           />
@@ -116,7 +112,6 @@ const changePage = (e: IPage) => {
       <div class="flex items-center gap-0.5 px-2 py-1">
         <Button
           icon="close"
-          iconClass="aspect-square w-4 fill-gray-700"
           class="rounded-full p-1"
           @click="emit('update:modelValue', false)"
         />

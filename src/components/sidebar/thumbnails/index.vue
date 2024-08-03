@@ -33,6 +33,7 @@ watch(
     :scale="0.18"
     :gap="15"
     :renderOffset="50"
+    :rotation="rotation"
   >
     <template #renderer="{ pageInfo, render }">
       <VPdfPageRenderer
@@ -40,7 +41,6 @@ watch(
         :pageInfo="pageInfo"
         :render="render"
         :textLayer="false"
-        :rotation="rotation"
         class="absolute cursor-pointer select-none rounded-lg border border-dashed px-1 py-0.5 transition-colors hover:border-blue-500 hover:bg-gray-400/25"
         :class="{
           'border-blue-500': pageInfo.page === page,

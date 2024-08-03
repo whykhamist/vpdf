@@ -52,8 +52,9 @@ watch(
       <Button
         @click="changePage(-1)"
         icon="arrow_circle_up"
-        class="group rounded-lg px-1 py-0.5"
+        class="group rounded-lg px-1 py-0.5 text-2xl"
         :iconClass="{
+          'transition-transform': true,
           '-rotate-90': mode != 'vertical',
         }"
         :disabled="disabled"
@@ -61,8 +62,9 @@ watch(
       <Button
         @click="changePage(1)"
         icon="arrow_circle_down"
-        class="group rounded-lg px-1 py-0.5"
+        class="group rounded-lg px-1 py-0.5 text-2xl"
         :iconClass="{
+          'transition-transform': true,
           '-rotate-90': mode != 'vertical',
         }"
         :disabled="disabled"

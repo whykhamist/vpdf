@@ -1,7 +1,7 @@
 import { App, type Plugin } from "vue";
 import components from "./components";
 
-import "./style.css";
+import "./css/index.scss";
 
 export const PDFPlugin: Plugin = {
   install: (app: App) => {

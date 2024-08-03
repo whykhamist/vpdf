@@ -26,8 +26,8 @@ const setWorker = (worker: string) => {
   }
 };
 
-export function usePdf(src: Ref<pdfSource> | pdfSource, options: pdfOptions) {
-  setWorker(options.workerSrc ?? PDFWorker);
+export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
+  setWorker(options?.workerSrc ?? PDFWorker);
 
   const pdfSrc = toRef(src);
   const pdf = shallowRef<pdfjs.PDFDocumentLoadingTask>();
@@ -50,9 +50,9 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options: pdfOptions) {
 
       _loading.value = true;
       const loadingTask = pdfjs.getDocument(toValue(src));
-      if (!!options.password) {
+      if (!!options?.password) {
         loadingTask.onPassword = (cb: Function, _: any) => {
-          cb(options.password ?? "");
+          cb(options?.password ?? "");
         };
       } else {
         loadingTask.onPassword = onPdfPassword;
@@ -74,9 +74,7 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options: pdfOptions) {
         loaded: 1,
         total: 1,
       });
-      if (!!options.onError && typeof options.onError === "function") {
-        options.onError(e);
-      }
+      options?.onError?.(e);
     } finally {
       _loading.value = false;
     }
@@ -93,12 +91,12 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options: pdfOptions) {
   };
 
   const onPdfProgress = (e: pdfjs.OnProgressParameters) => {
-    options.onProgress?.(e);
+    options?.onProgress?.(e);
     _progress.value = Math.floor(e.loaded / e.total) * 100;
   };
 
   const onPdfPassword = (updatePassword: Function, reason: Number) => {
-    if (!!options.onPassword && typeof options.onPassword === "function") {
+    if (!!options?.onPassword && typeof options?.onPassword === "function") {
       options.onPassword(updatePassword, reason);
     } else {
       if (reason == 1) {

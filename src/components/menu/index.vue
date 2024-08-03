@@ -76,10 +76,9 @@ const rotate = (deg: number) => {
     <div class="flex-auto">
       <div class="px-2">
         <Button
-          class="w-8 rounded-lg px-1 py-0.5"
+          class="rounded-lg px-1 py-0.5 text-2xl hover:text-blue-600"
           :icon="sidebar ? 'menu_open' : 'menu'"
           :disabled="disabled"
-          iconClass="aspect-square w-6"
           @click="_sidebar = !_sidebar"
         />
       </div>
@@ -89,7 +88,7 @@ const rotate = (deg: number) => {
     >
       <div class="px-2">
         <Button
-          class="group w-8 rounded-lg px-1 py-0.5"
+          class="group rounded-lg px-1 py-0.5 text-2xl"
           :icon="mode == 'vertical' ? 'table_rows' : 'view_column'"
           :disabled="disabled"
           @click="toggleViewMode"
@@ -104,8 +103,8 @@ const rotate = (deg: number) => {
       />
       <div class="px-2">
         <Button
-          class="group w-8 rounded-lg px-1 py-0.5"
-          icon="rotate_90_degrees_ccw"
+          class="group rounded-lg px-1 py-0.5 text-2xl"
+          icon="rotate_left"
           :disabled="disabled"
           @click="rotate(-90)"
         />
