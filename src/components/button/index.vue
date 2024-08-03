@@ -40,7 +40,7 @@ const ripple = (e: MouseEvent) => {
 
 <template>
   <button
-    class="group/pdfbutton relative flex items-center justify-center gap-2 overflow-hidden outline-blue-700/25 disabled:cursor-not-allowed disabled:before:opacity-0"
+    class="relative flex items-center justify-center gap-2 overflow-hidden outline-blue-700/25 disabled:cursor-not-allowed disabled:before:opacity-0"
     :disabled="disabled"
     @click="ripple"
   >
