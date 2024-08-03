@@ -5,5 +5,5 @@ const props = defineProps<{
 </script>
 
 <template>
-  <span class="icon leading-none transition-colors" :class="`icon-${name}`" />
+  <i class="icon leading-none transition-colors" :class="`icon-${name}`" />
 </template>
