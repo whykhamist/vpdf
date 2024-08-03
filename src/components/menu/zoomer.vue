@@ -75,13 +75,13 @@ defineExpose({
   <div class="flex items-center justify-center gap-0.5 px-2">
     <Button
       icon="zoom_out"
-      class="group rounded-lg px-1 py-0.5"
+      class="group rounded-lg px-1 py-0.5 text-2xl"
       :disabled="scaleIndex == 0 || disabled"
       @click="prevScale"
     />
     <Button
       icon="zoom_in"
-      class="group rounded-lg px-1 py-0.5"
+      class="group rounded-lg px-1 py-0.5 text-2xl"
       :disabled="scaleIndex == _scales.length - 1 || disabled"
       @click="nextScale"
     />

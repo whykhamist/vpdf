@@ -38,7 +38,6 @@ onMounted(() => {
       <Button
         v-if="false"
         icon="close"
-        iconClass="aspect-square w-4 fill-gray-100"
         class="rounded-full p-1"
         @click="emit('close')"
       />
@@ -49,7 +48,7 @@ onMounted(() => {
       <div
         class="flex items-center gap-3 rounded-lg border border-amber-400 bg-amber-400/25 px-3 py-1"
       >
-        <Icon name="warning" class="aspect-square w-16 fill-amber-600" />
+        <Icon name="warning" class="aspect-square text-5xl text-amber-600" />
         <div class="font-semibold leading-tight">
           The pdf file is protected. Please enter the document's password to
           continue.
@@ -57,11 +56,11 @@ onMounted(() => {
       </div>
       <label
         for="__PDF_PASSWORD_INPUT__"
-        class="flex items-center justify-end gap-2"
+        class="mb-3 flex items-center justify-end gap-2"
       >
         <span>Enter Password: </span>
         <div
-          class="relative mb-3 flex items-center gap-2 rounded-lg border border-black/25 bg-white px-2 py-0.5 text-black focus-within:border-blue-700/75"
+          class="relative flex items-center gap-2 rounded-lg border border-black/25 bg-white px-2 py-0.5 text-black focus-within:border-blue-700/75"
         >
           <input
             id="__PDF_PASSWORD_INPUT__"

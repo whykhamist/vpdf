@@ -40,7 +40,7 @@ const ripple = (e: MouseEvent) => {
 
 <template>
   <button
-    class="group/pdfbutton relative flex items-center justify-center gap-2 overflow-hidden shadow-sm outline-blue-700/25 disabled:cursor-not-allowed disabled:before:opacity-0"
+    class="group/pdfbutton relative flex items-center justify-center gap-2 overflow-hidden outline-blue-700/25 disabled:cursor-not-allowed disabled:before:opacity-0"
     :disabled="disabled"
     @click="ripple"
   >
@@ -53,7 +53,6 @@ const ripple = (e: MouseEvent) => {
           v-if="!!icon"
           :key="`__PDF_BUTTON_ICON_${icon}_LEFT__`"
           :name="icon"
-          class="aspect-square w-6 fill-gray-700 transition-colors group-hover/pdfbutton:fill-blue-500 group-disabled/pdfbutton:fill-gray-400"
           :class="iconClass"
         />
         <span v-if="!!label" :class="labelClass">{{ label }}</span>
@@ -61,7 +60,6 @@ const ripple = (e: MouseEvent) => {
           v-if="!!iconRight"
           :key="`__PDF_BUTTON_ICON_${iconRight}_RIGHT__`"
           :name="iconRight"
-          class="aspect-square w-6 fill-gray-700 transition-colors group-hover/pdfbutton:fill-blue-500 group-disabled/pdfbutton:fill-gray-400"
           :class="iconRightClass"
         />
       </div>
