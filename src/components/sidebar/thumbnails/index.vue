@@ -34,6 +34,7 @@ watch(
     :gap="15"
     :renderOffset="50"
     :rotation="rotation"
+    class="bg-transparent"
   >
     <template #renderer="{ pageInfo, render }">
       <VPdfPageRenderer
