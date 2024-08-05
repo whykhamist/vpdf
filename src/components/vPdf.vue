@@ -48,7 +48,7 @@ const progress = ref({
 });
 const viewerOptions = ref<IViewerOptions>({
   mode: "vertical",
-  scale: 1,
+  scale: 1.75,
   sidebar: false,
   rotation: 0,
 });
@@ -159,7 +159,9 @@ watch(
 </script>
 
 <template>
-  <div class="relative flex h-full flex-col border border-gray-400/25 bg-white">
+  <div
+    class="relative flex h-full flex-col border border-gray-400/25 bg-background text-foreground"
+  >
     <PDFMenu
       ref="menu"
       :pages="pages"
@@ -182,7 +184,7 @@ watch(
         </div>
         <div
           v-if="!!error"
-          class="absolute top-full z-20 w-full bg-rose-600 px-2 py-1 text-sm font-semibold leading-none text-rose-50"
+          class="absolute top-full z-20 w-full bg-negative px-2 py-1 text-sm font-semibold leading-none text-rose-50"
         >
           {{ error.message }}
         </div>
@@ -199,7 +201,6 @@ watch(
         :page="viewer?.currentPage ?? 1"
         :rotation="viewerOptions.rotation"
         @changePage="(e) => changePage(e.page, e.offset)"
-        class="absolute inset-y-0 left-0 z-10 backdrop-blur-sm"
       />
       <PDFViewer
         v-if="!!pdf && !loading"
