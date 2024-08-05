@@ -13,6 +13,11 @@ export default defineConfig({
   },
   build: {
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        chunkFileNames: `[hash].js`,
+      },
+    },
   },
   plugins: [vue()],
   css: {

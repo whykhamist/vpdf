@@ -19,13 +19,6 @@ export default mergeConfig(
     build: {
       sourcemap: false,
       outDir: "docs",
-      rollupOptions: {
-        output: {
-          entryFileNames: `assets/[hash].js`,
-          chunkFileNames: `assets/[hash].js`,
-          assetFileNames: `assets/[hash].[ext]`,
-        },
-      },
     },
     server: {
       port: 5173,
