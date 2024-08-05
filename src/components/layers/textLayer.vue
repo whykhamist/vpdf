@@ -85,8 +85,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss">
-@use "pdfjs-dist/web/pdf_viewer.css";
-
 .textLayer {
   span,
   br {
