@@ -16,7 +16,7 @@
       "require": "./dist/index.umd.cjs",
       "types": "./dist/types/index.d.ts"
     },
-    "./dist/style.css": "./dist/style.css",
+    "./style.css": "./dist/style.css",
     "./src/*": "./src/*",
     "./composables": "./src/composables"
   },
