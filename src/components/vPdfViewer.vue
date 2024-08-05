@@ -137,7 +137,7 @@ defineExpose(slotBinds.value);
 <template>
   <div
     ref="container"
-    class="relative grid h-full min-h-0 w-full min-w-0 items-center overflow-scroll bg-gray-400/25"
+    class="relative grid h-full min-h-0 w-full min-w-0 items-center overflow-scroll bg-foreground/15"
     :class="{
       'grid items-center': viewMode != 'vertical',
     }"
