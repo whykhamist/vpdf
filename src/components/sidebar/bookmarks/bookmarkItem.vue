@@ -28,7 +28,7 @@ const changePage = (page: number | null, offset: Point | null = null) => {
     >
       <Button
         icon="arrow_right"
-        class="rounded-md px-2 py-1 font-bold shadow-none"
+        class="rounded-md px-2 py-1 font-bold"
         :iconClass="{
           'w-4 aspect-square transition-transform': true,
           'rotate-90': open,
@@ -38,7 +38,7 @@ const changePage = (page: number | null, offset: Point | null = null) => {
     </div>
     <Button
       focusDisabled
-      class="w-full px-1 shadow-none hover:underline"
+      class="w-full px-1 hover:underline"
       @click="
         changePage(outline.page, { y: outline.offsetY, x: outline.offsetX })
       "
