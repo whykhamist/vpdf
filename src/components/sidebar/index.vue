@@ -85,58 +85,69 @@ const changePage = (e: IPage) => {
 </script>
 
 <template>
-  <div
-    class="flex min-w-0 flex-auto flex-col overflow-hidden bg-white/75 transition-all"
-    :class="{
-      'w-0': !props.modelValue,
-      'w-64': props.modelValue,
-    }"
-  >
-    <div
-      v-if="modelValue"
-      class="flex items-center gap-2 border-b border-r border-gray-700/25 bg-white/25"
-    >
-      <div class="flex flex-auto items-center gap-0.5 px-2 py-1">
-        <template v-for="(item, index) in items" :key="item.label">
-          <Button
-            :icon="item.icon"
-            class="rounded-lg px-1 py-0.5 text-2xl text-gray-700"
-            :class="{
-              'bg-gray-400/25 text-blue-700': activeItemName === index,
-              'hover:fill-blue-500': activeItemName !== index,
-            }"
-            @click="activeItemName = index"
+  <div class="pointer-events-none absolute inset-0 z-10">
+    <div class="relative h-full w-full">
+      <div
+        v-if="props.modelValue"
+        class="pointer-events-auto absolute inset-0 block bg-foreground/15 md:hidden"
+        @click="emit('update:modelValue', false)"
+      />
+      <div
+        class="pointer-events-auto relative flex h-full min-w-0 flex-auto flex-col overflow-hidden bg-background/75 transition-all"
+        :class="{
+          'w-0': !props.modelValue,
+          'w-64': props.modelValue,
+        }"
+      >
+        <div
+          v-if="modelValue"
+          class="flex items-center gap-2 border-b border-r border-accent/25"
+        >
+          <div class="flex flex-auto items-center gap-0.5 px-2 py-1">
+            <template v-for="(item, index) in items" :key="item.label">
+              <Button
+                :icon="item.icon"
+                class="rounded-lg px-1 py-0.5 text-2xl"
+                :class="{
+                  'bg-secondary/30': activeItemName === index,
+                  'hover:text-primary': activeItemName !== index,
+                }"
+                @click="activeItemName = index"
+              />
+            </template>
+          </div>
+          <div class="flex items-center gap-0.5 px-2 py-1">
+            <Button
+              icon="close"
+              class="rounded-full p-1"
+              @click="emit('update:modelValue', false)"
+            />
+          </div>
+        </div>
+        <div
+          v-if="modelValue"
+          class="flex-auto overflow-auto border-r border-gray-700/25"
+        >
+          <Thumbnails
+            v-if="
+              !!options.thumbnails && activeItemName == 'thumbnails' && !!pdf
+            "
+            :pdf="pdf"
+            :page="page"
+            :rotation="rotation"
+            @changePage="changePage"
           />
-        </template>
+          <Bookmarks
+            v-if="activeItemName == 'bookmarks'"
+            :outline="outline"
+            @changePage="changePage"
+          />
+          <Attachments
+            v-if="activeItemName == 'attachments'"
+            :attachments="attachments"
+          />
+        </div>
       </div>
-      <div class="flex items-center gap-0.5 px-2 py-1">
-        <Button
-          icon="close"
-          class="rounded-full p-1"
-          @click="emit('update:modelValue', false)"
-        />
-      </div>
-    </div>
-    <div
-      v-if="modelValue"
-      class="flex-auto overflow-auto border-r border-gray-700/25"
-    >
-      <Thumbnails
-        v-if="!!options.thumbnails && activeItemName == 'thumbnails' && !!pdf"
-        :pdf="pdf"
-        :page="page"
-        :rotation="rotation"
-        @changePage="changePage"
-      />
-      <Bookmarks
-        v-if="activeItemName == 'bookmarks'"
-        :outline="outline"
-        @changePage="changePage"
-      />
-      <Attachments
-        v-if="activeItemName == 'attachments'"
-        :attachments="attachments"
-      />
     </div>
   </div>
 </template>
