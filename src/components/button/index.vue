@@ -40,11 +40,11 @@ const ripple = (e: MouseEvent) => {
 
 <template>
   <button
-    class="relative flex items-center justify-center gap-2 overflow-hidden outline-blue-700/25 disabled:cursor-not-allowed disabled:before:opacity-0"
+    class="relative flex items-center justify-center gap-2 overflow-hidden outline-primary disabled:cursor-not-allowed disabled:text-foreground/30"
     :disabled="disabled"
     @click="ripple"
   >
-    <FocusHelper :disabled="disabled || focusDisabled" class="bg-black" />
+    <FocusHelper :disabled="disabled || focusDisabled" class="bg-primary" />
     <slot>
       <div
         class="pointer-events-none flex items-center justify-center gap-2 leading-none"
