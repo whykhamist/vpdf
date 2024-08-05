@@ -69,14 +69,12 @@ const rotate = (deg: number) => {
 </script>
 
 <template>
-  <div
-    class="relative flex items-center justify-center border-b border-gray-400/50"
-  >
+  <div class="relative flex items-center justify-center bg-foreground/5">
     <slot name="prepend" />
     <div class="flex-auto">
       <div class="px-2">
         <Button
-          class="rounded-lg px-1 py-0.5 text-2xl hover:text-blue-600"
+          class="rounded-lg px-1 py-0.5 text-2xl"
           :icon="sidebar ? 'menu_open' : 'menu'"
           :disabled="disabled"
           @click="_sidebar = !_sidebar"
@@ -84,7 +82,7 @@ const rotate = (deg: number) => {
       </div>
     </div>
     <div
-      class="flex flex-auto items-center justify-center divide-x divide-gray-400/25 px-3 py-1 *:border-gray-400/25 first:*:!border-l last:*:!border-r"
+      class="flex flex-auto items-center justify-center divide-x divide-foreground/25 px-3 py-1 *:border-foreground/25 first:*:!border-l last:*:!border-r"
     >
       <div class="px-2">
         <Button
