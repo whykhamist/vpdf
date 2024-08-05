@@ -1,0 +1,9 @@
+@use "@whykhamist/vpdf/css/index.scss";
+
+@layer base {
+  html,
+  body,
+  div#app {
+    @apply h-screen;
+  }
+}
