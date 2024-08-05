@@ -12,22 +12,21 @@ const src = ref(pdf);
 // const src = ref({ url: pdf, enableXfa: true }); // xfa enabled
 const smoothJump = ref(false);
 const textLayer = ref(false);
+const theme = ref("");
 </script>
 
-<style>
-html,
-body,
-div#app,
-.h-screen {
-  height: 100vh;
-  height: 100dvh;
-  height: 100svh;
-  margin: 0;
+<style lang="scss">
+.vpdf-sepia {
+  --foreground: 34 33% 20%;
+  --background: 42 54% 88%;
+  --primary: 34 20% 51%;
+  --secondary: 60 19% 73%;
+  --accent: 75 19% 63%;
 }
 </style>
 
 <template>
-  <div class="flex h-full flex-col bg-rose-700 px-3 py-2">
+  <div class="flex h-full flex-col px-3 py-2">
     <div class="flex items-center gap-2 px-3 py-1">
       <label
         for="__PDF_PREVIEW_SMOOTHJ__"
@@ -67,12 +66,27 @@ div#app,
           <option :value="onlineSrcSecured">Online Secured (password)</option>
         </select>
       </label>
+      <label
+        for="__PDF_PREVIEW_THEME_SELECT__"
+        class="rounded-lg bg-gray-400/25 px-3 py-1"
+      >
+        <select
+          id="__PDF_PREVIEW_THEME_SELECT__"
+          v-model="theme"
+          class="w-full bg-transparent bg-none outline-none"
+        >
+          <option value="">LIght (Default)</option>
+          <option value="vpdf-dark">Dark</option>
+          <option value="vpdf-sepia">Sepia (Custom)</option>
+        </select>
+      </label>
     </div>
     <VPdf
       :src="src"
       :smoothJump="smoothJump"
       :textLayer="textLayer"
-      class="min-h-0 flex-auto border border-gray-400"
+      class="min-h-0 flex-auto"
+      :class="theme"
     />
   </div>
 </template>
