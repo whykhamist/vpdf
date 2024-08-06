@@ -78,14 +78,14 @@ watch(
     >
       <label
         for="__PDF__PAGER_INPUT__"
-        class="group relative max-w-10 leading-none before:absolute before:inset-x-0 before:top-full before:h-0.5 before:bg-gray-400/25"
+        class="group relative max-w-10 bg-foreground/10 leading-none before:absolute before:inset-x-0 before:top-full before:h-0.5 before:bg-gray-400/25"
         :class="{ 'cursor-not-allowed opacity-50': disabled }"
       >
         <input
           id="__PDF__PAGER_INPUT__"
           :value="p"
           :size="inputSize"
-          class="w-full select-none bg-gray-300/25 px-1 text-center leading-none outline-none"
+          class="w-full select-none bg-transparent px-1 text-center leading-none outline-none"
           :class="{ 'aria-disabled pointer-events-none': disabled }"
           :disabled="disabled"
           @change="onChange"

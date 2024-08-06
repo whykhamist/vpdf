@@ -87,11 +87,11 @@ defineExpose({
     />
     <label
       for="__PDF_SCALE_SELECT__"
-      class="group relative hidden max-w-24 leading-none before:absolute before:inset-x-0 before:top-full before:h-0.5 before:bg-gray-400/25 md:block"
+      class="group relative hidden max-w-24 rounded-t-md bg-foreground/10 leading-none before:absolute before:inset-x-0 before:top-full before:h-0.5 before:bg-gray-400/25 md:block"
     >
       <select
         id="__PDF_SCALE_SELECT__"
-        class="max-w-full bg-foreground/25 text-center leading-none outline-none"
+        class="max-w-full bg-transparent text-center leading-none outline-none"
         :value="scale"
         :disabled="disabled"
         @change="onScaleSelect"

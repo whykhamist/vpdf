@@ -117,11 +117,11 @@ defineExpose({
 
 <template>
   <div class="leading-none">
-    <div class="relative h-full w-full bg-white leading-none text-gray-800">
+    <div class="relative h-full w-full bg-white leading-none">
       <slot name="prepend" />
       <canvas
         ref="canva"
-        class="box-border h-full w-full border border-gray-400 bg-white text-gray-800 outline-none"
+        class="box-border h-full w-full border border-gray-400 bg-white outline-none"
         :class="{
           hidden: rendering,
         }"

@@ -45,6 +45,7 @@ watch(
         class="absolute cursor-pointer select-none rounded-lg border border-dashed px-1 py-0.5 transition-colors hover:border-blue-500 hover:bg-gray-400/25"
         :class="{
           'border-blue-500': pageInfo.page === page,
+          'border-transparent': pageInfo.page !== page,
         }"
         :style="{
           top: `${pageInfo.bounds.inner.top}px`,
