@@ -1,5 +1,5 @@
 import { createApp } from "vue";
-import App from "./app.vue";
+import App from "./App.vue";
 import VPdf from "@whykhamist/vpdf";
 
 import "./css/index.scss";

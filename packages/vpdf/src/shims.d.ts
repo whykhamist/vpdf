@@ -28,13 +28,3 @@ declare module "pdfjs-dist/build/pdf" {
 declare module "pdfjs-dist/types" {
   export * from "pdfjs-dist/types";
 }
-
-declare module "*.svg" {
-  const filePath: string;
-  export default filePath;
-}
-
-declare module "@files/*.pdf" {
-  const filePath: string;
-  export default filePath;
-}

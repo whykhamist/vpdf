@@ -1,13 +1,9 @@
 import type { Config } from "tailwindcss";
-import { animation, keyframes } from "./tw/animations";
-import { width as twWidth, height as twHeight } from "./tw/size";
+import { animation, keyframes } from "../../tw/animations";
+import { width as twWidth, height as twHeight } from "../../tw/size";
 
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx,json}",
-    "./preview/**/*.{vue,js,ts,jsx,tsx,json}",
-  ],
+  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx,json}"],
   theme: {
     extend: {
       colors: {

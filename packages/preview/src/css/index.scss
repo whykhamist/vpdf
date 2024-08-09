@@ -1,0 +1,13 @@
+@use "tailwindcss/base";
+@use "tailwindcss/components";
+@use "tailwindcss/utilities";
+
+@use "@whykhamist/vpdf/style.css";
+
+@layer base {
+  html,
+  body,
+  div#app {
+    @apply h-screen;
+  }
+}

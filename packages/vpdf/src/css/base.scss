@@ -1,0 +1,19 @@
+@layer base {
+  :root {
+    --foreground: 213deg 13% 14%;
+    --background: 0deg 0% 100%;
+    --primary: 211deg 32% 26%;
+    --secondary: 211deg 46% 69%;
+    --accent: 211deg 62% 44%;
+
+    --positive: 125deg 42% 50%;
+    --negative: 3deg 75% 60%;
+  }
+  .vpdf-dark {
+    --foreground: 213deg 26% 82%;
+    --background: 215deg 18% 13%;
+    --primary: 211deg 32% 74%;
+    --secondary: 211deg 46% 31%;
+    --accent: 211deg 62% 56%;
+  }
+}
