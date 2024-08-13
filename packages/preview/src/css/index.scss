@@ -2,12 +2,10 @@
 @use "tailwindcss/components";
 @use "tailwindcss/utilities";
 
-@use "@whykhamist/vpdf/style.css";
+@use "@whykhamist/vpdf/css/main.scss";
 
-@layer base {
-  html,
-  body,
-  div#app {
-    @apply h-screen;
-  }
+html,
+body,
+div#app {
+  @apply h-screen;
 }

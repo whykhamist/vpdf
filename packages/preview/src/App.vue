@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from "vue";
+import { ref } from "vue";
 
 import pdf from "@files/attachments.pdf";
 
 const onlineSrc =
   "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference.pdf";
 const onlineSrcSecured =
-  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference_secured.pdf";
+  "https://raw.githubusercontent.com/whykhamist/vpdf/main/packages/preview/files/acrobat_reference_secured.pdf";
 
 const src = ref(pdf);
 // const src = ref({ url: pdf, enableXfa: true }); // xfa enabled

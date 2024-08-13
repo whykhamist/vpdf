@@ -3,7 +3,11 @@ import { animation, keyframes } from "../../tw/animations";
 import { width as twWidth, height as twHeight } from "../../tw/size";
 
 export default {
-  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx,json}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx,json}",
+    "../vpdf/src/**/*.{vue,js,ts,jsx,tsx,json}",
+  ],
   theme: {
     extend: {
       colors: {

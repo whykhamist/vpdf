@@ -16,19 +16,23 @@ export default mergeConfig(
           find: "@vue/runtime-core",
           replacement: "@vue/runtime-core/dist/runtime-core.esm-bundler.js",
         },
-        {
-          find: "@",
-          replacement: fileURLToPath(new URL("./src", import.meta.url)),
-        },
+        // {
+        //   find: "@",
+        //   replacement: fileURLToPath(new URL("./src", import.meta.url)),
+        // },
         {
           find: "@files",
           replacement: fileURLToPath(new URL("./files", import.meta.url)),
+        },
+        {
+          find: "@whykhamist/vpdf",
+          replacement: fileURLToPath(new URL("../vpdf/src", import.meta.url)),
         },
       ],
     },
     build: {
       sourcemap: false,
-      outDir: "docs",
+      outDir: "../../docs",
     },
     server: {
       port: 5173,

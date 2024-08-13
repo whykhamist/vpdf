@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@whykhamist/vpdf": "*",
-    "@whykhamist/file-icons": "^0.0.1",
     "vue": "^3.4.35"
   },
   "devDependencies": {
