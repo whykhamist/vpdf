@@ -36,7 +36,7 @@
     "vue": "^3.4.31"
   },
   "dependencies": {
-    "@whykhamist/file-icons": "^0.0.1",
+    "@whykhamist/file-icons": "^1.0.2",
     "@whykhamist/mime-types": "^1.0.2",
     "pdfjs-dist": "^4.5.136"
   },
