@@ -154,6 +154,7 @@ watch(
       viewer: 0,
     };
     dialog.value.show = false;
+    error.value = undefined;
   }
 );
 </script>
@@ -203,7 +204,7 @@ watch(
         @changePage="(e) => changePage(e.page, e.offset)"
       />
       <PDFViewer
-        v-if="!!pdf && !loading"
+        v-if="!!pdf && !loading && !error"
         ref="viewer"
         :pdf="pdf"
         :smoothJump="smoothJump"
