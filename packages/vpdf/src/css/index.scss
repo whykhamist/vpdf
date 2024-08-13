@@ -1,9 +1,2 @@
-@use "tailwindcss/base";
-@use "tailwindcss/components";
-@use "tailwindcss/utilities";
-
-@use "./fonts/vpdf_icons.scss";
-
-@use "pdfjs-dist/web/pdf_viewer.css";
-
-@use "./base.scss" as twBase;
+@use "./tw.scss";
+@use "./main.scss";
