@@ -49,14 +49,12 @@ const props = defineProps({
   },
   renderDelay: {
     type: Number,
-    default: 50,
+    default: 75,
   },
-
   renderOffset: {
     type: Number,
-    default: 256,
+    default: 396,
   },
-
   onProgress: {
     type: Function,
     default: () => {},

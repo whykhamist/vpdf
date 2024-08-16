@@ -2,7 +2,6 @@
 import {
   computed,
   defineAsyncComponent,
-  nextTick,
   onBeforeUnmount,
   onMounted,
   ref,
@@ -16,8 +15,10 @@ import {
   type PageViewport,
 } from "pdfjs-dist";
 import type { pdfPageInfo, RenderParameters } from "../types/pdf";
+import type { ISignData } from "../types/signature";
 
 const TextLayer = defineAsyncComponent(() => import("./layers/textLayer.vue"));
+const SignLayer = defineAsyncComponent(() => import("./layers/singature.vue"));
 
 type RenderArgs = {
   canvas: HTMLCanvasElement;
@@ -33,6 +34,7 @@ interface IProps {
   render: boolean;
   onRender?: (opts: RenderArgs) => void;
   onError?: Function;
+  signData?: ISignData;
 }
 const props = withDefaults(defineProps<IProps>(), {
   textLayer: false,
@@ -44,6 +46,7 @@ const rendering = ref(false);
 const canva = ref<HTMLCanvasElement>();
 const renderer = shallowRef();
 const renderedPage = shallowRef<PDFPageProxy>();
+const rendered = ref(false);
 
 const ctx = computed(() =>
   canva.value?.getContext("2d", {
@@ -68,6 +71,7 @@ const renderPage = async () => {
 
       renderer.value = renderedPage.value.render(renderContext);
       await renderer.value.promise;
+
       if (!!canva.value && !!ctx.value) {
         props.onRender({
           canvas: canva.value,
@@ -76,6 +80,7 @@ const renderPage = async () => {
           doc,
         });
       }
+      rendered.value = true;
     } catch (e: any) {
       props.onError?.(e);
       if (e.name != "RenderingCancelledException") {
@@ -107,6 +112,7 @@ onBeforeUnmount(async () => {
     renderer.value.cancel();
   }
   renderedPage.value?.cleanup();
+  renderedPage.value = undefined;
 });
 
 defineExpose({
@@ -121,7 +127,7 @@ defineExpose({
       <slot name="prepend" />
       <canvas
         ref="canva"
-        class="box-border h-full w-full border border-gray-400 bg-white outline-none"
+        class="box-border h-full w-full border border-gray-400 bg-transparent outline-none"
         :class="{
           hidden: rendering,
         }"
@@ -129,8 +135,14 @@ defineExpose({
         :height="pageInfo.viewport.height"
       />
       <TextLayer
-        v-if="textLayer && renderedPage"
+        v-if="textLayer && rendered && !signData"
         :page="renderedPage!"
+        :pageInfo="pageInfo"
+      />
+      <SignLayer
+        v-if="!!signData && rendered"
+        :canvas="canva!"
+        :signData="signData"
         :pageInfo="pageInfo"
       />
       <Transition

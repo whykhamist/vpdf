@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, ref, PropType } from "vue";
-const Button = defineAsyncComponent(() => import("../button/index.vue"));
+import { PDFButton } from "../misc";
+// const Button = defineAsyncComponent(() => import("../button/index.vue"));
 const Pager = defineAsyncComponent(() => import("./pager.vue"));
 const Zoomer = defineAsyncComponent(() => import("./zoomer.vue"));
 
@@ -29,6 +30,7 @@ const emit = defineEmits([
   "update:sidebar",
   "update:rotation",
   "fitPage",
+  "sign",
 ]);
 
 const zoomer = ref<typeof Zoomer>();
@@ -73,7 +75,7 @@ const rotate = (deg: number) => {
     <slot name="prepend" />
     <div class="flex-auto">
       <div class="px-2">
-        <Button
+        <PDFButton
           class="rounded-lg px-1 py-0.5 text-2xl"
           :icon="sidebar ? 'menu_open' : 'menu'"
           :disabled="disabled"
@@ -85,7 +87,15 @@ const rotate = (deg: number) => {
       class="flex flex-auto items-center justify-center divide-x divide-foreground/25 px-3 py-1 *:border-foreground/25 first:*:!border-l last:*:!border-r"
     >
       <div class="px-2">
-        <Button
+        <PDFButton
+          class="group rounded-lg px-1 py-0.5 text-2xl"
+          icon="draw"
+          :disabled="disabled"
+          @click="emit('sign')"
+        />
+      </div>
+      <div class="px-2">
+        <PDFButton
           class="group rounded-lg px-1 py-0.5 text-2xl"
           :icon="mode == 'vertical' ? 'table_rows' : 'view_column'"
           :disabled="disabled"
@@ -100,7 +110,7 @@ const rotate = (deg: number) => {
         @fitPage="(e) => emit('fitPage', e)"
       />
       <div class="px-2">
-        <Button
+        <PDFButton
           class="group rounded-lg px-1 py-0.5 text-2xl"
           icon="rotate_left"
           :disabled="disabled"

@@ -6,6 +6,14 @@ import viteCommon from "../../vite.config";
 export default mergeConfig(
   viteCommon,
   defineConfig({
+    resolve: {
+      alias: [
+        {
+          find: "@",
+          replacement: resolve(__dirname, "./src"),
+        },
+      ],
+    },
     build: {
       sourcemap: true,
       lib: {

@@ -11,7 +11,10 @@
     "copy404": "copyfiles -f packages/preview/404.html docs",
     "preview": "vite preview"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fabric": "^5.4.0",
+    "signature_pad": "^5.0.2"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
     "copyfiles": "^2.4.1",

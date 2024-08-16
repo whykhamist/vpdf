@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import { animation, keyframes } from "../../tw/animations";
 import { width as twWidth, height as twHeight } from "../../tw/size";
+import checkered from "../../tw/checkered";
 
 export default {
   content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx,json}"],
@@ -15,6 +16,7 @@ export default {
         negative: "hsl(var(--negative) / <alpha-value>)",
         positive: "hsl(var(--positive) / <alpha-value>)",
       },
+
       animation,
       // @ts-expect-error
       keyframes,
@@ -30,6 +32,10 @@ export default {
       minWidth: twWidth,
       // @ts-expect-error
       maxWidth: twWidth,
+
+      backgroundImage: { ...checkered.backgroundImage },
+      backgroundSize: { ...checkered.backgroundSize },
+      backgroundPosition: { ...checkered.backgroundPosition },
     },
   },
   plugins: [],

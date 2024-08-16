@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, computed, toRef, watch } from "vue";
-import { pdfSource, Point } from "../types/pdf";
+import type { pdfSource, Point } from "../types/pdf";
+import type { ISignData } from "../types/signature";
 import { usePdf } from "../composables/usePdf";
 import type { OnProgressParameters } from "pdfjs-dist/types/src/display/api";
 
@@ -9,7 +10,8 @@ const PDFMenu = defineAsyncComponent(() => import("./menu/index.vue"));
 const PDFDialog = defineAsyncComponent(() => import("./dialog/index.vue"));
 const PDFPassword = defineAsyncComponent(() => import("./password/index.vue"));
 const PDFSideBar = defineAsyncComponent(() => import("./sidebar/index.vue"));
-const Progress = defineAsyncComponent(() => import("./progress/index.vue"));
+const PDFProgress = defineAsyncComponent(() => import("./progress/index.vue"));
+const PDFSignPad = defineAsyncComponent(() => import("./signpad/index.vue"));
 
 type IProps = {
   src: pdfSource;
@@ -41,11 +43,13 @@ const props = withDefaults(defineProps<IProps>(), {
 
 const viewer = ref<typeof PDFViewer>();
 const menu = ref<typeof PDFMenu>();
+const signData = ref<ISignData>();
 const error = ref();
 const progress = ref({
   loader: 0,
   viewer: 0,
 });
+
 const viewerOptions = ref<IViewerOptions>({
   mode: "vertical",
   scale: 1.75,
@@ -146,6 +150,11 @@ const onMouseWheel = (e: any) => {
   }
 };
 
+const onSign = (e: ISignData) => {
+  signData.value = e;
+  dialog.value.show = false;
+};
+
 watch(
   () => props.src,
   () => {
@@ -174,10 +183,11 @@ watch(
       v-model:rotation="viewerOptions.rotation"
       @fitPage="fitPage"
       @update:page="changePage"
+      @sign="openDialog(null, 'signaturePrompt')"
     >
       <template #prepend>
         <div class="absolute inset-x-0 bottom-0">
-          <Progress
+          <PDFProgress
             v-if="progress.loader + progress.viewer < 100"
             :value="+(progress.loader + progress.viewer).toFixed(2)"
             class="h-0.5 w-full"
@@ -219,7 +229,24 @@ watch(
         }"
         @wheel="onMouseWheel"
         @mousewheel="onMouseWheel"
-      />
+      >
+        <template #renderer="{ pdf, pageInfo, render }">
+          <VPdfPageRenderer
+            :pdf="pdf"
+            :pageInfo="pageInfo"
+            class="absolute"
+            :textLayer="textLayer"
+            :render="render"
+            :signData="signData"
+            :style="{
+              top: `${pageInfo.bounds.inner.top}px`,
+              left: `${pageInfo.bounds.inner.left}px`,
+              width: `${pageInfo.viewport.width}px`,
+              height: `${pageInfo.viewport.height}px`,
+            }"
+          />
+        </template>
+      </PDFViewer>
     </div>
     <PDFDialog
       v-model="dialog.show"
@@ -228,9 +255,16 @@ watch(
       class="z-20"
     >
       <PDFPassword
+        v-if="dialog.type === 'passwordPrompt'"
         :callback="dialog.data.cb"
         :reason="dialog.data.reason"
         class=""
+      />
+      <PDFSignPad
+        v-else-if="dialog.type === 'signaturePrompt'"
+        class="max-h-screen-95 w-screen-95 max-w-md"
+        @sign="onSign"
+        @close="close"
       />
     </PDFDialog>
   </div>

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import { animation, keyframes } from "../../tw/animations";
 import { width as twWidth, height as twHeight } from "../../tw/size";
+import checkered from "../../tw/checkered";
 
 export default {
   content: [
@@ -34,6 +35,10 @@ export default {
       minWidth: twWidth,
       // @ts-expect-error
       maxWidth: twWidth,
+
+      backgroundImage: { ...checkered.backgroundImage },
+      backgroundSize: { ...checkered.backgroundSize },
+      backgroundPosition: { ...checkered.backgroundPosition },
     },
   },
   plugins: [],
