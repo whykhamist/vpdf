@@ -15,7 +15,7 @@ import {
   type PageViewport,
 } from "pdfjs-dist";
 import type { pdfPageInfo, RenderParameters } from "../types/pdf";
-import type { ISignData } from "../types/signature";
+import type { ISignData, ISignature } from "../types/signature";
 
 const TextLayer = defineAsyncComponent(() => import("./layers/textLayer.vue"));
 const SignLayer = defineAsyncComponent(() => import("./layers/singature.vue"));
@@ -35,12 +35,17 @@ interface IProps {
   onRender?: (opts: RenderArgs) => void;
   onError?: Function;
   signData?: ISignData;
+  signs?: ISignature[];
 }
+
 const props = withDefaults(defineProps<IProps>(), {
   textLayer: false,
   render: false,
   onRender: () => {},
+  signs: () => [],
 });
+
+const emit = defineEmits(["signed", "update:signs"]);
 
 const rendering = ref(false);
 const canva = ref<HTMLCanvasElement>();
@@ -54,6 +59,13 @@ const ctx = computed(() =>
     willReadFrequently: true,
   })
 );
+
+const signatures = computed({
+  get: () => props.signs,
+  set: (val) => {
+    emit("update:signs", val);
+  },
+});
 
 const renderPage = async () => {
   if (!rendering.value && !!canva.value && !!ctx.value) {
@@ -91,6 +103,55 @@ const renderPage = async () => {
     }
   }
 };
+
+const drawSignatures = async () => {
+  return new Promise((resolve, reject) => {
+    try {
+      props.signs.forEach((sign) => {
+        if (sign) {
+          const { left, top, width, height, scaleX, scaleY } = sign;
+          const ctx = canva.value?.getContext("2d", {
+            alpha: false,
+            willReadFrequently: true,
+          });
+          const img = new Image();
+          img.onload = () => {
+            ctx?.save();
+            ctx?.translate(
+              -left * props.pageInfo.scale,
+              -top * props.pageInfo.scale
+            );
+            ctx?.rotate((sign.angle * Math.PI) / 180);
+            ctx?.drawImage(
+              img,
+              left * props.pageInfo.scale,
+              top * props.pageInfo.scale,
+              width * (scaleX * props.pageInfo.scale),
+              height * (scaleY * props.pageInfo.scale)
+            );
+            ctx?.restore();
+          };
+          img.src = sign.signData.dataUrl;
+        }
+      });
+      resolve(true);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+const radiansToDegrees = (radians: number): number => {
+  return radians * (180 / Math.PI);
+};
+
+// watch(
+//   () => props.signs,
+//   async (val) => {
+//     await renderPage();
+//   },
+//   { deep: true }
+// );
 
 watch(
   () => props.render,
@@ -135,15 +196,17 @@ defineExpose({
         :height="pageInfo.viewport.height"
       />
       <TextLayer
-        v-if="textLayer && rendered && !signData"
+        v-if="textLayer && rendered && !signData && signs?.length <= 0"
         :page="renderedPage!"
         :pageInfo="pageInfo"
       />
       <SignLayer
-        v-if="!!signData && rendered"
+        v-if="(!!signData || signs?.length > 0) && rendered"
+        v-model:signs="signatures"
         :canvas="canva!"
         :signData="signData"
         :pageInfo="pageInfo"
+        @signed="(e) => emit('signed', e)"
       />
       <Transition
         enter-from-class="opacity-0 blur-sm"

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref, computed, toRef, watch } from "vue";
-import type { pdfSource, Point } from "../types/pdf";
-import type { ISignData } from "../types/signature";
+import type { pdfSource, Point, pdfPageInfo } from "../types/pdf";
+import type { ISignData, ISignature } from "../types/signature";
 import { usePdf } from "../composables/usePdf";
 import type { OnProgressParameters } from "pdfjs-dist/types/src/display/api";
 
@@ -36,6 +36,8 @@ type IDialog = {
   persistent: boolean;
 };
 
+type IPageSignatures = Record<number, Array<ISignature>>;
+
 const props = withDefaults(defineProps<IProps>(), {
   smoothJump: false,
   textLayer: false,
@@ -44,6 +46,8 @@ const props = withDefaults(defineProps<IProps>(), {
 const viewer = ref<typeof PDFViewer>();
 const menu = ref<typeof PDFMenu>();
 const signData = ref<ISignData>();
+const signatures = ref<IPageSignatures>({});
+const toSign = ref<IPageSignatures>();
 const error = ref();
 const progress = ref({
   loader: 0,
@@ -155,6 +159,14 @@ const onSign = (e: ISignData) => {
   dialog.value.show = false;
 };
 
+const signed = (e: ISignature, pageInfo: pdfPageInfo) => {
+  if (!signatures.value[pageInfo.page]) {
+    Object.assign(signatures.value, { [pageInfo.page]: [] });
+  }
+  signatures.value![pageInfo.page].push(e);
+  signData.value = undefined;
+};
+
 watch(
   () => props.src,
   () => {
@@ -238,12 +250,14 @@ watch(
             :textLayer="textLayer"
             :render="render"
             :signData="signData"
+            v-model:signs="signatures[pageInfo.page]"
             :style="{
               top: `${pageInfo.bounds.inner.top}px`,
               left: `${pageInfo.bounds.inner.left}px`,
               width: `${pageInfo.viewport.width}px`,
               height: `${pageInfo.viewport.height}px`,
             }"
+            @signed="(e: ISignature) => signed(e, pageInfo)"
           />
         </template>
       </PDFViewer>
