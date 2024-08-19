@@ -10,6 +10,7 @@ type IProps = {
   pageInfo: pdfPageInfo;
 };
 const props = defineProps<IProps>();
+const emit = defineEmits(["signed"]);
 
 const fabCan = ref();
 const signImage = shallowRef<fabric.Image>();
@@ -23,53 +24,90 @@ const imagePos = ref({
 
 const init = () => {
   const bg = props.canvas.toDataURL();
+
+  fabric.Object.prototype.transparentCorners = false;
+  fabric.Object.prototype.cornerColor = "skyblue";
+  fabric.Object.prototype.cornerStyle = "circle";
+  fabric.Object.prototype.cornerStrokeColor = "blue";
+  fabric.Object.prototype.borderColor = "blue";
+
   fabCan.value = markRaw(new fabric.Canvas(props.canvas));
   fabCan.value.setBackgroundImage(
     bg,
     fabCan.value.renderAll.bind(fabCan.value)
   );
-
+  drawBoundingRect();
   fabCan.value.on("mouse:down", (e: any) => {
     if (setSignPos.value) {
       imagePos.value.x = e.pointer.x;
       imagePos.value.y = e.pointer.y;
     }
   });
-  fabCan.value.on("mouse:up", (e: any) => {
+  fabCan.value.on("mouse:up", async (e: any) => {
     if (setSignPos.value) {
       imagePos.value.w = e.pointer.x - imagePos.value.x;
       imagePos.value.h = e.pointer.y - imagePos.value.y;
 
-      signImage.value = addSignature(props.signData.dataUrl, imagePos.value);
+      signImage.value = await addSignature(
+        props.signData.dataUrl,
+        imagePos.value
+      );
     }
   });
 };
 
-const addSignature = (imageData: string, bounds: any): fabric.Image => {
-  const img = new Image();
-  img.src = imageData;
+const signed = () => {
+  emit("signed", {});
+};
 
-  const signature = new fabric.Image(img);
+const addSignature = (
+  imageData: string,
+  bounds: any
+): Promise<fabric.Image> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = imageData;
+    img.onload = () => {
+      try {
+        const signature = new fabric.Image(img);
 
-  signature.set({
-    angle: 0,
-    width: bounds.w,
-    height: bounds.h,
-    left: bounds.x,
-    top: bounds.y,
+        let scaleX = bounds.w / img.naturalWidth;
+        let scaleY = bounds.h / img.naturalHeight;
+        const minScale = 0.15 * props.pageInfo.scale;
+
+        signature.set({
+          angle: 0,
+          width: img.naturalWidth,
+          height: img.naturalHeight,
+          left: bounds.x,
+          top: bounds.y,
+          scaleY: Math.max(scaleY, minScale),
+          scaleX: Math.max(scaleX, minScale),
+          minScaleLimit: minScale,
+          lockScalingFlip: true,
+          lockUniScaling: true,
+        });
+
+        signature.on("scaling", (e: any) => {
+          console.log(e);
+        });
+
+        fabCan.value.add(signature);
+        setSignPos.value = false;
+        resolve(signature);
+      } catch (e) {
+        reject(e);
+      }
+    };
   });
-
-  fabCan.value.add(signature);
-  setSignPos.value = false;
-  return signature;
 };
 
 const drawBoundingRect = () => {
   fabCan.value.on("after:render", () => {
-    fabCan.value.contextContainer.strokeStyle = "#555";
-    fabCan.value.forEachObject((obj: any) => {
-      var bound = obj.getBoundingRect();
+    fabCan.value.contextContainer.strokeStyle = "skyblue";
 
+    fabCan.value.getActiveObjects().forEach((obj: any) => {
+      var bound = obj.getBoundingRect();
       fabCan.value.contextContainer.strokeRect(
         bound.left + 0.5,
         bound.top + 0.5,
@@ -80,22 +118,16 @@ const drawBoundingRect = () => {
   });
 };
 
-const insideCanvas = (x: number, y: number): boolean => {
-  const bound = {
-    x1: 0,
-    y1: 0,
-    x2: fabCan.value.canvas.width,
-    y2: fabCan.value.canvas.height,
-  };
-
-  return x > bound.x1 && x < bound.x2 && y > bound.y1 && y < bound.y2;
-};
-
 onMounted(() => {
   nextTick(init);
 });
 </script>
 
 <template>
-  <slot></slot>
+  <slot>
+    <div
+      v-if="!signImage"
+      class="pointer-events-none absolute inset-0 bg-gray-400/10 bg-checkered-lg"
+    />
+  </slot>
 </template>

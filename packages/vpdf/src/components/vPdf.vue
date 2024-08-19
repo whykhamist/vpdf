@@ -64,13 +64,6 @@ const dialog = ref<IDialog>({
   persistent: false,
 });
 
-const openDialog = (data: any, type: string, persistent: boolean = false) => {
-  dialog.value.data = data;
-  dialog.value.persistent = persistent;
-  dialog.value.type = type;
-  dialog.value.show = true;
-};
-
 const { pdf, pages, loading, outline, attachments } = usePdf(
   toRef(() => props.src),
   {
@@ -107,6 +100,13 @@ const sidebarOptions = computed(() => ({
   bookmarks: true,
   attachments: true,
 }));
+
+const openDialog = (data: any, type: string, persistent: boolean = false) => {
+  dialog.value.data = data;
+  dialog.value.persistent = persistent;
+  dialog.value.type = type;
+  dialog.value.show = true;
+};
 
 const onViewerProgress = (e: OnProgressParameters) => {
   progress.value.viewer = (e.loaded / e.total) * 15;
