@@ -27,72 +27,84 @@
   font-feature-settings: "liga";
 }
 
-.icon-error:before {
+.icon-arrow_circle_down:before {
+  content: "\e919";
+}
+.icon-arrow_circle_up:before {
+  content: "\e91a";
+}
+.icon-arrow_drop_down:before {
   content: "\e900";
 }
-.icon-warning:before {
-  content: "\e913";
-}
-.icon-block:before {
+.icon-arrow_drop_up:before {
   content: "\e901";
 }
-.icon-close:before {
+.icon-arrow_left:before {
   content: "\e902";
 }
-.icon-file_copy:before {
+.icon-arrow_right:before {
   content: "\e903";
 }
 .icon-attachment:before {
   content: "\e904";
 }
-.icon-rotate_left:before {
+.icon-block:before {
   content: "\e905";
 }
-.icon-rotate_right:before {
+.icon-bookmark_border:before {
   content: "\e906";
 }
-.icon-arrow_drop_down:before {
+.icon-close:before {
   content: "\e907";
 }
-.icon-arrow_drop_up:before {
+.icon-draw:before {
   content: "\e908";
 }
-.icon-menu:before {
+.icon-error:before {
   content: "\e909";
 }
-.icon-arrow_left:before {
+.icon-file_copy:before {
   content: "\e90a";
 }
-.icon-arrow_right:before {
+.icon-gesture:before {
   content: "\e90b";
 }
-.icon-bookmark_border:before {
+.icon-help:before {
   content: "\e90c";
 }
-.icon-help:before {
+.icon-image:before {
   content: "\e90d";
 }
-.icon-view_column:before {
-  content: "\e915";
-}
-.icon-zoom_in:before {
+.icon-keyboard:before {
   content: "\e90e";
 }
-.icon-zoom_out:before {
+.icon-menu:before {
   content: "\e90f";
 }
 .icon-menu_open:before {
   content: "\e910";
 }
-.icon-arrow_circle_down:before {
+.icon-motion_photos_on:before {
   content: "\e911";
 }
-.icon-arrow_circle_up:before {
+.icon-rotate_left:before {
   content: "\e912";
 }
-.icon-motion_photos_on:before {
-  content: "\e916";
+.icon-rotate_right:before {
+  content: "\e913";
 }
 .icon-table_rows:before {
+  content: "\e914";
+}
+.icon-view_column:before {
+  content: "\e915";
+}
+.icon-warning:before {
+  content: "\e916";
+}
+.icon-zoom_in:before {
   content: "\e917";
+}
+.icon-zoom_out:before {
+  content: "\e918";
 }
