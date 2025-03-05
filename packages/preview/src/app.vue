@@ -2,11 +2,10 @@
 import { ref } from "vue";
 
 import pdf from "@files/attachments.pdf";
+import secured from "@files/acrobat_reference_secured.pdf";
 
 const onlineSrc =
-  "https://raw.githubusercontent.com/whykhamist/vpdf/main/preview/files/acrobat_reference.pdf";
-const onlineSrcSecured =
-  "https://raw.githubusercontent.com/whykhamist/vpdf/main/packages/preview/files/acrobat_reference_secured.pdf";
+  "https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/pdfreference1.7old.pdf";
 
 const src = ref(pdf);
 // const src = ref({ url: pdf, enableXfa: true }); // xfa enabled
@@ -17,11 +16,11 @@ const theme = ref("");
 
 <style lang="scss">
 .vpdf-sepia {
-  --foreground: 34 33% 20%;
-  --background: 42 54% 88%;
-  --primary: 34 20% 51%;
-  --secondary: 60 19% 73%;
-  --accent: 75 19% 63%;
+  --vpdf-foreground: 34 33% 20%;
+  --vpdf-background: 42 54% 88%;
+  --vpdf-primary: 34 20% 51%;
+  --vpdf-secondary: 60 19% 73%;
+  --vpdf-accent: 75 19% 63%;
 }
 </style>
 
@@ -62,8 +61,8 @@ const theme = ref("");
           class="w-full bg-transparent bg-none outline-none"
         >
           <option :value="pdf">Local</option>
+          <option :value="secured">Encrypted (password)</option>
           <option :value="onlineSrc">Online</option>
-          <option :value="onlineSrcSecured">Online Secured (password)</option>
         </select>
       </label>
       <label
@@ -82,7 +81,7 @@ const theme = ref("");
       </label>
     </div>
     <VPdf
-      :src="src"
+      :src
       :smoothJump="smoothJump"
       :textLayer="textLayer"
       class="min-h-0 flex-auto"
