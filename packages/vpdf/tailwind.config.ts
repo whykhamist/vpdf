@@ -7,13 +7,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        foreground: "hsl(var(--foreground) / <alpha-value>)",
-        background: "hsl(var(--background) / <alpha-value>)",
-        primary: "hsl(var(--primary) / <alpha-value>)",
-        secondary: "hsl(var(--secondary) / <alpha-value>)",
-        accent: "hsl(var(--accent) / <alpha-value>)",
-        negative: "hsl(var(--negative) / <alpha-value>)",
-        positive: "hsl(var(--positive) / <alpha-value>)",
+        foreground: "hsl(var(--vpdf-foreground) / <alpha-value>)",
+        background: "hsl(var(--vpdf-background) / <alpha-value>)",
+        primary: "hsl(var(--vpdf-primary) / <alpha-value>)",
+        secondary: "hsl(var(--vpdf-secondary) / <alpha-value>)",
+        accent: "hsl(var(--vpdf-accent) / <alpha-value>)",
+        negative: "hsl(var(--vpdf-negative) / <alpha-value>)",
+        positive: "hsl(var(--vpdf-positive) / <alpha-value>)",
       },
       animation,
       // @ts-expect-error
