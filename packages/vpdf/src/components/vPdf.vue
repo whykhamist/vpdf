@@ -11,15 +11,6 @@ const PDFPassword = defineAsyncComponent(() => import("./password/index.vue"));
 const PDFSideBar = defineAsyncComponent(() => import("./sidebar/index.vue"));
 const Progress = defineAsyncComponent(() => import("./progress/index.vue"));
 
-type IProps = {
-  src: pdfSource;
-  workerSrc?: string;
-  smoothJump?: boolean;
-  textLayer?: boolean;
-  password?: string;
-  onPassword?: (callback: Function, reason: number) => {};
-};
-
 type IViewerOptions = {
   mode: "vertical" | "horizontal";
   scale: number;
@@ -34,10 +25,20 @@ type IDialog = {
   persistent: boolean;
 };
 
-const props = withDefaults(defineProps<IProps>(), {
-  smoothJump: false,
-  textLayer: false,
-});
+const props = withDefaults(
+  defineProps<{
+    src: pdfSource;
+    workerSrc?: string;
+    smoothJump?: boolean;
+    textLayer?: boolean;
+    password?: string;
+    onPassword?: (callback: Function, reason: number) => {};
+  }>(),
+  {
+    smoothJump: false,
+    textLayer: false,
+  }
+);
 
 const viewer = ref<typeof PDFViewer>();
 const menu = ref<typeof PDFMenu>();

@@ -26,19 +26,21 @@ type RenderArgs = {
   doc: PDFDocumentProxy;
 };
 
-interface IProps {
-  pageInfo: pdfPageInfo;
-  pdf: PDFDocumentLoadingTask;
-  textLayer: boolean;
-  render: boolean;
-  onRender?: (opts: RenderArgs) => void;
-  onError?: Function;
-}
-const props = withDefaults(defineProps<IProps>(), {
-  textLayer: false,
-  render: false,
-  onRender: () => {},
-});
+const props = withDefaults(
+  defineProps<{
+    pageInfo: pdfPageInfo;
+    pdf: PDFDocumentLoadingTask;
+    textLayer: boolean;
+    render: boolean;
+    onRender?: (opts: RenderArgs) => void;
+    onError?: Function;
+  }>(),
+  {
+    textLayer: false,
+    render: false,
+    onRender: () => {},
+  }
+);
 
 const rendering = ref(false);
 const canva = ref<HTMLCanvasElement>();
