@@ -411,8 +411,8 @@ export function usePdfViewer(
     return !!initial
       ? Math.floor(size - initial * (scale.value * props.value.downScale))
       : page > 1
-      ? gap
-      : 0;
+        ? gap
+        : 0;
   };
 
   const fitPage = (mode: "width" | "height" | "fit" = "fit") => {
@@ -461,7 +461,7 @@ export function usePdfViewer(
     totalPage,
     pageInfo,
     containerBounds,
-    scrollState,
+    // scrollState,
     progress,
     render,
     currentPage,
@@ -469,19 +469,19 @@ export function usePdfViewer(
     scale,
     rotation,
     viewMode,
-    readPDF,
+    // readPDF,
     refresh,
-    getPageInfo,
-    getBounds,
-    getVBounds,
-    getHBounds,
-    getInnerBounds,
-    getGaps,
-    getVisiblePages,
-    boundsIntersecting,
-    onContainerScroll,
-    inRange,
-    getCurrentPage,
+    // getPageInfo,
+    // getBounds,
+    // getVBounds,
+    // getHBounds,
+    // getInnerBounds,
+    // getGaps,
+    // getVisiblePages,
+    // boundsIntersecting,
+    // onContainerScroll,
+    // inRange,
+    // getCurrentPage,
     nextPage,
     prevPage,
     changePage,
