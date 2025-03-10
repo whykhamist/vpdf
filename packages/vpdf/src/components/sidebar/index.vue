@@ -32,6 +32,11 @@ const props = withDefaults(
 );
 const emit = defineEmits(["update:modelValue", "changePage"]);
 
+const expanded = computed({
+  get: () => props.modelValue,
+  set: (v) => emit("update:modelValue", v),
+});
+
 type itemType = {
   label: string;
   icon: string;
@@ -93,10 +98,10 @@ const changePage = (e: IPage) => {
         @click="emit('update:modelValue', false)"
       />
       <div
-        class="pointer-events-auto relative flex h-full min-w-0 flex-auto flex-col overflow-hidden bg-background/75 transition-all"
+        class="pointer-events-auto relative flex h-full min-w-0 flex-auto flex-col pr-4 bg-background/75 transition-all"
         :class="{
-          'w-0': !props.modelValue,
-          'w-64': props.modelValue,
+          'w-4': !props.modelValue,
+          'w-72': props.modelValue,
         }"
       >
         <div
@@ -120,7 +125,7 @@ const changePage = (e: IPage) => {
             <Button
               icon="close"
               class="rounded-full p-1"
-              @click="emit('update:modelValue', false)"
+              @click="expanded = false"
             />
           </div>
         </div>
@@ -135,6 +140,7 @@ const changePage = (e: IPage) => {
             :pdf="pdf"
             :page="page"
             :rotation="rotation"
+            class="overflow-x-hidden"
             @changePage="changePage"
           />
           <Bookmarks
@@ -147,6 +153,17 @@ const changePage = (e: IPage) => {
             :attachments="attachments"
           />
         </div>
+
+        <span class="absolute right-0 inset-y-0 bg-foreground/15">
+          <Button
+            icon="arrow_right"
+            class="h-full"
+            :iconClass="{
+              'rotate-180': expanded,
+            }"
+            @click="expanded = !expanded"
+          />
+        </span>
       </div>
     </div>
   </div>

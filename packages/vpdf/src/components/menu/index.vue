@@ -74,6 +74,7 @@ const rotate = (deg: number) => {
     <div class="flex-auto">
       <div class="px-2">
         <Button
+          v-if="false"
           class="rounded-lg px-1 py-0.5 text-2xl"
           :icon="sidebar ? 'menu_open' : 'menu'"
           :disabled="disabled"

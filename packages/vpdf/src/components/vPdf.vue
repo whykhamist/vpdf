@@ -216,7 +216,8 @@ watch(
         v-model:scale="viewerOptions.scale"
         class="max-h-full min-h-0 min-w-0 flex-auto transition-all"
         :class="{
-          'md:ml-64': viewerOptions.sidebar && !error,
+          'md:ml-72': viewerOptions.sidebar && !error,
+          'md:ml-4': !viewerOptions.sidebar && !error,
         }"
         @wheel="onMouseWheel"
         @mousewheel="onMouseWheel"
