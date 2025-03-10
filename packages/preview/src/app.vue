@@ -25,7 +25,10 @@ const theme = ref("");
 </style>
 
 <template>
-  <div class="flex h-full flex-col px-3 py-2">
+  <div
+    class="flex h-full flex-col bg-background px-3 py-2 text-foreground"
+    :class="theme"
+  >
     <div class="flex items-center gap-2 px-3 py-1">
       <label
         for="__PDF_PREVIEW_SMOOTHJ__"
@@ -58,7 +61,7 @@ const theme = ref("");
         <select
           id="__PDF_PREVIEW_SRC_SELECT__"
           v-model="src"
-          class="w-full bg-transparent bg-none outline-none"
+          class="w-full bg-transparent bg-none outline-none [&>option]:bg-background"
         >
           <option :value="pdf">Local</option>
           <option :value="secured">Encrypted (password)</option>
@@ -72,7 +75,7 @@ const theme = ref("");
         <select
           id="__PDF_PREVIEW_THEME_SELECT__"
           v-model="theme"
-          class="w-full bg-transparent bg-none outline-none"
+          class="w-full bg-transparent bg-none outline-none [&>option]:bg-background"
         >
           <option value="">LIght (Default)</option>
           <option value="vpdf-dark">Dark</option>
