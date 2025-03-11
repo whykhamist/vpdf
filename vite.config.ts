@@ -16,6 +16,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         chunkFileNames: `[hash].js`,
+        entryFileNames: `[hash].js`,
       },
     },
   },

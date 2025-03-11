@@ -1,6 +1,6 @@
 {
   "name": "@whykhamist/vpdf",
-  "version": "1.0.0-alpha",
+  "version": "1.0.1-alpha",
   "files": [
     "dist",
     "src"
@@ -9,13 +9,15 @@
   "main": "./dist/index.umd.cjs",
   "module": "./dist/index",
   "types": "./dist/types/index.d.ts",
+  "repository": "whykhamist/vpdf",
+  "homepage": "https://whykhamist.github.io/vpdf",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
       "import": "./dist/index",
       "require": "./dist/index.umd.cjs"
     },
-    "./style.css": "./dist/style.css",
+    "./style.css": "./dist/index.css",
     "./src/*": "./src/*"
   },
   "scripts": {
