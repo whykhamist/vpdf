@@ -38,7 +38,7 @@ import { createApp } from "vue";
 import App from "./app.vue";
 import VPdf from "@whykhamist/vpdf";
 
-import "@whykhamist/vpdf/css/main.scss";
+import "@whykhamist/vpdf/style.css";
 
 async function init() {
   const app = createApp(App);
