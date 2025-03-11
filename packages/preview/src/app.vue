@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import Icon from "./components/icon/index.vue";
 
 import pdf from "@files/attachments.pdf";
 import secured from "@files/acrobat_reference_secured.pdf";
@@ -82,6 +83,21 @@ const theme = ref("");
           <option value="vpdf-sepia">Sepia (Custom)</option>
         </select>
       </label>
+      <div class="flex-auto flex"></div>
+      <a
+        href="https://github.com/whykhamist/vpdf?tab=readme-ov-file#vue-pdf-vpdf"
+        target="_blank"
+        class="px-2 py-1"
+      >
+        <Icon name="github" class="w-5 h-5" />
+      </a>
+      <a
+        href="https://www.npmjs.com/package/@whykhamist/vpdf"
+        target="_blank"
+        class="px-2 py-1"
+      >
+        <Icon name="npm" class="w-5 h-5" />
+      </a>
     </div>
     <VPdf
       :src
