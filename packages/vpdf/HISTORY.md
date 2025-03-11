@@ -1,3 +1,8 @@
+### 1.0.2-alpha / 03-11-2025
+
+    - Fixed build issue
+    - Upgrade dependencies
+
 ### 1.0.1-alpha / 03-11-2025
 
     - Fixed build issue
