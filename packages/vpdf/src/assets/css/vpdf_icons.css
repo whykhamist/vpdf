@@ -1,0 +1,158 @@
+:root{
+  --vpdf-icon-family: "vpdf";
+  --vpdf-icon-weight: normal;
+  --vpdf-icon-style: normal;
+  --vpdf-icon-line-height: 1;
+  --vpdf-icon-letter-spacing: normal;
+  --vpdf-icon-text-transform: none;
+  --vpdf-icon-display: inline-block;
+  --vpdf-icon-white-space: nowrap;
+  --vpdf-icon-word-wrap: normal;
+  --vpdf-icon-direction: ltr;
+  --vpdf-icon-font-smoothing: antialiased;
+  --vpdf-icon-moz-osx-font-smoothing: grayscale;
+  --vpdf-icon-text-rendering: optimizeLegibility;
+  --vpdf-icon-font-feature-settings: "liga";
+
+  --vpdf-icon-arrow_down: "\e919";
+  --vpdf-icon-arrow_up: "\e91a";
+  --vpdf-icon-arrow_left: "\e902";
+  --vpdf-icon-arrow_right: "\e903";
+  --vpdf-icon-arrow_drop_down: "\e900";
+  --vpdf-icon-arrow_drop_up: "\e901";
+  --vpdf-icon-attachment: "\e904";
+  --vpdf-icon-block: "\e905";
+  --vpdf-icon-bookmark: "\e906";
+  --vpdf-icon-close: "\e907";
+  --vpdf-icon-draw: "\e908";
+  --vpdf-icon-error: "\e909";
+  --vpdf-icon-copy: "\e90a";
+  --vpdf-icon-gesture: "\e90b";
+  --vpdf-icon-help: "\e90c";
+  --vpdf-icon-image: "\e90d";
+  --vpdf-icon-keyboard: "\e90e";
+  --vpdf-icon-menu: "\e90f";
+  --vpdf-icon-menu_open: "\e910";
+  --vpdf-icon-loader: "\e911";
+  --vpdf-icon-rotate_left: "\e912";
+  --vpdf-icon-rotate_right: "\e913";
+  --vpdf-icon-rows: "\e914";
+  --vpdf-icon-columns: "\e915";
+  --vpdf-icon-warning: "\e916";
+  --vpdf-icon-zoom_in: "\e917";
+  --vpdf-icon-zoom_out: "\e918";
+}
+
+@font-face {
+  font-family: "vpdf";
+  src: url("./vpdf_icons/vpdf.eot");
+  src:
+    url("./vpdf_icons/vpdf.eot#iefix") format("embedded-opentype"),
+    url("./vpdf_icons/vpdf.ttf") format("truetype"),
+    url("./vpdf_icons/vpdf.woff") format("woff"),
+    url("./vpdf_icons/vpdf.svg#vpdf") format("svg");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+.vpdf\:icon {
+  font-family: var(--vpdf-icon-family) !important;
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga";
+
+  
+}
+
+.vpdf\:icon-arrow_circle_down:before {
+  content: var(--vpdf-icon-arrow_down);
+}
+.vpdf\:icon-arrow_circle_up:before {
+  content: var(--vpdf-icon-arrow_up);
+}
+.vpdf\:icon-arrow_drop_down:before {
+  content: var(--vpdf-icon-arrow_drop_down);
+}
+.vpdf\:icon-arrow_drop_up:before {
+  content: var(--vpdf-icon-arrow_drop_up);
+}
+.vpdf\:icon-arrow_left:before {
+  content: var(--vpdf-icon-arrow_left);
+}
+.vpdf\:icon-arrow_right:before {
+  content: var(--vpdf-icon-arrow_right);
+}
+.vpdf\:icon-attachment:before {
+  content: var(--vpdf-icon-attachment);
+}
+.vpdf\:icon-block:before {
+  content: var(--vpdf-icon-block);
+}
+.vpdf\:icon-bookmark_border:before {
+  content: var(--vpdf-icon-bookmark);
+}
+.vpdf\:icon-close:before {
+  content: var(--vpdf-icon-close);
+}
+.vpdf\:icon-draw:before {
+  content: var(--vpdf-icon-draw);
+}
+.vpdf\:icon-error:before {
+  content: var(--vpdf-icon-error);
+}
+.vpdf\:icon-file_copy:before {
+  content: var(--vpdf-icon-copy);
+}
+.vpdf\:icon-gesture:before {
+  content: var(--vpdf-icon-gesture);
+}
+.vpdf\:icon-help:before {
+  content: var(--vpdf-icon-help);
+}
+.vpdf\:icon-image:before {
+  content: var(--vpdf-icon-image);
+}
+.vpdf\:icon-keyboard:before {
+  content: var(--vpdf-icon-keyboard);
+}
+.vpdf\:icon-menu:before {
+  content: var(--vpdf-icon-menu);
+}
+.vpdf\:icon-menu_open:before {
+  content: var(--vpdf-icon-menu_open);
+}
+.vpdf\:icon-motion_photos_on:before {
+  content: var(--vpdf-icon-loader);
+}
+.vpdf\:icon-rotate_left:before {
+  content: var(--vpdf-icon-rotate_left);
+}
+.vpdf\:icon-rotate_right:before {
+  content: var(--vpdf-icon-rotate_right);
+}
+.vpdf\:icon-table_rows:before {
+  content: var(--vpdf-icon-rows);
+}
+.vpdf\:icon-view_column:before {
+  content: var(--vpdf-icon-columns);
+}
+.vpdf\:icon-warning:before {
+  content: var(--vpdf-icon-warning);
+}
+.vpdf\:icon-zoom_in:before {
+  content: var(--vpdf-icon-zoom_in);
+}
+.vpdf\:icon-zoom_out:before {
+  content: var(--vpdf-icon-zoom_out);
+}

@@ -1,5 +1,5 @@
 import {
-  Ref,
+  type Ref,
   computed,
   nextTick,
   onBeforeUnmount,
@@ -15,7 +15,9 @@ import type {
 } from "pdfjs-dist/types/src/display/api";
 import type {
   Bounds,
+  FitPageMode,
   Point,
+  Position,
   ScrollState,
   Size,
   pdfPageBounds,
@@ -26,7 +28,7 @@ import type {
 
 export function usePdfViewer(
   container: Ref<HTMLElement | undefined>,
-  options: pdfViewerOptions
+  options: pdfViewerOptions,
 ) {
   const props = computed<Required<pdfViewerOptions>>(() => ({
     pdf: options.pdf,
@@ -44,10 +46,7 @@ export function usePdfViewer(
 
   const totalPage = ref(0);
   const pageInfo = ref<Array<pdfPageInfo>>([]);
-  const containerBounds = ref<Size>({
-    width: 0,
-    height: 0,
-  });
+  const containerBounds = ref<Size>({ width: 0, height: 0 });
   const scrollState = ref<pdfScrollState>({
     rAF: null,
     state: {
@@ -66,40 +65,41 @@ export function usePdfViewer(
   const progress = ref<OnProgressParameters>();
   const render = ref(true);
   const bypassSmooth = ref(false);
-
   const visiblePages = ref<Array<pdfPageInfo>>([]);
+
   const scale = computed(() => props.value.scale ?? 1);
   const rotation = computed(() =>
-    (props.value.rotation * 1) % 90 == 0 ? props.value.rotation * 1 : 0
+    (props.value.rotation * 1) % 90 == 0 ? props.value.rotation * 1 : 0,
   );
   const viewMode = computed(() => props.value.view.toLowerCase());
   const gap = computed(() => options?.gap ?? 10);
+  const isVerticalMode = computed(() => viewMode.value == "vertical");
+
+  const activeScale = ref(scale.value);
 
   const { observe, unobserve } = useSizeObserver((els) => {
     visiblePages.value = getVisiblePages(
       scrollState.value.state,
-      els[0].target as HTMLElement
+      els[0]?.target as HTMLElement,
     );
   });
 
   const readPDF = async () => {
-    if (!!props.value.pdf) {
-      const { docId, promise } = props.value.pdf;
-      let pdf = await promise;
-      const { numPages } = pdf;
+    const { docId, promise } = props.value.pdf;
+    let pdf = await promise;
+    const { numPages } = pdf;
 
-      updateProgress({ loaded: 0, total: 1 });
-      await getPageInfo(pdf, docId, numPages);
-      if (!!container.value) {
-        currentPage.value = getCurrentPage(
-          scrollState.value.state,
-          container.value
-        );
-        visiblePages.value = getVisiblePages(
-          scrollState.value.state,
-          container.value
-        );
-      }
+    updateProgress({ loaded: 0, total: 1 });
+    await getPageInfo(pdf, docId, numPages);
+    if (container.value) {
+      currentPage.value = getCurrentPage(
+        scrollState.value.state,
+        container.value,
+      );
+      visiblePages.value = getVisiblePages(
+        scrollState.value.state,
+        container.value,
+      );
     }
   };
 
@@ -114,10 +114,10 @@ export function usePdfViewer(
   const getPageInfo = async (
     pdf: PDFDocumentProxy,
     docId: string,
-    numPages: number
+    numPages: number,
   ): Promise<void> => {
     const { gap, dGap } = getGaps();
-    const isVertical = viewMode.value == "vertical";
+    const isVertical = isVerticalMode.value;
 
     let pages = [],
       lastViewport = null,
@@ -128,19 +128,27 @@ export function usePdfViewer(
       };
 
     totalPage.value = numPages;
+    activeScale.value = scale.value;
+    if (props.value.scale < 0) {
+      const ss = await getFittedPageScale(pdf);
+      if (props.value.scale == -1) {
+        activeScale.value = ss.fit;
+      } else if (props.value.scale == -2) {
+        activeScale.value = ss.width;
+      } else if (props.value.scale == -3) {
+        activeScale.value = ss.height;
+      }
+    }
 
     for (let i = 0; i < numPages; i++) {
       const pageNum = i + 1;
       const pageId = `${docId}_pdf_page_${pageNum}_${scale.value}_${rotation.value}`;
       let page = await pdf.getPage(pageNum);
       const viewport = page.getViewport({
-        scale: scale.value * props.value.downScale,
+        scale: activeScale.value * props.value.downScale,
         rotation: rotation.value,
       });
-      const pos = {
-        x: 0,
-        y: 0,
-      };
+      const pos = { x: 0, y: 0 };
 
       if (isVertical) {
         lastPos += (lastViewport?.height ?? 0) + gap + 2;
@@ -157,7 +165,7 @@ export function usePdfViewer(
       pages.push({
         id: pageId,
         scale: scale.value,
-        rotation: rotation.value,
+        rotation: pageNum == 1 ? 0 : rotation.value,
         page: pageNum,
         viewport,
         pos,
@@ -167,10 +175,7 @@ export function usePdfViewer(
 
       page.cleanup();
 
-      updateProgress({
-        loaded: (i + 1) * 8,
-        total: numPages * 8,
-      });
+      updateProgress({ loaded: (i + 1) * 8, total: numPages * 8 });
     }
 
     (pages as Array<pdfPageInfo>).forEach((p) => {
@@ -186,9 +191,21 @@ export function usePdfViewer(
     containerBounds.value = max;
   };
 
+  const getFittedPageScale = async (pdf: PDFDocumentProxy) => {
+    let page = await pdf.getPage(1);
+    const scales = computeScales(
+      page.getViewport({
+        scale: 1 * props.value.downScale,
+        rotation: rotation.value,
+      }),
+      1,
+    );
+    return scales;
+  };
+
   const getBounds = (
     pageInfo: pdfPageInfo,
-    vertical: boolean = true
+    vertical: boolean = true,
   ): pdfPageBounds => {
     const { gap, hGap } = getGaps();
     const { page, pos, viewport } = pageInfo;
@@ -204,7 +221,7 @@ export function usePdfViewer(
     inner: Bounds,
     gap: number,
     firstHG: number,
-    lastHG: number
+    lastHG: number,
   ): pdfPageBounds => {
     return {
       inner,
@@ -221,7 +238,7 @@ export function usePdfViewer(
     inner: Bounds,
     gap: number,
     firstHG: number,
-    lastHG: number
+    lastHG: number,
   ): pdfPageBounds => {
     return {
       inner,
@@ -254,7 +271,7 @@ export function usePdfViewer(
 
   const getVisiblePages = (
     sState: ScrollState,
-    container: HTMLElement
+    container: HTMLElement,
   ): Array<pdfPageInfo> => {
     const { lastY, lastX } = sState;
     const { clientHeight, clientWidth } = container;
@@ -266,7 +283,7 @@ export function usePdfViewer(
     };
 
     const filtered = pageInfo.value.filter((p) =>
-      boundsIntersecting(p.bounds.outer, bounds)
+      boundsIntersecting(p.bounds.outer, bounds),
     );
     return filtered;
   };
@@ -306,10 +323,10 @@ export function usePdfViewer(
         scrollState.value.state.lastY = currentY;
 
         scrollState.value.covered.y = Math.round(
-          ((currentY + target.clientHeight) / target.scrollHeight) * 100
+          ((currentY + target.clientHeight) / target.scrollHeight) * 100,
         );
         scrollState.value.covered.x = Math.round(
-          ((currentX + target.clientWidth) / target.scrollWidth) * 100
+          ((currentX + target.clientWidth) / target.scrollWidth) * 100,
         );
         visiblePages.value = getVisiblePages(scrollState.value.state, target);
 
@@ -330,9 +347,9 @@ export function usePdfViewer(
 
   const getCurrentPage = (sState: ScrollState, target: HTMLElement): number => {
     let pos: number = 0,
-      minKey: "top" | "bottom" | "left" | "right" = "top",
-      maxKey: "top" | "bottom" | "left" | "right" = "bottom";
-    if (viewMode.value == "vertical") {
+      minKey: Position = "top",
+      maxKey: Position = "bottom";
+    if (isVerticalMode.value) {
       pos = sState.lastY + target.clientHeight / 2;
       minKey = "top";
       maxKey = "bottom";
@@ -343,7 +360,7 @@ export function usePdfViewer(
     }
     return (
       pageInfo.value.find((p) =>
-        inRange(pos, p.bounds.outer[minKey], p.bounds.outer[maxKey])
+        inRange(pos, p.bounds.outer[minKey], p.bounds.outer[maxKey]),
       )?.page ?? 1
     );
   };
@@ -358,11 +375,11 @@ export function usePdfViewer(
     changePage(Math.max(p, 1));
   };
 
-  const changePage = (page: number, offset: Point | null = null) => {
+  const changePage = (page: number, offset?: Point) => {
     const pInfo = pageInfo.value.find((p) => p.page == (page ?? 1));
     const containerSize = container.value;
     currentPage.value = page;
-    if (!!pInfo) {
+    if (pInfo) {
       const { gap, hGap } = getGaps();
       const { top, left } = pInfo.bounds.outer;
       const viewport = pInfo.viewport;
@@ -374,14 +391,16 @@ export function usePdfViewer(
       };
       let offY = pageOffset(offset?.y ?? 0, viewport.height, page, gap);
       let offX = Math.floor(
-        (offset?.x ?? 0) * (scale.value * props.value.downScale)
+        (offset?.x ?? 0) * (scale.value * props.value.downScale),
       );
 
       if (viewMode.value == "vertical") {
         if (viewport.height < (containerSize?.clientHeight ?? 0)) {
           scroll.top =
             Math.round(
-              top - (containerSize?.clientHeight ?? 0) / 2 + viewport.height / 2
+              top -
+                (containerSize?.clientHeight ?? 0) / 2 +
+                viewport.height / 2,
             ) - hGap;
         } else {
           scroll.top = top - (gap + hGap);
@@ -390,7 +409,7 @@ export function usePdfViewer(
         if (viewport.width < (containerSize?.clientWidth ?? 0)) {
           scroll.left =
             Math.round(
-              left - (containerSize?.clientWidth ?? 0) / 2 + viewport.width / 2
+              left - (containerSize?.clientWidth ?? 0) / 2 + viewport.width / 2,
             ) + hGap;
         } else {
           scroll.left = left - (gap + hGap);
@@ -406,49 +425,47 @@ export function usePdfViewer(
     initial: number,
     size: number,
     page: number,
-    gap: number
+    gap: number,
   ): number => {
-    return !!initial
+    return initial
       ? Math.floor(size - initial * (scale.value * props.value.downScale))
       : page > 1
         ? gap
         : 0;
   };
 
-  const fitPage = (mode: "width" | "height" | "fit" = "fit") => {
+  const fitPage = (mode: FitPageMode = "fit") => {
     const page = pageInfo.value.find((p) => p.page == currentPage.value);
     const viewport = page!.viewport;
-    const { dGap } = getGaps();
     let sf = page!.scale;
-    const hsf = ((container.value!.clientHeight - dGap) / viewport.height) * sf;
-    const wsf = ((container.value!.clientWidth - dGap) / viewport.width) * sf;
-    const fit = { width: wsf, height: hsf, fit: Math.min(wsf, hsf) };
+    const fit = computeScales(viewport, sf);
     return fit[mode];
+  };
+
+  const computeScales = (viewport: PageViewport, scaleFactor: number) => {
+    const { dGap } = getGaps();
+    const hsf =
+      ((container.value!.clientHeight - dGap) / viewport.height) * scaleFactor;
+    const wsf =
+      ((container.value!.clientWidth - dGap) / viewport.width) * scaleFactor;
+    return { width: wsf, height: hsf, fit: Math.min(wsf, hsf) };
   };
 
   watch([() => props.value.pdf, scale, rotation, viewMode, gap], refresh, {
     deep: true,
   });
 
-  watch(container, (val) => {
-    if (!!val) {
-      observe(val);
-    } else {
-      unobserve();
-    }
-  });
+  watch(container, (val) => (val ? observe(val) : unobserve()));
 
   onMounted(async () => {
     await nextTick();
     scrollState.value.state.lastX = container.value?.scrollLeft ?? 0;
     scrollState.value.state.lastY = container.value?.scrollTop ?? 0;
     container.value?.addEventListener("scroll", onContainerScroll, true);
-    if (!!props.value.pdf) {
-      await readPDF();
+    await readPDF();
 
-      if (!!props.value.page) {
-        changePage(props.value.page);
-      }
+    if (props.value.page) {
+      changePage(props.value.page);
     }
   });
 
@@ -466,22 +483,11 @@ export function usePdfViewer(
     render,
     currentPage,
     visiblePages,
-    scale,
+    scale: activeScale,
     rotation,
     viewMode,
     // readPDF,
     refresh,
-    // getPageInfo,
-    // getBounds,
-    // getVBounds,
-    // getHBounds,
-    // getInnerBounds,
-    // getGaps,
-    // getVisiblePages,
-    // boundsIntersecting,
-    // onContainerScroll,
-    // inRange,
-    // getCurrentPage,
     nextPage,
     prevPage,
     changePage,

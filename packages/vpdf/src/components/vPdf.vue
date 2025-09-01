@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref, computed, toRef, watch } from "vue";
-import { pdfSource, Point } from "../types/pdf";
+import { ref, computed, toRef, watch } from "vue";
+import type { pdfSource, Point } from "../types/pdf";
 import { usePdf } from "../composables/usePdf";
 import type { OnProgressParameters } from "pdfjs-dist/types/src/display/api";
 
-const PDFViewer = defineAsyncComponent(() => import("./vPdfViewer.vue"));
-const PDFMenu = defineAsyncComponent(() => import("./menu/index.vue"));
-const PDFDialog = defineAsyncComponent(() => import("./dialog/index.vue"));
-const PDFPassword = defineAsyncComponent(() => import("./password/index.vue"));
-const PDFSideBar = defineAsyncComponent(() => import("./sidebar/index.vue"));
-const Progress = defineAsyncComponent(() => import("./progress/index.vue"));
+import PDFViewer from "./vPdfViewer.vue";
+import PDFMenu from "./menu/index.vue";
+import PDFDialog from "./dialog/index.vue";
+import PDFPassword from "./password/index.vue";
+import PDFSideBar from "./sidebar/index.vue";
+import Progress from "./progress/index.vue";
+import { log, useScales, useTouchZoom } from "../composables";
+import BottomMenu from "./menu/bottom.vue";
 
 type IViewerOptions = {
   mode: "vertical" | "horizontal";
-  scale: number;
   sidebar: boolean;
+  scale: number;
   rotation: number;
 };
 
@@ -32,25 +34,28 @@ const props = withDefaults(
     smoothJump?: boolean;
     textLayer?: boolean;
     password?: string;
+    scale?: number;
+    page?: number;
     onPassword?: (callback: Function, reason: number) => {};
   }>(),
   {
     smoothJump: false,
     textLayer: false,
-  }
+  },
 );
 
 const viewer = ref<typeof PDFViewer>();
 const menu = ref<typeof PDFMenu>();
 const error = ref();
+const scaleTimer = ref();
 const progress = ref({
   loader: 0,
   viewer: 0,
 });
 const viewerOptions = ref<IViewerOptions>({
   mode: "vertical",
-  scale: 1.75,
   sidebar: false,
+  scale: props.scale ?? 1,
   rotation: 0,
 });
 
@@ -86,7 +91,7 @@ const { pdf, pages, loading, outline, attachments } = usePdf(
             },
           },
           "passwordPrompt",
-          true
+          true,
         );
       }
     },
@@ -96,7 +101,26 @@ const { pdf, pages, loading, outline, attachments } = usePdf(
     onError: (e) => {
       error.value = e;
     },
-  }
+  },
+);
+
+const {
+  scale: _scale,
+  scales: _scales,
+  next: nextScale,
+  prev: prevScale,
+} = useScales(props.scale);
+
+const { touching, touchStart, touchMove, touchEnd } = useTouchZoom(
+  (zoomin, zoomout, distance) => {
+    // log("IN: ", zoomin, "OUT: ", zoomout, "DISTANCE: ", distance);
+    // zoomin ? nextScale() : prevScale();
+    if (zoomin) {
+      nextScale();
+    } else if (zoomout) {
+      prevScale();
+    }
+  },
 );
 
 const sidebarOptions = computed(() => ({
@@ -113,37 +137,10 @@ const changePage = (page: number, offset: Point | null = null) => {
   viewer.value?.changePage(page, offset);
 };
 
-const fitPage = (mode: "fit" | "width" | "height" = "fit") => {
-  viewerOptions.value.scale = viewer.value?.fitPage(mode);
-};
-
 const onMouseWheel = (e: any) => {
   if (e.ctrlKey) {
     e.preventDefault();
-    const scales = menu.value?.scales;
-    let scaleIndex = scales.findIndex(
-      (s: any) => s.value == viewerOptions.value.scale
-    );
-    if (e.wheelDeltaY > 0) {
-      scaleIndex =
-        scaleIndex > -1
-          ? scaleIndex
-          : scales.findIndex((s: any) => s.value >= viewerOptions.value.scale) -
-            1;
-      scaleIndex = Math.min(
-        scaleIndex + 1,
-        scales.filter((s: any) => !!s.value).length - 1
-      );
-    } else {
-      scaleIndex =
-        scaleIndex > -1
-          ? scaleIndex
-          : scales.findLastIndex(
-              (s: any) => s.value <= viewerOptions.value.scale
-            ) + 1;
-      scaleIndex = Math.max(scaleIndex - 1, 0);
-    }
-    viewerOptions.value.scale = scales[scaleIndex].value;
+    e.wheelDeltaY > 0 ? nextScale() : prevScale();
   }
 };
 
@@ -156,43 +153,68 @@ watch(
     };
     dialog.value.show = false;
     error.value = undefined;
-  }
+  },
+);
+
+watch(_scale, (val) => {
+  clearTimeout(scaleTimer.value);
+  scaleTimer.value = setTimeout(
+    () => {
+      viewerOptions.value.scale = val;
+    },
+    touching.value ? 500 : 10,
+  );
+});
+
+watch(
+  () => viewerOptions.value.scale,
+  (val) => {
+    _scale.value = val;
+  },
 );
 </script>
 
 <template>
   <div
-    class="relative flex h-full flex-col border border-gray-400/25 bg-background text-foreground"
+    class="vpdf:relative vpdf:flex vpdf:h-full vpdf:flex-col vpdf:border vpdf:border-gray-400/25 vpdf:bg-background vpdf:text-foreground"
   >
     <PDFMenu
       ref="menu"
       :pages="pages"
       :page="viewer?.currentPage ?? 1"
-      :loading="loading"
+      :loading
+      :scales="_scales"
       v-model:mode="viewerOptions.mode"
-      v-model:scale="viewerOptions.scale"
+      v-model:scale="_scale"
       v-model:sidebar="viewerOptions.sidebar"
       v-model:rotation="viewerOptions.rotation"
-      @fitPage="fitPage"
       @update:page="changePage"
+      class="vpdf:border-b vpdf:border-foreground/25"
     >
       <template #prepend>
-        <div class="absolute inset-x-0 bottom-0">
+        <div class="vpdf:absolute vpdf:inset-x-0 vpdf:bottom-0">
           <Progress
             v-if="progress.loader + progress.viewer < 100"
             :value="+(progress.loader + progress.viewer).toFixed(2)"
-            class="h-0.5 w-full"
+            class="vpdf:h-0.5 vpdf:w-full"
           />
         </div>
         <div
           v-if="!!error"
-          class="absolute top-full z-20 w-full bg-negative px-2 py-1 text-sm font-semibold leading-none text-rose-50"
+          class="vpdf:absolute vpdf:top-full vpdf:z-20 vpdf:w-full vpdf:bg-negative vpdf:px-2 vpdf:py-1 vpdf:text-sm vpdf:leading-none vpdf:font-semibold vpdf:text-negative-50"
         >
           {{ error.message }}
         </div>
       </template>
     </PDFMenu>
-    <div class="relative flex min-h-0 min-w-0 flex-auto">
+    <div
+      class="vpdf:relative vpdf:flex vpdf:min-h-0 vpdf:min-w-0 vpdf:flex-auto"
+      @wheel="onMouseWheel"
+      @mousewheel="onMouseWheel"
+      @touchstart="touchStart"
+      @touchmove="touchMove"
+      @touchend="touchEnd"
+    >
       <PDFSideBar
         v-if="!error"
         v-model="viewerOptions.sidebar"
@@ -202,7 +224,7 @@ watch(
         :attachments="attachments"
         :page="viewer?.currentPage ?? 1"
         :rotation="viewerOptions.rotation"
-        @changePage="(e) => changePage(e.page, e.offset)"
+        @changePage="(e: any) => changePage(e.page, e.offset)"
       />
       <PDFViewer
         v-if="!!pdf && !loading && !error"
@@ -212,22 +234,31 @@ watch(
         :view="viewerOptions.mode"
         :textLayer="textLayer"
         :rotation="viewerOptions.rotation"
-        @progress="onViewerProgress"
+        :scaling="_scale"
+        :page
         v-model:scale="viewerOptions.scale"
-        class="max-h-full min-h-0 min-w-0 flex-auto transition-all"
+        class="vpdf:max-h-full vpdf:min-h-0 vpdf:min-w-0 vpdf:flex-auto vpdf:transition-all"
         :class="{
-          'md:ml-72': viewerOptions.sidebar && !error,
-          'md:ml-4': !viewerOptions.sidebar && !error,
+          'vpdf:md:ml-72': viewerOptions.sidebar && !error,
+          'vpdf:md:ml-0': !viewerOptions.sidebar && !error,
         }"
-        @wheel="onMouseWheel"
-        @mousewheel="onMouseWheel"
+        @progress="onViewerProgress"
+      />
+
+      <BottomMenu
+        :page="viewer?.currentPage ?? 1"
+        v-model:scale="viewerOptions.scale"
+        :scales="_scales"
+        :pages
+        :pageMode="viewerOptions.mode"
+        @update:page="changePage"
       />
     </div>
     <PDFDialog
       v-model="dialog.show"
       :persistent="dialog.persistent"
       v-slot="{ close }"
-      class="z-20"
+      class="vpdf:z-20"
     >
       <PDFPassword
         :callback="dialog.data.cb"

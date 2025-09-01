@@ -1,16 +1,18 @@
-import { defineConfig, mergeConfig } from "vite";
-import { resolve } from "node:path";
-import viteCommon from "../../vite.config";
+import { fileURLToPath, URL } from "node:url";
+import { defineConfig, mergeConfig, UserConfig } from "vite";
+import vitecommon from "../../vite.config";
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default mergeConfig(
-  viteCommon,
+  vitecommon,
   defineConfig({
     build: {
-      sourcemap: true,
+      // sourcemap: true,
+
       lib: {
-        entry: resolve(__dirname, "./src/index.ts"),
+        entry: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
         name: "@whykhamist/vpdf",
+        formats: ["es", "umd"],
         fileName: "index",
       },
 
@@ -26,5 +28,10 @@ export default mergeConfig(
         },
       },
     },
-  })
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
+      },
+    },
+  } satisfies UserConfig),
 );

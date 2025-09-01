@@ -1,10 +1,10 @@
 import { ref } from "vue";
 
 export function useSizeObserver(
-  cb?: (elements: Array<ResizeObserverEntry>) => void,
-  delay: number = 100
+  cb: (elements: Array<ResizeObserverEntry>) => void,
+  delay: number = 100,
 ) {
-  const timer = ref<NodeJS.Timeout>();
+  const timer = ref();
   const observed = ref<HTMLElement>();
   const observer = new ResizeObserver(
     (elements: Array<ResizeObserverEntry>) => {
@@ -12,10 +12,10 @@ export function useSizeObserver(
         clearTimeout(timer.value);
 
         timer.value = setTimeout(() => {
-          cb?.(elements);
+          cb(elements);
         }, delay);
       });
-    }
+    },
   );
 
   const observe = (el: HTMLElement, options?: ResizeObserverOptions) => {

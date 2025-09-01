@@ -1,21 +1,19 @@
 {
   "name": "@whykhamist/vpdf",
-  "version": "1.0.2-alpha",
+  "version": "2.0.0-alpha",
   "files": [
     "dist",
     "src"
   ],
   "type": "module",
-  "main": "./dist/index.umd.cjs",
-  "module": "./dist/index",
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.js",
   "types": "./dist/types/index.d.ts",
-  "repository": "whykhamist/vpdf",
-  "homepage": "https://whykhamist.github.io/vpdf",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/index",
-      "require": "./dist/index.umd.cjs"
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.js"
     },
     "./style.css": "./dist/index.css",
     "./src/*": "./src/*"
@@ -23,7 +21,7 @@
   "scripts": {
     "build": "vue-tsc -b && npm run build:lib && npm run build:dts",
     "build:lib": "vite build",
-    "build:dts": "vue-tsc --declaration --emitDeclarationOnly -p tsconfig.build.json"
+    "build:dts": "vue-tsc --declaration --emitDeclarationOnly -p tsconfig.json"
   },
   "keywords": [
     "pdf",
@@ -34,28 +32,22 @@
     "tailwindcss"
   ],
   "peerDependencies": {
-    "vue": "^3.4.31"
+    "pdfjs-dist": "^5.2.133",
+    "vue": "^3.5.13"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.12",
     "@whykhamist/file-icons": "^1.0.2",
     "@whykhamist/mime-types": "^1.0.3",
-    "pdfjs-dist": "^4.10.38"
+    "pdfjs-dist": "^5.4.54",
+    "tailwindcss": "^4.1.12"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.2.1",
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
-    "postcss-import": "^16.1.0",
-    "prettier": "3.5.3",
-    "prettier-plugin-tailwindcss": "0.6.11",
-    "sass": "^1.85.1",
-    "tailwindcss": "^3.4.17",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.1",
-    "vue-tsc": "^2.2.8"
-  },
-  "resolutions": {
-    "prettier": "2.8.8",
-    "prettier-plugin-tailwindcss": "0.4.1"
+    "@vitejs/plugin-vue": "^6.0.1",
+    "@vue/tsconfig": "^0.8.1",
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.3",
+    "vue-tsc": "^3.0.6"
   }
 }

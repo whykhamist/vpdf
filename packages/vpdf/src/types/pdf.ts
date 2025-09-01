@@ -5,27 +5,26 @@ import type {
   PDFDocumentProxy,
   DocumentInitParameters,
   TypedArray,
-  RenderParameters,
 } from "pdfjs-dist/types/src/display/api";
 
-type Size = {
+export type Size = {
   width: number;
   height: number;
 };
 
-type Point = {
+export type Point = {
   x: number;
   y: number;
 };
 
-type Bounds = {
+export type Bounds = {
   top: number;
   bottom: number;
   left: number;
   right: number;
 };
 
-type ScrollState = {
+export type ScrollState = {
   right: boolean;
   down: boolean;
   lastX: number;
@@ -33,14 +32,14 @@ type ScrollState = {
 };
 
 // ----------------------------- PDF Loader ----------------------------- //
-type pdfSource =
+export type pdfSource =
   | string
   | URL
   | TypedArray
   | ArrayBuffer
   | DocumentInitParameters;
 
-interface pdfOptions {
+export interface pdfOptions {
   workerSrc?: string;
   password?: string;
   onError?: (error: any) => void;
@@ -48,11 +47,11 @@ interface pdfOptions {
   onPassword?: (callback: Function, reason: any) => void;
 }
 
-type pdfOutlineDest = string | Array<any> | null;
+export type pdfOutlineDest = string | Array<any> | null;
 
-type pdfOutline = Awaited<ReturnType<PDFDocumentProxy["getOutline"]>>;
+export type pdfOutline = Awaited<ReturnType<PDFDocumentProxy["getOutline"]>>;
 
-type pdfOutlinePairs = {
+export type pdfOutlinePairs = {
   page: number | null;
   offsetY: number;
   offsetX: number;
@@ -61,8 +60,8 @@ type pdfOutlinePairs = {
 };
 
 // ----------------------------- PDF Viewer ----------------------------- //
-type pdfViewerOptions = {
-  pdf: PDFDocumentLoadingTask | undefined;
+export type pdfViewerOptions = {
+  pdf: PDFDocumentLoadingTask;
   page: number;
   scale: number;
   gap: number;
@@ -75,7 +74,7 @@ type pdfViewerOptions = {
   downScale?: number;
 };
 
-type pdfPageInfo = {
+export type pdfPageInfo = {
   id: string;
   scale: number;
   rotation: number;
@@ -85,41 +84,26 @@ type pdfPageInfo = {
   bounds: pdfPageBounds;
 };
 
-type pdfPageBounds = {
+export type pdfPageBounds = {
   inner: Bounds;
   outer: Bounds;
 };
 
-type pdfScrollState = {
+export type pdfScrollState = {
   rAF: number | null;
   state: ScrollState;
   covered: Point;
   timer: ReturnType<typeof setTimeout> | null;
 };
 
-type pdfattachmentFile = {
+export type pdfattachmentFile = {
   filename: string;
   content: TypedArray;
   rawFilename: string;
 };
 
-type pdfattachment = Record<string, pdfattachmentFile>;
+export type pdfattachment = Record<string, pdfattachmentFile>;
 
-export {
-  Size,
-  Point,
-  Bounds,
-  ScrollState,
-  pdfSource,
-  pdfOptions,
-  pdfOutlineDest,
-  pdfOutline,
-  pdfOutlinePairs,
-  pdfViewerOptions,
-  pdfPageInfo,
-  pdfPageBounds,
-  pdfScrollState,
-  pdfattachmentFile,
-  pdfattachment,
-  RenderParameters,
-};
+export type Position = "top" | "bottom" | "left" | "right";
+
+export type FitPageMode = "fit" | "width" | "height";

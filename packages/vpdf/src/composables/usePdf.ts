@@ -1,10 +1,16 @@
 import "../utils/polyfill";
-import * as pdfjs from "pdfjs-dist";
+import {
+  GlobalWorkerOptions,
+  getDocument,
+  type PDFDocumentLoadingTask,
+  type PDFDocumentProxy,
+  type OnProgressParameters,
+} from "pdfjs-dist";
 import PDFWorker from "pdfjs-dist/legacy/build/pdf.worker.min?url";
 import {
   onBeforeUnmount,
   onMounted,
-  Ref,
+  type Ref,
   ref,
   shallowRef,
   toRef,
@@ -21,25 +27,30 @@ import type {
 } from "../types/pdf";
 
 const setWorker = (worker: string) => {
-  if (!pdfjs.GlobalWorkerOptions.workerSrc) {
-    pdfjs.GlobalWorkerOptions.workerSrc = worker;
+  if (!GlobalWorkerOptions.workerSrc) {
+    GlobalWorkerOptions.workerSrc = worker;
   }
 };
 
 export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
-  setWorker(options?.workerSrc ?? PDFWorker);
+  setWorker(options?.workerSrc || PDFWorker);
 
   const pdfSrc = toRef(src);
-  const pdf = shallowRef<pdfjs.PDFDocumentLoadingTask>();
-  const doc = shallowRef<pdfjs.PDFDocumentProxy>();
+  const pdf = shallowRef<PDFDocumentLoadingTask>();
+  const doc = shallowRef<PDFDocumentProxy>();
   const pages = shallowRef(0);
   const outline = shallowRef<Array<pdfOutlinePairs>>();
   const attachments = shallowRef<pdfattachment>();
-  const js = shallowRef();
+  const javascript = shallowRef();
   const metadata = shallowRef();
 
-  const _progress = ref(0);
-  const _loading = ref(false);
+  // const states = ref({
+  //   loading: false,
+  //   progress: 0,
+  // });
+
+  const loading = ref(false);
+  const progress = ref(0);
 
   const readDocument = async () => {
     try {
@@ -48,40 +59,31 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
         doc.value.destroy();
       }
 
-      _loading.value = true;
-      const loadingTask = pdfjs.getDocument(toValue(src));
-      if (!!options?.password) {
-        loadingTask.onPassword = (cb: Function, _: any) => {
-          cb(options?.password ?? "");
-        };
-      } else {
-        loadingTask.onPassword = onPdfPassword;
-      }
+      loading.value = true;
+      const loadingTask = getDocument(toValue(src));
+      loadingTask.onPassword = setPassword(options?.password);
       loadingTask.onProgress = onPdfProgress;
-
       doc.value = await loadingTask.promise;
       pdf.value = doc.value.loadingTask;
       pages.value = doc.value.numPages;
       outline.value = await getOutlines(doc.value);
       attachments.value = await doc.value.getAttachments();
       metadata.value = await doc.value.getMetadata();
-      js.value = await doc.value.getJSActions();
+      javascript.value = await doc.value.getJSActions();
+
       Object.assign(metadata.value, {
         fingerprint: doc.value.fingerprints,
       });
     } catch (e: any) {
-      onPdfProgress({
-        loaded: 1,
-        total: 1,
-      });
+      onPdfProgress({ loaded: 1, total: 1 });
       options?.onError?.(e);
     } finally {
-      _loading.value = false;
+      loading.value = false;
     }
   };
 
   const cleanup = () => {
-    pdf.value?.promise.then((doc: pdfjs.PDFDocumentProxy) => {
+    pdf.value?.promise.then((doc: PDFDocumentProxy) => {
       doc.cleanup();
     });
     pdf.value?.destroy();
@@ -90,12 +92,16 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
     attachments.value = undefined;
   };
 
-  const onPdfProgress = (e: pdfjs.OnProgressParameters) => {
+  const onPdfProgress = (e: OnProgressParameters) => {
     options?.onProgress?.(e);
-    _progress.value = Math.floor(e.loaded / e.total) * 100;
+    progress.value = Math.floor(e.loaded / e.total) * 100;
   };
 
-  const onPdfPassword = (updatePassword: Function, reason: Number) => {
+  const setPassword = (pass?: string) => {
+    return pass ? (cb: Function, _: number) => cb(pass) : onPassword;
+  };
+
+  const onPassword = (updatePassword: Function, reason: number) => {
     if (!!options?.onPassword && typeof options?.onPassword === "function") {
       options.onPassword(updatePassword, reason);
     } else {
@@ -103,19 +109,19 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
         const pass = prompt("Enter password for protected PDF");
         updatePassword(pass ?? "");
       } else if (reason == 2) {
-        throw new Error();
+        throw new Error("Password is required for this document");
       }
     }
   };
 
   const getOutlines = async (
-    doc: pdfjs.PDFDocumentProxy,
-    ol: pdfOutline | null = null
+    doc: PDFDocumentProxy,
+    ol: pdfOutline | null = null,
   ): Promise<Array<pdfOutlinePairs>> => {
     let pairs: Array<pdfOutlinePairs> = [];
 
     let _outline: pdfOutline = ol ?? (await doc.getOutline());
-    if (!!_outline) {
+    if (_outline) {
       for await (const { dest, title, items } of _outline) {
         let d = dest;
         if (typeof dest === "string") {
@@ -137,11 +143,11 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
   };
 
   const getOutlinePage = async (
-    doc: pdfjs.PDFDocumentProxy,
-    dest: pdfOutlineDest
+    doc: PDFDocumentProxy,
+    dest: pdfOutlineDest,
   ): Promise<number | null> => {
     const r = dest?.[0];
-    if (!!r) {
+    if (r) {
       const id = await doc.getPageIndex(r);
       return id + 1;
     }
@@ -155,13 +161,13 @@ export function usePdf(src: Ref<pdfSource> | pdfSource, options?: pdfOptions) {
   onBeforeUnmount(cleanup);
 
   return {
-    pdf: pdf,
-    pages: pages,
-    outline: outline,
-    attachments: attachments,
-    metadata: metadata,
-    progress: _progress,
-    javascript: js,
-    loading: _loading,
+    pdf,
+    pages,
+    outline,
+    attachments,
+    metadata,
+    javascript,
+    progress,
+    loading,
   };
 }

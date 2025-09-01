@@ -1,17 +1,14 @@
-import { App, type Plugin } from "vue";
+import type { App, Plugin } from "vue";
+import "./assets/css/style.css";
 import components from "./components";
 
-import "./css/index.scss";
+export * from "./components";
+export * from "./composables";
 
-export const PDFPlugin: Plugin = {
-  install: (app: App) => {
+export default {
+  install(app: App) {
     for (const [key, component] of Object.entries(components)) {
       app.component(key, component);
     }
   },
-};
-
-export * from "./components";
-export * from "./composables";
-export * from "./types/pdf";
-export default PDFPlugin;
+} satisfies Plugin;

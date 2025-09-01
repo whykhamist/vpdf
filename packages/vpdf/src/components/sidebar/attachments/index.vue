@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from "vue";
-import { pdfattachment, pdfattachmentFile } from "../../../types/pdf";
+import { defineAsyncComponent } from "vue";
+import type { pdfattachment } from "../../../types/pdf";
 import { getMime } from "@whykhamist/mime-types";
 
 const AttachmentItem = defineAsyncComponent(
-  () => import("./attachmentItem.vue")
+  () => import("./attachmentItem.vue"),
 );
 
 const props = defineProps<{
@@ -15,8 +15,8 @@ const props = defineProps<{
 
 const downloadFile = (filename: string) => {
   const blob = binaryToBlob(
-    props.attachments![filename].content as Uint8Array,
-    getMime(filename) as string
+    props.attachments![filename]?.content as Uint8Array,
+    getMime(filename) as string,
   );
   download(blob, filename);
 };
@@ -31,7 +31,7 @@ const download = (blob: Blob, fileName: string) => {
 };
 
 const binaryToBlob = (data: Uint8Array, type: string) => {
-  const blob = new Blob([data], {
+  const blob = new Blob([data as BlobPart], {
     type: type,
   });
   return blob;
@@ -63,11 +63,11 @@ const humanFileSize = (bytes: number, si = false, dp = 1) => {
 </script>
 
 <template>
-  <div class="flex max-h-full flex-col gap-0.5 py-1">
-    <div class="min-h-0 flex-auto overflow-auto">
+  <div class="vpdf:flex vpdf:max-h-full vpdf:flex-col vpdf:gap-0.5 vpdf:py-1">
+    <div class="vpdf:min-h-0 vpdf:flex-auto vpdf:overflow-auto">
       <template v-if="!attachments || Object.keys(attachments).length <= 0">
         <div
-          class="select-none text-center font-semibold italic text-gray-400/50"
+          class="vpdf:text-center vpdf:font-semibold vpdf:text-foreground-400 vpdf:italic vpdf:select-none"
         >
           No Attachments
         </div>
@@ -80,7 +80,7 @@ const humanFileSize = (bytes: number, si = false, dp = 1) => {
           :attachment="attachment"
           :size="humanFileSize(attachment.content.length)"
           @click="downloadFile(index)"
-          class="mb-0.5"
+          class="vpdf:mb-0.5"
         />
       </template>
     </div>

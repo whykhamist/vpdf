@@ -8,7 +8,7 @@ const props = withDefaults(
   {
     modelValue: false,
     persistent: false,
-  }
+  },
 );
 const emit = defineEmits(["update:modelValue"]);
 
@@ -23,23 +23,34 @@ const close = (force: boolean = false) => {
 };
 
 const shake = () => {
-  if (!!content.value && !content.value.classList.contains("animate-shake")) {
-    content.value.classList.add("animate-shake");
+  if (
+    !!content.value &&
+    !content.value.classList.contains("vpdf:animate-shake")
+  ) {
+    content.value.classList.add("vpdf:animate-shake");
     content.value.addEventListener("animationend", () => {
-      content.value?.classList.remove("animate-shake");
+      content.value?.classList.remove("vpdf:animate-shake");
     });
   }
 };
 </script>
 
 <template>
-  <div v-if="modelValue" class="pointer-events-none absolute inset-0">
-    <div class="pointer-events-none relative flex h-full w-full items-center">
+  <div
+    v-if="modelValue"
+    class="vpdf:pointer-events-none vpdf:absolute vpdf:inset-0"
+  >
+    <div
+      class="vpdf:pointer-events-none vpdf:relative vpdf:flex vpdf:h-full vpdf:w-full vpdf:items-center"
+    >
       <div
-        class="pointer-events-auto absolute inset-0 bg-gray-500/25"
+        class="vpdf:pointer-events-auto vpdf:absolute vpdf:inset-0 vpdf:bg-background-500/25"
         @click.stop="close(false)"
       />
-      <div ref="content" class="pointer-events-auto static z-10 mx-auto">
+      <div
+        ref="content"
+        class="vpdf:pointer-events-auto vpdf:static vpdf:z-10 vpdf:mx-auto"
+      >
         <slot :close="() => close(true)"></slot>
       </div>
     </div>

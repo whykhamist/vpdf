@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, defineAsyncComponent } from "vue";
-import { pdfattachment, pdfOutlinePairs, Point } from "../../types/pdf";
+import { ref, computed } from "vue";
+import type { pdfattachment, pdfOutlinePairs, Point } from "../../types/pdf";
 import type { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
 
-const Button = defineAsyncComponent(() => import("../button/index.vue"));
-const Thumbnails = defineAsyncComponent(() => import("./thumbnails/index.vue"));
-const Bookmarks = defineAsyncComponent(() => import("./bookmarks/index.vue"));
-const Attachments = defineAsyncComponent(
-  () => import("./attachments/index.vue")
-);
+import Button from "../button/index.vue";
+import Thumbnails from "./thumbnails/index.vue";
+import Bookmarks from "./bookmarks/index.vue";
+import Attachments from "./attachments/index.vue";
+import Wrapper from "./wrapper.vue";
+
 const props = withDefaults(
   defineProps<{
-    modelValue: boolean;
-    options: Record<string, Object>;
+    options: Record<string, boolean>;
     outline?: Array<pdfOutlinePairs>;
     attachments?: pdfattachment | null;
     pdf: PDFDocumentLoadingTask | undefined;
@@ -20,7 +19,6 @@ const props = withDefaults(
     rotation: number;
   }>(),
   {
-    modelValue: false,
     options: () => ({
       thumbnails: true,
       bookmarks: true,
@@ -28,21 +26,18 @@ const props = withDefaults(
     }),
     page: 1,
     rotation: 0,
-  }
+  },
 );
-const emit = defineEmits(["update:modelValue", "changePage"]);
+const emit = defineEmits(["changePage"]);
 
-const expanded = computed({
-  get: () => props.modelValue,
-  set: (v) => emit("update:modelValue", v),
-});
+const expanded = defineModel<boolean>();
 
 type itemType = {
   label: string;
   icon: string;
   component: any;
-  bind: Object;
-  events: Object;
+  bind: Record<string, any>;
+  events: Record<string, any>;
 };
 type IPage = {
   page: number;
@@ -51,7 +46,7 @@ type IPage = {
 
 const items = computed<Record<string, itemType>>(() => {
   let result = {};
-  if (!!props.options.thumbnails) {
+  if (props.options.thumbnails) {
     Object.assign(result, {
       thumbnails: {
         label: "Page Thumbnails",
@@ -60,7 +55,7 @@ const items = computed<Record<string, itemType>>(() => {
     });
   }
 
-  if (!!props.options.bookmarks) {
+  if (props.options.bookmarks) {
     Object.assign(result, {
       bookmarks: {
         label: "Bookmarks",
@@ -69,7 +64,7 @@ const items = computed<Record<string, itemType>>(() => {
     });
   }
 
-  if (!!props.options.attachments) {
+  if (props.options.attachments) {
     Object.assign(result, {
       attachments: {
         label: "Attachments",
@@ -83,88 +78,61 @@ const items = computed<Record<string, itemType>>(() => {
 const activeItemName = ref<string>("bookmarks");
 
 const changePage = (e: IPage) => {
-  if (!!e) {
-    emit("changePage", { page: e.page, offset: e.offset });
+  if (e) {
+    emit("changePage", { page: e.page, offset: e.offset } as IPage);
   }
 };
 </script>
 
 <template>
-  <div class="pointer-events-none absolute inset-0 z-10">
-    <div class="relative h-full w-full">
+  <Wrapper v-model="expanded">
+    <div
+      v-if="expanded"
+      class="vpdf:flex vpdf:items-center vpdf:gap-2 vpdf:border-r vpdf:border-b vpdf:border-accent/25"
+    >
       <div
-        v-if="props.modelValue"
-        class="pointer-events-auto absolute inset-0 block bg-foreground/15 md:hidden"
-        @click="emit('update:modelValue', false)"
-      />
-      <div
-        class="pointer-events-auto relative flex h-full min-w-0 flex-auto flex-col pr-4 bg-background/75 transition-all"
-        :class="{
-          'w-4': !props.modelValue,
-          'w-72': props.modelValue,
-        }"
+        class="vpdf:flex vpdf:flex-auto vpdf:items-center vpdf:gap-0.5 vpdf:px-2 vpdf:py-1"
       >
-        <div
-          v-if="modelValue"
-          class="flex items-center gap-2 border-b border-r border-accent/25"
-        >
-          <div class="flex flex-auto items-center gap-0.5 px-2 py-1">
-            <template v-for="(item, index) in items" :key="item.label">
-              <Button
-                :icon="item.icon"
-                class="rounded-lg px-1 py-0.5 text-2xl"
-                :class="{
-                  'bg-secondary/30': activeItemName === index,
-                  'hover:text-primary': activeItemName !== index,
-                }"
-                @click="activeItemName = index"
-              />
-            </template>
-          </div>
-          <div class="flex items-center gap-0.5 px-2 py-1">
-            <Button
-              icon="close"
-              class="rounded-full p-1"
-              @click="expanded = false"
-            />
-          </div>
-        </div>
-        <div
-          v-if="modelValue"
-          class="flex-auto overflow-auto border-r border-gray-700/25"
-        >
-          <Thumbnails
-            v-if="
-              !!options.thumbnails && activeItemName == 'thumbnails' && !!pdf
-            "
-            :pdf="pdf"
-            :page="page"
-            :rotation="rotation"
-            class="overflow-x-hidden"
-            @changePage="changePage"
-          />
-          <Bookmarks
-            v-if="activeItemName == 'bookmarks'"
-            :outline="outline"
-            @changePage="changePage"
-          />
-          <Attachments
-            v-if="activeItemName == 'attachments'"
-            :attachments="attachments"
-          />
-        </div>
-
-        <span class="absolute right-0 inset-y-0 bg-foreground/15">
+        <template v-for="(item, index) in items" :key="item.label">
           <Button
-            icon="arrow_right"
-            class="h-full"
-            :iconClass="{
-              'rotate-180': expanded,
+            :icon="item.icon"
+            :class="{
+              'vpdf:bg-secondary/30': activeItemName === index,
+              'vpdf:hover:text-primary': activeItemName !== index,
             }"
-            @click="expanded = !expanded"
+            @click="activeItemName = index"
           />
-        </span>
+        </template>
+      </div>
+      <div class="vpdf:flex vpdf:items-center vpdf:gap-0.5 vpdf:px-2 vpdf:py-1">
+        <Button
+          icon="close"
+          class="vpdf:rounded-full vpdf:p-1"
+          @click="expanded = false"
+        />
       </div>
     </div>
-  </div>
+    <div
+      v-if="modelValue"
+      class="vpdf:flex-auto vpdf:overflow-auto vpdf:border-r vpdf:border-gray-700/25"
+    >
+      <Thumbnails
+        v-if="!!options.thumbnails && activeItemName == 'thumbnails' && !!pdf"
+        :pdf="pdf"
+        :page="page"
+        :rotation="rotation"
+        class="vpdf:overflow-x-hidden"
+        @changePage="changePage"
+      />
+      <Bookmarks
+        v-if="activeItemName == 'bookmarks'"
+        :outline="outline"
+        @changePage="changePage"
+      />
+      <Attachments
+        v-if="activeItemName == 'attachments'"
+        :attachments="attachments"
+      />
+    </div>
+  </Wrapper>
 </template>

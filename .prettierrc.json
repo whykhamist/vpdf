@@ -1,0 +1,4 @@
+{
+  "tailwindStylesheet": "./packages/vpdf/src/assets/css/style.css",
+  "plugins": ["prettier-plugin-tailwindcss"]
+}

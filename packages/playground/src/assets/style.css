@@ -1,0 +1,148 @@
+@import "@whykhamist/vpdf/assets/css/style.css";
+@import "material-icons/iconfont/outlined.css";
+@import "./sizes.css";
+
+@source "../../../vpdf/src/components";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@utility flex-auto {
+  flex: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+:root {
+  /* --vpdf-textlayer-selection-bg: yellow;
+  --vpdf-textlayer-selection-color: black; */
+}
+
+.vpdf-icons-emoji {
+  --vpdf-icon-arrow_down: "⬇️";
+  --vpdf-icon-arrow_up: "⬆️";
+  --vpdf-icon-arrow_left: "⬅️";
+  --vpdf-icon-arrow_right: "➡️";
+  --vpdf-icon-arrow_drop_down: "🔻";
+  --vpdf-icon-arrow_drop_up: "🔺";
+  --vpdf-icon-attachment: "📎";
+  --vpdf-icon-block: "🤚";
+  --vpdf-icon-bookmark: "🔖";
+  --vpdf-icon-close: "❌";
+  --vpdf-icon-draw: "✏️";
+  --vpdf-icon-error: "🚫";
+  --vpdf-icon-copy: "📋";
+  --vpdf-icon-gesture: "👆";
+  --vpdf-icon-help: "❔";
+  --vpdf-icon-image: "🖼️";
+  --vpdf-icon-keyboard: "🖥️";
+  --vpdf-icon-menu: "📁";
+  --vpdf-icon-menu_open: "📂";
+  --vpdf-icon-loader: "⌛";
+  --vpdf-icon-rotate_left: "🔄";
+  --vpdf-icon-rotate_right: "🔃";
+  --vpdf-icon-rows: "🚥";
+  --vpdf-icon-columns: "🚦";
+  --vpdf-icon-warning: "⚠️";
+  --vpdf-icon-zoom_in: "🔎";
+  --vpdf-icon-zoom_out: "🔍";
+}
+
+.vpdf-sepia {
+  /* Foreground (sepia) */
+  --vpdf-color-foreground-50: #fdfaf5;
+  --vpdf-color-foreground-100: #f8f1e7;
+  --vpdf-color-foreground-200: #f2e6d7;
+  --vpdf-color-foreground-300: #e6d3b8;
+  --vpdf-color-foreground-400: #d4b98e;
+  --vpdf-color-foreground-500: #5b4636;
+  --vpdf-color-foreground-600: #4a382b;
+  --vpdf-color-foreground-700: #3a2c22;
+  --vpdf-color-foreground-800: #2b2119;
+  --vpdf-color-foreground-900: #1c1510;
+  --vpdf-color-foreground-950: #0e0a08;
+  --vpdf-color-foreground: #5b4636;
+
+  /* Background (sepia) */
+  --vpdf-color-background-50: #fdfaf5;
+  --vpdf-color-background-100: #f9f4eb;
+  --vpdf-color-background-200: #f3ebdb;
+  --vpdf-color-background-300: #e9dcc2;
+  --vpdf-color-background-400: #dec9a7;
+  --vpdf-color-background-500: #c6aa82;
+  --vpdf-color-background-600: #a38461;
+  --vpdf-color-background-700: #7c6347;
+  --vpdf-color-background-800: #57452f;
+  --vpdf-color-background-900: #352a1b;
+  --vpdf-color-background-950: #1a140d;
+  --vpdf-color-background: #f9f4eb;
+
+  /* Primary (sepia-warmed from #2f3e52) */
+  --vpdf-color-primary-50: #f6f3ef;
+  --vpdf-color-primary-100: #eae2d8;
+  --vpdf-color-primary-200: #d8c9b6;
+  --vpdf-color-primary-300: #b89c82;
+  --vpdf-color-primary-400: #8f6f55;
+  --vpdf-color-primary-500: #6a533f;
+  --vpdf-color-primary-600: #4f3d2f;
+  --vpdf-color-primary-700: #3a2d23;
+  --vpdf-color-primary-800: #281f18;
+  --vpdf-color-primary-900: #191410;
+  --vpdf-color-primary-950: #0c0907;
+  --vpdf-color-primary: #6a533f;
+
+  /* Secondary (sepia-warmed from #a3bddc) */
+  --vpdf-color-secondary-50: #fbf8f4;
+  --vpdf-color-secondary-100: #f4ece2;
+  --vpdf-color-secondary-200: #e9dbc8;
+  --vpdf-color-secondary-300: #d8c2a3;
+  --vpdf-color-secondary-400: #c19e77;
+  --vpdf-color-secondary-500: #9d7a58;
+  --vpdf-color-secondary-600: #7c5d42;
+  --vpdf-color-secondary-700: #5d4430;
+  --vpdf-color-secondary-800: #3f2e20;
+  --vpdf-color-secondary-900: #241b12;
+  --vpdf-color-secondary-950: #110c07;
+  --vpdf-color-secondary: #9d7a58;
+
+  /* Accent (sepia-warmed from #4676bd → muted indigo-brown) */
+  --vpdf-color-accent-50: #f9f6f3;
+  --vpdf-color-accent-100: #f1e9e0;
+  --vpdf-color-accent-200: #e3d5c2;
+  --vpdf-color-accent-300: #cbb391;
+  --vpdf-color-accent-400: #a68464;
+  --vpdf-color-accent-500: #7c5e47;
+  --vpdf-color-accent-600: #604737;
+  --vpdf-color-accent-700: #473429;
+  --vpdf-color-accent-800: #2f221b;
+  --vpdf-color-accent-900: #1c130f;
+  --vpdf-color-accent-950: #0c0806;
+  --vpdf-color-accent: #7c5e47;
+
+  /* Positive (sepia-warmed from #40bf77 → olive/tea green) */
+  --vpdf-color-positive-50: #f6fbf4;
+  --vpdf-color-positive-100: #e8f6e2;
+  --vpdf-color-positive-200: #d1eac7;
+  --vpdf-color-positive-300: #b0d6a1;
+  --vpdf-color-positive-400: #89b879;
+  --vpdf-color-positive-500: #678f59;
+  --vpdf-color-positive-600: #4e6e45;
+  --vpdf-color-positive-700: #3b5234;
+  --vpdf-color-positive-800: #283725;
+  --vpdf-color-positive-900: #181f16;
+  --vpdf-color-positive-950: #0b0d0a;
+  --vpdf-color-positive: #678f59;
+
+  /* Negative (sepia-warmed from #ef5f4f → burnt clay red) */
+  --vpdf-color-negative-50: #fcf6f4;
+  --vpdf-color-negative-100: #f7e9e5;
+  --vpdf-color-negative-200: #efcec8;
+  --vpdf-color-negative-300: #e0a79d;
+  --vpdf-color-negative-400: #c5786c;
+  --vpdf-color-negative-500: #9e554e;
+  --vpdf-color-negative-600: #7b413c;
+  --vpdf-color-negative-700: #5a2f2c;
+  --vpdf-color-negative-800: #3b1f1d;
+  --vpdf-color-negative-900: #201111;
+  --vpdf-color-negative-950: #100808;
+  --vpdf-color-negative: #9e554e;
+}

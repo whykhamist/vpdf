@@ -3,17 +3,17 @@ import { defineAsyncComponent } from "vue";
 
 const Icon = defineAsyncComponent(() => import("../icons/index.vue"));
 const FocusHelper = defineAsyncComponent(
-  () => import("../focusHelper/index.vue")
+  () => import("../focusHelper/index.vue"),
 );
 
 const props = withDefaults(
   defineProps<{
     label?: string;
-    labelClass?: string | Object;
+    labelClass?: string | object;
     icon?: string;
-    iconClass?: string | Object;
+    iconClass?: string | object;
     iconRight?: string;
-    iconRightClass?: string | Object;
+    iconRightClass?: string | object;
     disabled?: boolean;
     focusDisabled?: boolean;
   }>(),
@@ -23,7 +23,7 @@ const props = withDefaults(
     iconRightClass: "",
     disabled: false,
     focusDisabled: false,
-  }
+  },
 );
 
 const ripple = (e: MouseEvent) => {
@@ -32,7 +32,7 @@ const ripple = (e: MouseEvent) => {
   const ripples = document.createElement("span");
   ripples.setAttribute("style", `top: ${y}px; left: ${x}px`);
   ripples.className =
-    "bg-white/75 absolute -translate-x-1/2 -translate-y-1/2 rounded-full animate-ripple pointer-events-none";
+    "vpdf:bg-white/75 vpdf:absolute vpdf:-translate-x-1/2 vpdf:-translate-y-1/2 vpdf:rounded-full vpdf:animate-ripple vpdf:pointer-events-none";
   (e.target as HTMLElement).appendChild(ripples);
   setTimeout(() => ripples.remove(), 250);
 };
@@ -40,14 +40,17 @@ const ripple = (e: MouseEvent) => {
 
 <template>
   <button
-    class="relative flex items-center justify-center gap-2 overflow-hidden outline-primary disabled:cursor-not-allowed disabled:text-foreground/30"
+    class="vpdf:relative vpdf:flex vpdf:items-center vpdf:justify-center vpdf:gap-2 vpdf:overflow-hidden vpdf:rounded-lg vpdf:px-1 vpdf:py-0.5 vpdf:text-3xl vpdf:outline-primary vpdf:disabled:cursor-not-allowed vpdf:disabled:text-foreground/30 vpdf:md:text-2xl"
     :disabled="disabled"
     @click="ripple"
   >
-    <FocusHelper :disabled="disabled || focusDisabled" class="bg-primary" />
+    <FocusHelper
+      :disabled="disabled || focusDisabled"
+      class="vpdf:bg-primary"
+    />
     <slot>
       <div
-        class="pointer-events-none flex items-center justify-center gap-2 leading-none"
+        class="vpdf:pointer-events-none vpdf:flex vpdf:items-center vpdf:justify-center vpdf:gap-2 vpdf:leading-none"
       >
         <Icon
           v-if="!!icon"
