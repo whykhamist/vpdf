@@ -8,11 +8,6 @@ on:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      branch_name:
-        description: "VPDF Playground"
-        required: true
-        default: "playground"
 
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
