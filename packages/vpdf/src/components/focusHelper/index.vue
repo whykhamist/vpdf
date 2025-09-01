@@ -7,7 +7,7 @@ const props = withDefaults(
   }>(),
   {
     disabled: false,
-  }
+  },
 );
 
 const focusHelper = ref<HTMLElement>();
@@ -54,10 +54,10 @@ onBeforeUnmount(() => {
 <template>
   <div
     ref="focusHelper"
-    class="pointer-events-none absolute inset-0 transition-opacity"
+    class="vpdf:pointer-events-none vpdf:absolute vpdf:inset-0 vpdf:transition-opacity"
     :class="{
-      'opacity-0': !active,
-      'opacity-20': active,
+      'vpdf:opacity-0': !active,
+      'vpdf:opacity-20': active,
     }"
   />
 </template>

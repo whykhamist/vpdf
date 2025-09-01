@@ -8,9 +8,11 @@ const props = defineProps({
 });
 </script>
 <template>
-  <div class="relative block overflow-hidden bg-gray-400/25 leading-none">
+  <div
+    class="vpdf:relative vpdf:block vpdf:overflow-hidden vpdf:bg-background-400/25 vpdf:leading-none"
+  >
     <div
-      class="absolute left-0 top-0 h-full bg-blue-700 leading-none text-white transition-transform"
+      class="vpdf:absolute vpdf:top-0 vpdf:left-0 vpdf:h-full vpdf:bg-primary-700 vpdf:leading-none vpdf:text-foreground vpdf:transition-transform"
       :style="{ width: `${value}%` }"
     ></div>
   </div>

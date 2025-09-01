@@ -3,7 +3,7 @@ import { defineAsyncComponent, ref, watch } from "vue";
 import type { PDFDocumentLoadingTask } from "pdfjs-dist/types/src/display/api";
 
 const VPdfPageRenderer = defineAsyncComponent(
-  () => import("../../vPdfPageRenderer.vue")
+  () => import("../../vPdfPageRenderer.vue"),
 );
 const PDFViewer = defineAsyncComponent(() => import("../../vPdfViewer.vue"));
 
@@ -21,7 +21,7 @@ watch(
   () => props.page,
   (val) => {
     thumbs.value?.changePage(val);
-  }
+  },
 );
 </script>
 
@@ -34,7 +34,7 @@ watch(
     :gap="15"
     :renderOffset="50"
     :rotation="rotation"
-    class="bg-transparent"
+    class="vpdf:bg-transparent"
   >
     <template #renderer="{ pageInfo, render }">
       <VPdfPageRenderer
@@ -42,10 +42,10 @@ watch(
         :pageInfo="pageInfo"
         :render="render"
         :textLayer="false"
-        class="absolute cursor-pointer select-none rounded-lg border border-dashed px-1 py-0.5 transition-colors hover:border-blue-500 hover:bg-gray-400/25"
+        class="vpdf:absolute vpdf:cursor-pointer vpdf:rounded-lg vpdf:border vpdf:border-dashed vpdf:px-1 vpdf:py-0.5 vpdf:transition-colors vpdf:select-none vpdf:hover:border-accent-500 vpdf:hover:bg-background-400/25"
         :class="{
-          'border-blue-500': pageInfo.page === page,
-          'border-transparent': pageInfo.page !== page,
+          'vpdf:border-accent-500': pageInfo.page === page,
+          'vpdf:border-transparent': pageInfo.page !== page,
         }"
         :style="{
           top: `${pageInfo.bounds.inner.top}px`,
@@ -57,7 +57,7 @@ watch(
       >
         <template #append>
           <div
-            class="pointer-events-none absolute -bottom-5 w-full text-center text-sm font-semibold"
+            class="vpdf:pointer-events-none vpdf:absolute vpdf:-bottom-5 vpdf:w-full vpdf:text-center vpdf:text-sm vpdf:font-semibold"
           >
             {{ pageInfo.page }}
           </div>

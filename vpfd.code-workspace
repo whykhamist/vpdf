@@ -1,0 +1,65 @@
+{
+  "folders": [
+    {
+      "name": "workspace",
+      "path": "./",
+    },
+    {
+      "name": "vpdf",
+      "path": "./packages/vpdf",
+    },
+    {
+      "name": "playground",
+      "path": "./packages/playground",
+    },
+  ],
+  "settings": {
+    "task.allowAutomaticTasks": "off",
+    "tailwindCSS.experimental.configFile": "./packages/vpdf/src/assets/css/style.css",
+    "tailwindCSS.experimental.classRegex": [
+      ["ui:\\s*{([^)]*)\\s*}", "[\"'`]([^\"'`]*).*?[\"'`]"],
+      ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+      ["/\\*\\s?ui\\s?\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"],
+    ],
+    "tailwindCSS.classAttributes": [
+      "class",
+      "className",
+      "ngClass",
+      "ui",
+      "active-class",
+      "inactive-class",
+
+      "enter-from-class",
+      "leave-to-class",
+      "enter-active-clas",
+      "leave-active-class",
+      "enter-to-class",
+      "leave-from-class",
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Playground",
+        "type": "shell",
+        "command": "npm run dev",
+        "windows": {
+          "command": "npm run dev",
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new",
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+        },
+        "problemMatcher": [],
+        "options": {
+          "cwd": "${workspaceFolder}",
+        },
+      },
+    ],
+  },
+}

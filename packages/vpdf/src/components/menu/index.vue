@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, ref, PropType } from "vue";
+import { computed, defineAsyncComponent, ref, type PropType } from "vue";
+import type { ScaleOptions } from "../../types/scales";
 const Button = defineAsyncComponent(() => import("../button/index.vue"));
 const Pager = defineAsyncComponent(() => import("./pager.vue"));
 const Zoomer = defineAsyncComponent(() => import("./zoomer.vue"));
@@ -8,6 +9,7 @@ const props = defineProps({
   page: { type: Number, default: 1 },
   pages: { type: Number, default: 0 },
   scale: { type: Number, default: 1.0 },
+  scales: { type: Array as PropType<ScaleOptions>, default: () => [] },
   rotation: {
     type: Number,
     default: 0,
@@ -69,13 +71,11 @@ const rotate = (deg: number) => {
 </script>
 
 <template>
-  <div class="relative flex items-center justify-center bg-foreground/5">
+  <div class="vpdf:relative vpdf:flex vpdf:items-center vpdf:justify-center">
     <slot name="prepend" />
-    <div class="flex-auto">
-      <div class="px-2">
+    <div class="vpdf:flex-auto">
+      <div class="vpdf:px-2">
         <Button
-          v-if="false"
-          class="rounded-lg px-1 py-0.5 text-2xl"
           :icon="sidebar ? 'menu_open' : 'menu'"
           :disabled="disabled"
           @click="_sidebar = !_sidebar"
@@ -83,36 +83,42 @@ const rotate = (deg: number) => {
       </div>
     </div>
     <div
-      class="flex flex-auto items-center justify-center divide-x divide-foreground/25 px-3 py-1 *:border-foreground/25 first:*:!border-l last:*:!border-r"
+      class="vpdf:flex vpdf:flex-auto vpdf:items-center vpdf:justify-center vpdf:divide-x vpdf:divide-foreground/25 vpdf:px-3 vpdf:py-1 vpdf:*:border-foreground/25 vpdf:first:*:!border-l vpdf:last:*:!border-r"
     >
       <div class="px-2">
         <Button
-          class="group rounded-lg px-1 py-0.5 text-2xl"
           :icon="mode == 'vertical' ? 'table_rows' : 'view_column'"
           :disabled="disabled"
           @click="toggleViewMode"
         />
       </div>
-      <Pager v-model="_page" :pages="pages" :mode="mode" :disabled="disabled" />
+      <Pager
+        v-model="_page"
+        :pages="pages"
+        :mode="mode"
+        :disabled="disabled"
+        class="vpdf:hidden vpdf:sm:!flex"
+      />
       <Zoomer
         ref="zoomer"
         v-model:scale="_scale"
         :disabled="disabled"
+        :scales
+        :ui="{
+          btn: 'vpdf:sm:!flex vpdf:hidden',
+        }"
         @fitPage="(e) => emit('fitPage', e)"
       />
-      <div class="px-2">
-        <Button
-          class="group rounded-lg px-1 py-0.5 text-2xl"
-          icon="rotate_left"
-          :disabled="disabled"
-          @click="rotate(-90)"
-        />
+      <div class="vpdf:px-2">
+        <Button icon="rotate_left" :disabled="disabled" @click="rotate(-90)" />
       </div>
     </div>
-    <div class="flex flex-auto items-center justify-end px-3">
+    <div
+      class="vpdf:flex vpdf:flex-auto vpdf:items-center vpdf:justify-end vpdf:px-3"
+    >
       <span
         v-if="loading"
-        class="realtive block h-[1em] w-[1em] animate-mltShdSpin overflow-hidden rounded-full -indent-[9999em] text-sm leading-none text-black"
+        class="vpdf:realtive vpdf:block vpdf:h-[1em] vpdf:w-[1em] vpdf:animate-mltShdSpin vpdf:overflow-hidden vpdf:rounded-full vpdf:-indent-[9999em] vpdf:text-sm vpdf:leading-none vpdf:text-foreground"
         style="transform: translateZ(0)"
       />
     </div>

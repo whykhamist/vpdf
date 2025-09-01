@@ -1,25 +1,19 @@
 <script setup lang="ts">
-import {
-  computed,
-  defineAsyncComponent,
-  nextTick,
-  onBeforeUnmount,
-  onMounted,
-  ref,
-  shallowRef,
-  watch,
-} from "vue";
-import {
-  type PDFDocumentLoadingTask,
-  type PDFDocumentProxy,
-  type PDFPageProxy,
-  type PageViewport,
+import { onMounted, ref, shallowRef, watch } from "vue";
+import type {
+  PDFDocumentLoadingTask,
+  PDFDocumentProxy,
+  PDFPageProxy,
+  PageViewport,
 } from "pdfjs-dist";
-import type { pdfPageInfo, RenderParameters } from "../types/pdf";
+import type { pdfPageInfo } from "../types/pdf";
+import { log } from "../composables";
 
-const TextLayer = defineAsyncComponent(() => import("./layers/textLayer.vue"));
+import TextLayer from "./layers/textLayer.vue";
+import CanvasLayer from "./layers/canvas.vue";
 
 type RenderArgs = {
+  page: PDFPageProxy;
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
   viewport: PageViewport;
@@ -28,131 +22,163 @@ type RenderArgs = {
 
 const props = withDefaults(
   defineProps<{
-    pageInfo: pdfPageInfo;
     pdf: PDFDocumentLoadingTask;
-    textLayer: boolean;
-    render: boolean;
+    pageInfo?: pdfPageInfo;
+    page?: number;
+    scale?: number;
+    rotation?: number;
+    textLayer?: boolean;
+    render?: boolean;
     onRender?: (opts: RenderArgs) => void;
     onError?: Function;
+    visible?: boolean;
   }>(),
   {
     textLayer: false,
-    render: false,
+    render: true,
+    scale: 1,
+    rotation: 0,
+    visible: true,
     onRender: () => {},
-  }
+  },
 );
 
-const rendering = ref(false);
-const canva = ref<HTMLCanvasElement>();
-const renderer = shallowRef();
+const rendering = ref(true);
+// const canva = ref<HTMLCanvasElement>();
+// const renderer = shallowRef();
 const renderedPage = shallowRef<PDFPageProxy>();
 
-const ctx = computed(() =>
-  canva.value?.getContext("2d", {
-    alpha: false,
-    willReadFrequently: true,
-  })
+// const ctx = computed(() =>
+//   canva.value?.getContext("2d", {
+//     alpha: false,
+//     willReadFrequently: true,
+//   }),
+// );
+
+const _pageInfo = ref(
+  Object.assign({}, props.pageInfo, {
+    scale: props.scale,
+    rotation: props.rotation,
+  }),
 );
 
-const renderPage = async () => {
-  if (!rendering.value && !!canva.value && !!ctx.value) {
-    rendering.value = true;
-    const { viewport, page } = props.pageInfo;
-    const { promise } = props.pdf;
-    const doc = await promise;
+const createPageInfo = async (page: number): Promise<pdfPageInfo> => {
+  const { docId, promise } = props.pdf;
+  const doc = await promise;
+  const p = await doc.getPage(page);
+  const viewport = p.getViewport({
+    scale: props.scale,
+    rotation: props.rotation,
+  });
+  const bounds = {
+    top: 0,
+    bottom: viewport.height,
+    left: 0,
+    right: viewport.width,
+  };
 
-    try {
-      renderedPage.value = await doc.getPage(page);
-      const renderContext: RenderParameters = {
-        canvasContext: ctx.value,
-        viewport,
-      };
-
-      renderer.value = renderedPage.value.render(renderContext);
-      await renderer.value.promise;
-      if (!!canva.value && !!ctx.value) {
-        props.onRender({
-          canvas: canva.value,
-          context: ctx.value,
-          viewport,
-          doc,
-        });
-      }
-    } catch (e: any) {
-      props.onError?.(e);
-      if (e.name != "RenderingCancelledException") {
-      }
-    } finally {
-      rendering.value = false;
-      renderedPage.value?.cleanup(true);
-    }
-  }
+  return {
+    id: `${docId}_pdf_page_${page}_${props.scale}_${props.rotation}`,
+    page,
+    scale: props.scale,
+    rotation: props.rotation,
+    viewport: viewport,
+    pos: { x: 0, y: 0 },
+    bounds: {
+      inner: bounds,
+      outer: bounds,
+    },
+  };
 };
 
-watch(
-  () => props.render,
-  async (val) => {
-    if (val && !renderedPage.value) {
-      await renderPage();
-    }
-  }
-);
+const onRender = (opts: RenderArgs) => {
+  props.onRender?.(opts);
+  renderedPage.value = opts.page;
+  rendering.value = false;
+};
+
+// watch(
+//   [() => props.render, () => props.visible, () => props.page, canva],
+//   async (val, old) => {
+//     if (!props.pageInfo && props.page) {
+//       _pageInfo.value = await createPageInfo(props.page);
+//     }
+//     if ((val[0] && val[1] && !renderedPage.value) || val[2] != old[2]) {
+//       console.log("RENDERING SOMEWHERE");
+//       await renderPage();
+//     }
+//   },
+//   { deep: true },
+// );
+
+// watch(
+//   () => props.visible,
+//   async (val) => {
+//     if (val && _pageInfo.value && ctx.value) {
+//       const { viewport } = _pageInfo.value;
+//       ctx.value.fillStyle = "white";
+//       ctx.value.fillRect(0, 0, viewport.width, viewport.height);
+//       console.log("RENDERING VISIBLE");
+//       await renderPage();
+//     }
+//   },
+// );
 
 onMounted(async () => {
-  if (props.render) {
-    await renderPage();
+  if (!props.pageInfo && !props.page) {
+    log("Page not found!");
+  } else if (!props.pageInfo && props.page) {
+    _pageInfo.value = await createPageInfo(props.page);
   }
+  // else if (props.render) {
+  //   await renderPage();
+  // }
 });
 
-onBeforeUnmount(async () => {
-  if (rendering.value) {
-    renderer.value.cancel();
-  }
-  renderedPage.value?.cleanup();
-});
+// onBeforeUnmount(async () => {
+//   if (rendering.value) {
+//     renderer.value?.cancel();
+//   }
+//   renderedPage.value?.cleanup();
+// });
 
-defineExpose({
-  context: ctx,
-  canvas: canva,
-});
+// defineExpose({
+//   context: ctx,
+//   canvas: canva,
+// });
 </script>
 
 <template>
-  <div class="leading-none">
-    <div class="relative h-full w-full bg-white leading-none">
+  <div class="vpdf:leading-none">
+    <div
+      class="vpdf:relative vpdf:h-full vpdf:w-full vpdf:bg-white vpdf:leading-none"
+      :width="_pageInfo?.viewport.width"
+      :height="_pageInfo?.viewport.height"
+    >
       <slot name="prepend" />
-      <canvas
-        ref="canva"
-        class="box-border h-full w-full border border-gray-400 bg-white outline-none"
-        :class="{
-          hidden: rendering,
-        }"
-        :width="pageInfo.viewport.width"
-        :height="pageInfo.viewport.height"
+      <CanvasLayer
+        v-if="_pageInfo && visible"
+        :pdf
+        :pageInfo="_pageInfo"
+        @error="props.onError?.($event)"
+        @render="onRender"
       />
       <TextLayer
-        v-if="textLayer && renderedPage"
-        :page="renderedPage!"
-        :pageInfo="pageInfo"
+        v-if="_pageInfo && textLayer && renderedPage"
+        :page="renderedPage"
+        :pageInfo="_pageInfo"
       />
-      <Transition
-        enter-from-class="opacity-0 blur-sm"
-        leave-to-class="opacity-0 blur-sm"
-        enter-active-class="transition"
-        leave-active-class="transition"
+      <div
+        v-if="rendering"
+        class="vpdf:pointer-events-none vpdf:absolute vpdf:inset-0 vpdf:flex vpdf:items-center vpdf:bg-foreground/5"
       >
-        <div
-          v-if="rendering"
-          class="absolute inset-0 flex items-center bg-black/5"
-        >
-          <div class="mx-auto">
-            <span
-              class="realtive block h-[1em] w-[1em] animate-mltShdSpin overflow-hidden rounded-full -indent-[9999em] text-sm leading-none text-black"
-              style="transform: translateZ(0)"
-            ></span>
-          </div>
+        <div class="vpdf:mx-auto">
+          <span
+            class="vpdf:realtive vpdf:block vpdf:h-[1em] vpdf:w-[1em] vpdf:animate-mltShdSpin vpdf:overflow-hidden vpdf:rounded-full vpdf:-indent-[9999em] vpdf:text-sm vpdf:leading-none vpdf:text-foreground"
+            style="transform: translateZ(0)"
+          ></span>
         </div>
-      </Transition>
+      </div>
       <slot name="append" />
     </div>
   </div>

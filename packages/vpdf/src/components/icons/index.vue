@@ -5,5 +5,8 @@ const props = defineProps<{
 </script>
 
 <template>
-  <i class="icon leading-none transition-colors" :class="`icon-${name}`" />
+  <i
+    class="vpdf:icon vpdf:leading-none vpdf:transition-colors"
+    :class="`vpdf:icon-${name}`"
+  />
 </template>

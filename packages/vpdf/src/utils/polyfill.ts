@@ -1,4 +1,4 @@
-if (typeof Promise.withResolvers === "undefined") {
+if (!Promise.hasOwnProperty("withResolvers")) {
   if (window)
     // @ts-expect-error
     window.Promise.withResolvers = function () {

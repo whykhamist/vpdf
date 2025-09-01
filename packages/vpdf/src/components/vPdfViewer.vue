@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import type { PDFDocumentLoadingTask } from "pdfjs-dist";
-import { PropType, computed, defineAsyncComponent, ref, watch } from "vue";
+import { type PropType, computed, ref, watch } from "vue";
 import { usePdfViewer } from "../composables/usePdfViewer";
-
-const VPdfPageRenderer = defineAsyncComponent(
-  () => import("./vPdfPageRenderer.vue")
-);
+import VPdfPageRenderer from "./vPdfPageRenderer.vue";
 
 const props = defineProps({
   pdf: {
@@ -13,6 +10,10 @@ const props = defineProps({
     required: true,
   },
   scale: {
+    type: Number,
+    default: 1.0,
+  },
+  scaling: {
     type: Number,
     default: 1.0,
   },
@@ -26,7 +27,7 @@ const props = defineProps({
     validator: (val: number) => {
       const result = val % 90 == 0;
       if (!result) {
-        throw new Error("Rotation must be a multiple of 90");
+        throw new Error(`Rotation must be a multiple of 90, ${val} given.`);
       }
       return result;
     },
@@ -66,6 +67,7 @@ const props = defineProps({
 const emit = defineEmits(["update:page", "update:scale", "progress"]);
 
 const container = ref<HTMLElement>();
+const multiplier = ref(1);
 
 const slotBinds = computed(() => ({
   numPages: totalPage,
@@ -100,22 +102,6 @@ const {
   fitWidth,
   fitHeight,
   fitPage,
-  // ------------ Unused properties / methods ------------
-  // scrollState,
-  // rotation,
-  // readPDF,
-  // getPageInfo,
-  // getBounds,
-  // getVBounds,
-  // getHBounds,
-  // getInnerBounds,
-  // getGaps,
-  // getVisiblePages,
-  // boundsIntersecting,
-  // onContainerScroll,
-  // inRange,
-  // getCurrentPage,
-  // getFitRatio,
 } = usePdfViewer(container, props);
 
 watch(progress, (val) => {
@@ -131,24 +117,29 @@ watch(scale, (val) => {
   emit("update:scale", val);
 });
 
+watch([() => scale.value, () => props.scaling], (val) => {
+  // multiplier.value = Math.abs(props.scaling / scale.value);
+  // console.log(multiplier.value);
+});
+
 defineExpose(slotBinds.value);
 </script>
 
 <template>
   <div
     ref="container"
-    class="relative grid h-full min-h-0 w-full min-w-0 items-center overflow-scroll bg-foreground/15"
+    class="vpdf:relative vpdf:grid vpdf:h-full vpdf:min-h-0 vpdf:w-full vpdf:min-w-0 vpdf:items-center vpdf:overflow-scroll vpdf:bg-foreground/15"
     :class="{
-      'grid items-center': viewMode != 'vertical',
+      'vpdf:grid vpdf:items-center': viewMode != 'vertical',
     }"
   >
     <slot v-bind="slotBinds" name="prepend" />
     <div
       v-if="!!pdf"
-      class="relative mx-auto"
+      class="vpdf:relative vpdf:mx-auto"
       :style="{
-        width: `${containerBounds.width}px`,
-        height: `${containerBounds.height}px`,
+        width: `${containerBounds.width * multiplier}px`,
+        height: `${containerBounds.height * multiplier}px`,
       }"
     >
       <slot v-bind="slotBinds">
@@ -157,14 +148,16 @@ defineExpose(slotBinds.value);
             <VPdfPageRenderer
               :pdf="pdf"
               :pageInfo="vp"
-              class="absolute"
+              :scale="0.5"
               :textLayer="textLayer"
               :render="render"
+              :visible="visiblePages.findIndex((p) => p.page == vp.page) > -1"
+              class="vpdf:absolute"
               :style="{
-                top: `${vp.bounds.inner.top}px`,
-                left: `${vp.bounds.inner.left}px`,
-                width: `${vp.viewport.width}px`,
-                height: `${vp.viewport.height}px`,
+                top: `${vp.bounds.inner.top * multiplier}px`,
+                left: `${vp.bounds.inner.left * multiplier}px`,
+                width: `${vp.viewport.width * multiplier}px`,
+                height: `${vp.viewport.height * multiplier}px`,
               }"
             />
           </slot>
