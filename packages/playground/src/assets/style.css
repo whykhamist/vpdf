@@ -12,9 +12,12 @@
   min-height: 0;
 }
 
-:root {
-  /* --vpdf-textlayer-selection-bg: yellow;
-  --vpdf-textlayer-selection-color: black; */
+html,
+body {
+  @apply vpdf:max-h-screen;
+}
+div#app {
+  @apply vpdf:min-h-screen vpdf:min-w-full;
 }
 
 .vpdf-icons-emoji {
@@ -145,4 +148,9 @@
   --vpdf-color-negative-900: #201111;
   --vpdf-color-negative-950: #100808;
   --vpdf-color-negative: #9e554e;
+}
+
+@utility flex-auto {
+  min-height: 0;
+  min-width: 0;
 }
