@@ -1,7 +1,18 @@
 export default [
   {
     path: "/",
-    name: "Home",
-    component: () => import("@/pages/index.vue"),
+    component: () => import("@/components/layout.vue"),
+    children: [
+      {
+        path: "",
+        name: "home",
+        component: () => import("@/pages/index.vue"),
+      },
+      {
+        path: "/:catchAll(.*)",
+        name: "notFound",
+        component: () => import("@/pages/404.vue"),
+      },
+    ],
   },
 ];
