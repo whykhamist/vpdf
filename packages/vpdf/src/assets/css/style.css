@@ -1,7 +1,7 @@
 @import "tailwindcss" prefix(vpdf);
 @import "./vpdf_icons.css";
 @import "pdfjs-dist/web/pdf_viewer.css";
-@import "./textLayer.css";
+@import "./textlayer.css";
 @import "./annotation.css";
 @import "./animations.css";
 @import "@whykhamist/file-icons/style.css";
