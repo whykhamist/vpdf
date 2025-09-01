@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Acrobat_reference_secured from "@files/Acrobat_reference_secured.pdf";
+import Acrobat_reference_secured from "@files/acrobat_reference_secured.pdf";
 import Acrobat_reference from "@files/acrobat_reference.pdf";
 import With_Attachments from "@files/attachments.pdf";
 import type { LocationQuery, LocationQueryRaw } from "vue-router";
