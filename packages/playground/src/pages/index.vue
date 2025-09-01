@@ -72,7 +72,7 @@ watch(
   options,
   (val) => {
     router.push({
-      name: "Home",
+      name: "home",
       query: {
         smooth: val.smoothJump ? "1" : "0",
         textlayer: val.textlayer ? "1" : "0",
@@ -142,6 +142,7 @@ onMounted(() => {});
         :textLayer="options.textlayer"
         :smoothJump="options.smoothJump"
         :class="`${options.theme} ${options.icon}`"
+        :scale="-1"
       />
       <div v-else class="vpdf:bg-negative-400 vpdf:text-center">
         Unknown PDF Source
