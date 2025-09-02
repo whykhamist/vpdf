@@ -1,6 +1,6 @@
 {
   "name": "@whykhamist/vpdf",
-  "version": "2.0.0-alpha",
+  "version": "2.0.1-alpha",
   "files": [
     "dist",
     "src"
@@ -15,7 +15,7 @@
       "import": "./dist/index.js",
       "require": "./dist/index.umd.js"
     },
-    "./style.css": "./dist/index.css",
+    "./style.css": "./dist/assets/style.css",
     "./src/*": "./src/*"
   },
   "scripts": {
