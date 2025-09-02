@@ -10,6 +10,7 @@ import viteCommon from "../../vite.config";
 export default mergeConfig(
   viteCommon,
   defineConfig({
+    base: "/vpdf/",
     plugins: [
       vueJsx(),
       // vueDevTools(),
