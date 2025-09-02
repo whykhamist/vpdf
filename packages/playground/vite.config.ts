@@ -53,5 +53,8 @@ export default mergeConfig(
         ),
       },
     },
+    build: {
+      outDir: "../../docs",
+    },
   }),
 );

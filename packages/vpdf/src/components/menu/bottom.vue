@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ScaleOptions } from "../../types/scales";
+import type { ScaleOptions } from "../../types/scales";
 
 import Pager from "./pager.vue";
 import Zoomer from "./zoomer.vue";

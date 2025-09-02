@@ -7,6 +7,7 @@ import type { PreRenderedAsset } from "rollup";
 export default defineConfig({
   optimizeDeps: {
     esbuildOptions: {
+      target: "esnext",
       supported: {
         "top-level-await": true,
       },

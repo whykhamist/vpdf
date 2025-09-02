@@ -12,7 +12,6 @@ export default mergeConfig(
       lib: {
         entry: fileURLToPath(new URL("./src/index.ts", import.meta.url)),
         name: "@whykhamist/vpdf",
-        formats: ["es", "umd"],
         fileName: "index",
       },
 
