@@ -1,0 +1,482 @@
+@import "tailwindcss";
+
+html,
+body,
+#app {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  background:
+    radial-gradient(circle at top left, #dbeafe 0%, transparent 40%),
+    radial-gradient(circle at bottom right, #e2e8f0 0%, transparent 35%),
+    #f1f5f9;
+  color: #0f172a;
+}
+
+.vpdf-light,
+.vpdf-light-rich,
+.vpdf-dark,
+.vpdf-sepia,
+.vpdf-sepia-rich,
+.vpdf-sepia-dark,
+.vpdf-slate,
+.vpdf-slate-rich,
+.vpdf-slate-dark,
+.vpdf-ocean,
+.vpdf-ocean-rich,
+.vpdf-ocean-dark,
+.vpdf-forest,
+.vpdf-forest-rich,
+.vpdf-forest-dark,
+.vpdf-rose,
+.vpdf-rose-rich,
+.vpdf-rose-dark,
+.vpdf-amber,
+.vpdf-amber-rich,
+.vpdf-amber-dark {
+  --color-primary: var(--vpdf-primary);
+  --color-error: var(--vpdf-error);
+  --color-inverted: var(--vpdf-text-inverted);
+  --color-highlighted: var(--vpdf-text-highlighted);
+  --text-color-default: var(--vpdf-text);
+  --text-color-muted: var(--vpdf-text-muted);
+  --text-color-toned: var(--vpdf-text-toned);
+  --text-color-dimmed: var(--vpdf-text-dimmed);
+  --text-color-highlighted: var(--vpdf-text-highlighted);
+  --text-color-inverted: var(--vpdf-text-inverted);
+  --text-color-primary: var(--vpdf-primary);
+  --text-color-error: var(--vpdf-error);
+  --background-color-default: var(--vpdf-bg);
+  --background-color-muted: var(--vpdf-bg-muted);
+  --background-color-elevated: var(--vpdf-bg-elevated);
+  --background-color-accented: var(--vpdf-bg-accented);
+  --background-color-inverted: var(--vpdf-bg-inverted);
+  --background-color-primary: var(--vpdf-primary);
+  --border-color-default: var(--vpdf-border);
+  --border-color-muted: var(--vpdf-border-muted);
+  --border-color-accented: var(--vpdf-border-accented);
+  --border-color-inverted: var(--vpdf-border-inverted);
+}
+
+.vpdf-light {
+  --vpdf-primary: #3451b2;
+  --vpdf-error: #b91c1c;
+  --vpdf-text: #213547;
+  --vpdf-text-muted: #64748b;
+  --vpdf-text-toned: #475569;
+  --vpdf-text-dimmed: #94a3b8;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #3451b2;
+  --vpdf-bg: #ffffff;
+  --vpdf-bg-muted: #f6f6f7;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #eef2ff;
+  --vpdf-bg-inverted: #1e1e20;
+  --vpdf-border: #e2e2e3;
+  --vpdf-border-muted: #eeeeef;
+  --vpdf-border-accented: #c7d2fe;
+  --vpdf-border-inverted: #3c3c3f;
+}
+
+.vpdf-light-rich {
+  --vpdf-primary: #2947b8;
+  --vpdf-error: #c62828;
+  --vpdf-text: #172554;
+  --vpdf-text-muted: #52627a;
+  --vpdf-text-toned: #344563;
+  --vpdf-text-dimmed: #7b8ba5;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #2947b8;
+  --vpdf-bg: #f8faff;
+  --vpdf-bg-muted: #edf1f8;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #e4eaff;
+  --vpdf-bg-inverted: #172554;
+  --vpdf-border: #c9d2e3;
+  --vpdf-border-muted: #dce3ef;
+  --vpdf-border-accented: #aab9e8;
+  --vpdf-border-inverted: #344563;
+}
+
+.vpdf-dark {
+  --vpdf-primary: #a8b1ff;
+  --vpdf-error: #f87171;
+  --vpdf-text: rgba(255, 255, 255, 0.87);
+  --vpdf-text-muted: rgba(235, 235, 245, 0.6);
+  --vpdf-text-toned: rgba(235, 235, 245, 0.75);
+  --vpdf-text-dimmed: rgba(235, 235, 245, 0.38);
+  --vpdf-text-inverted: #1e1e20;
+  --vpdf-text-highlighted: #a8b1ff;
+  --vpdf-bg: #1e1e20;
+  --vpdf-bg-muted: #18181a;
+  --vpdf-bg-elevated: #252529;
+  --vpdf-bg-accented: #2a2a2f;
+  --vpdf-bg-inverted: #ffffff;
+  --vpdf-border: #3c3c3f;
+  --vpdf-border-muted: #2e2e32;
+  --vpdf-border-accented: #4c5190;
+  --vpdf-border-inverted: #e2e2e3;
+}
+
+.vpdf-sepia {
+  --vpdf-primary: #9a6700;
+  --vpdf-error: #b42318;
+  --vpdf-text: #3b3025;
+  --vpdf-text-muted: #796e62;
+  --vpdf-text-toned: #5c5044;
+  --vpdf-text-dimmed: #a59a8d;
+  --vpdf-text-inverted: #fffdf7;
+  --vpdf-text-highlighted: #805500;
+  --vpdf-bg: #f5f0e6;
+  --vpdf-bg-muted: #ebe4d7;
+  --vpdf-bg-elevated: #faf7ef;
+  --vpdf-bg-accented: #f1e5c8;
+  --vpdf-bg-inverted: #30271e;
+  --vpdf-border: #d8cdbb;
+  --vpdf-border-muted: #e5dccd;
+  --vpdf-border-accented: #d6b86a;
+  --vpdf-border-inverted: #5b5044;
+}
+
+.vpdf-sepia-rich {
+  --vpdf-primary: #8a5a00;
+  --vpdf-error: #b42318;
+  --vpdf-text: #34271b;
+  --vpdf-text-muted: #6f6254;
+  --vpdf-text-toned: #514335;
+  --vpdf-text-dimmed: #958878;
+  --vpdf-text-inverted: #fffaf0;
+  --vpdf-text-highlighted: #754900;
+  --vpdf-bg: #f3ecdd;
+  --vpdf-bg-muted: #e7ddca;
+  --vpdf-bg-elevated: #fbf6ea;
+  --vpdf-bg-accented: #ead8af;
+  --vpdf-bg-inverted: #2b2117;
+  --vpdf-border: #cdbda4;
+  --vpdf-border-muted: #ded2bd;
+  --vpdf-border-accented: #c5a85e;
+  --vpdf-border-inverted: #554636;
+}
+
+.vpdf-sepia-dark {
+  --vpdf-primary: #e2b75e;
+  --vpdf-error: #f08080;
+  --vpdf-text: #e8dfd1;
+  --vpdf-text-muted: #a99d8d;
+  --vpdf-text-toned: #c8bdae;
+  --vpdf-text-dimmed: #756b5e;
+  --vpdf-text-inverted: #30271e;
+  --vpdf-text-highlighted: #f0c96f;
+  --vpdf-bg: #29231d;
+  --vpdf-bg-muted: #211c17;
+  --vpdf-bg-elevated: #332c24;
+  --vpdf-bg-accented: #40351f;
+  --vpdf-bg-inverted: #f5f0e6;
+  --vpdf-border: #4a4034;
+  --vpdf-border-muted: #383027;
+  --vpdf-border-accented: #705a2d;
+  --vpdf-border-inverted: #d8cdbb;
+}
+
+.vpdf-slate {
+  --vpdf-primary: #6366f1;
+  --vpdf-error: #ef4444;
+  --vpdf-text: #1e293b;
+  --vpdf-text-muted: #64748b;
+  --vpdf-text-toned: #475569;
+  --vpdf-text-dimmed: #94a3b8;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #4338ca;
+  --vpdf-bg: #f8fafc;
+  --vpdf-bg-muted: #f1f5f9;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #eef2ff;
+  --vpdf-bg-inverted: #0f172a;
+  --vpdf-border: #e2e8f0;
+  --vpdf-border-muted: #f1f5f9;
+  --vpdf-border-accented: #c7d2fe;
+  --vpdf-border-inverted: #334155;
+}
+
+.vpdf-slate-rich {
+  --vpdf-primary: #4f46e5;
+  --vpdf-error: #dc2626;
+  --vpdf-text: #172033;
+  --vpdf-text-muted: #536176;
+  --vpdf-text-toned: #39475b;
+  --vpdf-text-dimmed: #7d8da3;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #3730a3;
+  --vpdf-bg: #f5f8fc;
+  --vpdf-bg-muted: #e8eef6;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #e0e7ff;
+  --vpdf-bg-inverted: #101a2e;
+  --vpdf-border: #c4cfdf;
+  --vpdf-border-muted: #d7e0ec;
+  --vpdf-border-accented: #a5b4fc;
+  --vpdf-border-inverted: #3b4a62;
+}
+
+.vpdf-slate-dark {
+  --vpdf-primary: #818cf8;
+  --vpdf-error: #f87171;
+  --vpdf-text: #e2e8f0;
+  --vpdf-text-muted: #94a3b8;
+  --vpdf-text-toned: #cbd5e1;
+  --vpdf-text-dimmed: #64748b;
+  --vpdf-text-inverted: #0f172a;
+  --vpdf-text-highlighted: #a5b4fc;
+  --vpdf-bg: #0f172a;
+  --vpdf-bg-muted: #1e293b;
+  --vpdf-bg-elevated: #1e293b;
+  --vpdf-bg-accented: #1e1b4b;
+  --vpdf-bg-inverted: #f8fafc;
+  --vpdf-border: #334155;
+  --vpdf-border-muted: #1e293b;
+  --vpdf-border-accented: #4338ca;
+  --vpdf-border-inverted: #cbd5e1;
+}
+
+.vpdf-ocean {
+  --vpdf-primary: #0891b2;
+  --vpdf-error: #e11d48;
+  --vpdf-text: #164e63;
+  --vpdf-text-muted: #64748b;
+  --vpdf-text-toned: #334155;
+  --vpdf-text-dimmed: #94a3b8;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #0e7490;
+  --vpdf-bg: #f8fafc;
+  --vpdf-bg-muted: #f1f5f9;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #ecfeff;
+  --vpdf-bg-inverted: #083344;
+  --vpdf-border: #cbd5e1;
+  --vpdf-border-muted: #e2e8f0;
+  --vpdf-border-accented: #a5f3fc;
+  --vpdf-border-inverted: #155e75;
+}
+
+.vpdf-ocean-rich {
+  --vpdf-primary: #087f9b;
+  --vpdf-error: #d7194d;
+  --vpdf-text: #0f4052;
+  --vpdf-text-muted: #536878;
+  --vpdf-text-toned: #294b5b;
+  --vpdf-text-dimmed: #7d96a2;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #066579;
+  --vpdf-bg: #f3fafd;
+  --vpdf-bg-muted: #e3f1f6;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #d8f6fa;
+  --vpdf-bg-inverted: #063343;
+  --vpdf-border: #b9d4dd;
+  --vpdf-border-muted: #d1e4e9;
+  --vpdf-border-accented: #7dd3df;
+  --vpdf-border-inverted: #126078;
+}
+
+.vpdf-ocean-dark {
+  --vpdf-primary: #22d3ee;
+  --vpdf-error: #fb7185;
+  --vpdf-text: #e2e8f0;
+  --vpdf-text-muted: #94a3b8;
+  --vpdf-text-toned: #cbd5e1;
+  --vpdf-text-dimmed: #64748b;
+  --vpdf-text-inverted: #083344;
+  --vpdf-text-highlighted: #67e8f9;
+  --vpdf-bg: #0c1f2a;
+  --vpdf-bg-muted: #102d3a;
+  --vpdf-bg-elevated: #143747;
+  --vpdf-bg-accented: #083344;
+  --vpdf-bg-inverted: #ecfeff;
+  --vpdf-border: #164e63;
+  --vpdf-border-muted: #123b4a;
+  --vpdf-border-accented: #0e7490;
+  --vpdf-border-inverted: #a5f3fc;
+}
+
+.vpdf-forest {
+  --vpdf-primary: #15803d;
+  --vpdf-error: #dc2626;
+  --vpdf-text: #17251b;
+  --vpdf-text-muted: #64746a;
+  --vpdf-text-toned: #3f5145;
+  --vpdf-text-dimmed: #94a39a;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #166534;
+  --vpdf-bg: #f7faf7;
+  --vpdf-bg-muted: #eef4ef;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #ecfdf3;
+  --vpdf-bg-inverted: #14251a;
+  --vpdf-border: #d7e2d9;
+  --vpdf-border-muted: #e8f0e9;
+  --vpdf-border-accented: #bbf7d0;
+  --vpdf-border-inverted: #36533d;
+}
+
+.vpdf-forest-rich {
+  --vpdf-primary: #137333;
+  --vpdf-error: #c52222;
+  --vpdf-text: #132219;
+  --vpdf-text-muted: #586b5e;
+  --vpdf-text-toned: #34493b;
+  --vpdf-text-dimmed: #829388;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #0f5c2c;
+  --vpdf-bg: #f2f9f3;
+  --vpdf-bg-muted: #e3eee5;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #dff7e7;
+  --vpdf-bg-inverted: #102219;
+  --vpdf-border: #bfd2c2;
+  --vpdf-border-muted: #d5e4d8;
+  --vpdf-border-accented: #86d9a0;
+  --vpdf-border-inverted: #345940;
+}
+
+.vpdf-forest-dark {
+  --vpdf-primary: #4ade80;
+  --vpdf-error: #f87171;
+  --vpdf-text: #e5eee7;
+  --vpdf-text-muted: #9aaa9f;
+  --vpdf-text-toned: #c7d5ca;
+  --vpdf-text-dimmed: #65776b;
+  --vpdf-text-inverted: #14251a;
+  --vpdf-text-highlighted: #86efac;
+  --vpdf-bg: #101a13;
+  --vpdf-bg-muted: #17231a;
+  --vpdf-bg-elevated: #1d2c21;
+  --vpdf-bg-accented: #12351e;
+  --vpdf-bg-inverted: #f0fdf4;
+  --vpdf-border: #2d4433;
+  --vpdf-border-muted: #213126;
+  --vpdf-border-accented: #166534;
+  --vpdf-border-inverted: #bbf7d0;
+}
+
+.vpdf-rose {
+  --vpdf-primary: #e11d48;
+  --vpdf-error: #dc2626;
+  --vpdf-text: #29202a;
+  --vpdf-text-muted: #786d76;
+  --vpdf-text-toned: #514750;
+  --vpdf-text-dimmed: #a69ca4;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #be123c;
+  --vpdf-bg: #fffafb;
+  --vpdf-bg-muted: #fdf2f5;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #fff1f2;
+  --vpdf-bg-inverted: #2a1018;
+  --vpdf-border: #eadde1;
+  --vpdf-border-muted: #f5e8eb;
+  --vpdf-border-accented: #fecdd3;
+  --vpdf-border-inverted: #5f2635;
+}
+
+.vpdf-rose-rich {
+  --vpdf-primary: #d81745;
+  --vpdf-error: #c52222;
+  --vpdf-text: #2a1821;
+  --vpdf-text-muted: #705c66;
+  --vpdf-text-toned: #4c3742;
+  --vpdf-text-dimmed: #98858e;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #ad1038;
+  --vpdf-bg: #fff7f9;
+  --vpdf-bg-muted: #f9e8ed;
+  --vpdf-bg-elevated: #ffffff;
+  --vpdf-bg-accented: #ffe1e7;
+  --vpdf-bg-inverted: #291019;
+  --vpdf-border: #e0c6ce;
+  --vpdf-border-muted: #eed9df;
+  --vpdf-border-accented: #f5aebc;
+  --vpdf-border-inverted: #63293a;
+}
+
+.vpdf-rose-dark {
+  --vpdf-primary: #fb7185;
+  --vpdf-error: #f87171;
+  --vpdf-text: #f3e8eb;
+  --vpdf-text-muted: #a99ba0;
+  --vpdf-text-toned: #d8cbd0;
+  --vpdf-text-dimmed: #71636a;
+  --vpdf-text-inverted: #2a1018;
+  --vpdf-text-highlighted: #fda4af;
+  --vpdf-bg: #1b1115;
+  --vpdf-bg-muted: #26171d;
+  --vpdf-bg-elevated: #302027;
+  --vpdf-bg-accented: #3b1722;
+  --vpdf-bg-inverted: #fff1f2;
+  --vpdf-border: #493039;
+  --vpdf-border-muted: #37232b;
+  --vpdf-border-accented: #9f1239;
+  --vpdf-border-inverted: #fecdd3;
+}
+
+.vpdf-amber {
+  --vpdf-primary: #b45309;
+  --vpdf-error: #dc2626;
+  --vpdf-text: #29251f;
+  --vpdf-text-muted: #78716c;
+  --vpdf-text-toned: #57534e;
+  --vpdf-text-dimmed: #a8a29e;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #92400e;
+  --vpdf-bg: #fffcf5;
+  --vpdf-bg-muted: #f7f3e8;
+  --vpdf-bg-elevated: #fffefa;
+  --vpdf-bg-accented: #fef3c7;
+  --vpdf-bg-inverted: #29220f;
+  --vpdf-border: #e7e0d2;
+  --vpdf-border-muted: #f0eadf;
+  --vpdf-border-accented: #fde68a;
+  --vpdf-border-inverted: #57534e;
+}
+
+.vpdf-amber-rich {
+  --vpdf-primary: #a64b05;
+  --vpdf-error: #c52222;
+  --vpdf-text: #292015;
+  --vpdf-text-muted: #70675c;
+  --vpdf-text-toned: #51483d;
+  --vpdf-text-dimmed: #978e82;
+  --vpdf-text-inverted: #ffffff;
+  --vpdf-text-highlighted: #813a04;
+  --vpdf-bg: #fffaf0;
+  --vpdf-bg-muted: #f3ead7;
+  --vpdf-bg-elevated: #fffdf8;
+  --vpdf-bg-accented: #fce8ad;
+  --vpdf-bg-inverted: #29200e;
+  --vpdf-border: #dcd0b9;
+  --vpdf-border-muted: #e9dfcc;
+  --vpdf-border-accented: #e9c85c;
+  --vpdf-border-inverted: #5d5549;
+}
+
+.vpdf-amber-dark {
+  --vpdf-primary: #fbbf24;
+  --vpdf-error: #f87171;
+  --vpdf-text: #eee9df;
+  --vpdf-text-muted: #a8a29e;
+  --vpdf-text-toned: #d6d0c5;
+  --vpdf-text-dimmed: #756f66;
+  --vpdf-text-inverted: #29220f;
+  --vpdf-text-highlighted: #fcd34d;
+  --vpdf-bg: #1c1915;
+  --vpdf-bg-muted: #27231c;
+  --vpdf-bg-elevated: #312c23;
+  --vpdf-bg-accented: #3b2f13;
+  --vpdf-bg-inverted: #fffbeb;
+  --vpdf-border: #484137;
+  --vpdf-border-muted: #383229;
+  --vpdf-border-accented: #92400e;
+  --vpdf-border-inverted: #fde68a;
+}

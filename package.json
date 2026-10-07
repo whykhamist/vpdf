@@ -1,24 +1,23 @@
 {
   "name": "vpdf-monorepo",
-  "version": "0.2.0",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
   "workspaces": [
-    "packages/playground",
-    "packages/vpdf"
+    "packages/*"
   ],
   "scripts": {
-    "dev": "npm run --prefix packages/playground dev",
-    "build": "npm run --prefix packages/vpdf build",
-    "build:docs": "npm run --prefix packages/playground build && npm run copy404",
-    "copy404": "copyfiles -f packages/playground/404.html docs",
-    "preview": "vite preview"
+    "dev": "npm run dev -w @vpdf/playground",
+    "build": "npm run build -w @whykhamist/vpdf && npm run build -w @whykhamist/vpdf-plugin-page-layout && npm run build -w @whykhamist/vpdf-plugin-print && npm run build -w @whykhamist/vpdf-plugin-open && npm run build -w @whykhamist/vpdf-plugin-iconify && npm run build -w @whykhamist/vpdf-plugin-xfa-thumbnail-raster && npm run build -w @vpdf/playground",
+    "build:vpdf": "npm run build -w @whykhamist/vpdf",
+    "typecheck": "npm run typecheck -w @whykhamist/vpdf && npm run typecheck -w @whykhamist/vpdf-plugin-page-layout && npm run typecheck -w @whykhamist/vpdf-plugin-print && npm run typecheck -w @whykhamist/vpdf-plugin-open && npm run typecheck -w @whykhamist/vpdf-plugin-iconify && npm run typecheck -w @whykhamist/vpdf-plugin-xfa-thumbnail-raster && npm run typecheck -w @vpdf/playground",
+    "test": "npm run test -w @whykhamist/vpdf && npm run test -w @whykhamist/vpdf-plugin-page-layout && npm run test -w @whykhamist/vpdf-plugin-print && npm run test -w @whykhamist/vpdf-plugin-open && npm run test -w @whykhamist/vpdf-plugin-iconify && npm run test -w @whykhamist/vpdf-plugin-xfa-thumbnail-raster",
+    "test:e2e": "npm run test:e2e -w @vpdf/playground",
+    "docs:dev": "npm run dev -w @vpdf/docs",
+    "docs:build": "npm run build -w @vpdf/docs",
+    "docs:preview": "npm run preview -w @vpdf/docs"
   },
-  "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/tsconfig": "^0.8.1",
-    "copyfiles": "^2.4.1",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "typescript": "~5.9.2",
-    "vite": "^7.1.3",
-    "vue-tsc": "^3.0.6"
+  "engines": {
+    "node": ">=20"
   }
 }

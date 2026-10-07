@@ -1,27 +1,13 @@
 <!doctype html>
-<html lang="">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@whykhamist/vpdf</title>
-
-    <link
-      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/fontawesome.min.css"
-      rel="stylesheet"
-    />
+    <title>@whykhamist/vpdf Playground</title>
+    <link rel="icon" href="src/favicon.svg" sizes="any" type="image/svg+xml" />
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      (function () {
-        var redirect = sessionStorage.redirect;
-        delete sessionStorage.redirect;
-        if (redirect && redirect != location.href) {
-          history.replaceState(null, null, redirect);
-        }
-      })();
-    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

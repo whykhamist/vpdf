@@ -1,27 +1,99 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Publish to NPM
+name: Stage packages on npm
 
 on:
   release:
     types: [created]
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      package:
+        description: Package to stage for npm review
+        type: choice
+        default: all
+        options:
+          - all
+          - "@whykhamist/vpdf"
+          - "@whykhamist/vpdf-plugin-page-layout"
+          - "@whykhamist/vpdf-plugin-print"
+          - "@whykhamist/vpdf-plugin-open"
+          - "@whykhamist/vpdf-plugin-iconify"
+          - "@whykhamist/vpdf-plugin-xfa-thumbnail-raster"
 
 jobs:
-  publish-npm:
+  stage-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: https://registry.npmjs.org/
-      - name: "Install Dependencies"
+          cache: npm
+
+      - name: Install npm 11 (npm stage)
+        run: npm install -g npm@11
+
+      - name: Install dependencies
         run: npm ci
-      - name: "Build Package"
-        run: npm run build
-      - name: "Publish Package"
-        working-directory: packages/vpdf
-        run: npm publish --access=public
+
+      - name: Build and stage packages
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+          SELECTED: ${{ github.event_name == 'release' && 'all' || inputs.package }}
+        run: |
+          set -euo pipefail
+
+          stage_pkg() {
+            local workspace="$1"
+            local directory="$2"
+            echo "::group::Build ${workspace}"
+            npm run build -w "${workspace}"
+            echo "::endgroup::"
+            echo "::group::Stage ${workspace}"
+            (cd "${directory}" && npm stage publish --access public)
+            echo "::endgroup::"
+          }
+
+          build_vpdf_if_needed() {
+            if [ "${SELECTED}" != "@whykhamist/vpdf" ] && [ "${SELECTED}" != "all" ]; then
+              npm run build -w @whykhamist/vpdf
+            fi
+          }
+
+          case "${SELECTED}" in
+            all)
+              stage_pkg @whykhamist/vpdf packages/vpdf
+              stage_pkg @whykhamist/vpdf-plugin-page-layout packages/plugin-page-layout
+              stage_pkg @whykhamist/vpdf-plugin-print packages/plugin-print
+              stage_pkg @whykhamist/vpdf-plugin-open packages/plugin-open
+              stage_pkg @whykhamist/vpdf-plugin-iconify packages/plugin-iconify
+              stage_pkg @whykhamist/vpdf-plugin-xfa-thumbnail-raster packages/plugin-xfa-thumbnail-raster
+              ;;
+            "@whykhamist/vpdf")
+              stage_pkg @whykhamist/vpdf packages/vpdf
+              ;;
+            "@whykhamist/vpdf-plugin-page-layout")
+              build_vpdf_if_needed
+              stage_pkg @whykhamist/vpdf-plugin-page-layout packages/plugin-page-layout
+              ;;
+            "@whykhamist/vpdf-plugin-print")
+              build_vpdf_if_needed
+              stage_pkg @whykhamist/vpdf-plugin-print packages/plugin-print
+              ;;
+            "@whykhamist/vpdf-plugin-open")
+              build_vpdf_if_needed
+              stage_pkg @whykhamist/vpdf-plugin-open packages/plugin-open
+              ;;
+            "@whykhamist/vpdf-plugin-iconify")
+              build_vpdf_if_needed
+              stage_pkg @whykhamist/vpdf-plugin-iconify packages/plugin-iconify
+              ;;
+            "@whykhamist/vpdf-plugin-xfa-thumbnail-raster")
+              build_vpdf_if_needed
+              stage_pkg @whykhamist/vpdf-plugin-xfa-thumbnail-raster packages/plugin-xfa-thumbnail-raster
+              ;;
+            *)
+              echo "Unknown package: ${SELECTED}"
+              exit 1
+              ;;
+          esac

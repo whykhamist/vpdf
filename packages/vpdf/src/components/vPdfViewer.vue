@@ -1,169 +1,333 @@
 <script setup lang="ts">
-import type { PDFDocumentLoadingTask } from "pdfjs-dist";
-import { type PropType, computed, ref, watch } from "vue";
-import { usePdfViewer } from "../composables/usePdfViewer";
-import VPdfPageRenderer from "./vPdfPageRenderer.vue";
+import {
+  computed,
+  markRaw,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  ref,
+  toValue,
+  watch,
+} from "vue";
+import { useVPdfViewer } from "../composables/useVPdfViewer";
+import {
+  VPDF_CONTROLLER_KEY,
+  VPDF_STATE_KEY,
+  VPDF_VIEWER_KEY,
+} from "../types/context";
+import type {
+  VPdfAttachmentDownloadEvent,
+  VPdfSource,
+  VPdfViewerOptions,
+} from "../types";
+import type { VPdfUiComponents } from "../types/ui";
+import type { VPdfPluginsConfig } from "../plugins/types";
+import { isPluginItemVisible, pluginItemProps } from "../plugins/resolve";
+import { resolvePageGap, resolvePageRadius } from "../utils/pageChrome";
+import { VPDF_UI_HOST_KEY } from "../composables/uiDefaults";
+import VPdfToolbar from "./VPdfToolbar.vue";
+import VPdfSidebar from "./VPdfSidebar.vue";
+import { VPdfModal } from "./ui";
+import VPdfPasswordForm from "./VPdfPasswordForm.vue";
+import VPdfStatus from "./VPdfStatus.vue";
+import VPdfPageOverlays from "./VPdfPageOverlays.vue";
+import "pdfjs-dist/legacy/web/pdf_viewer.css";
 
-const props = defineProps({
-  pdf: {
-    type: Object as PropType<PDFDocumentLoadingTask>,
-    required: true,
+const props = withDefaults(
+  defineProps<{
+    src?: VPdfSource;
+    options?: VPdfViewerOptions;
+    plugins?: VPdfPluginsConfig;
+    ui?: Partial<VPdfUiComponents>;
+  }>(),
+  {
+    options: () => ({}),
+    plugins: () => ({}),
   },
-  scale: {
-    type: Number,
-    default: 1.0,
-  },
-  scaling: {
-    type: Number,
-    default: 1.0,
-  },
-  gap: {
-    type: Number,
-    default: 10,
-  },
-  rotation: {
-    type: Number,
-    default: 0,
-    validator: (val: number) => {
-      const result = val % 90 == 0;
-      if (!result) {
-        throw new Error(`Rotation must be a multiple of 90, ${val} given.`);
-      }
-      return result;
-    },
-  },
-  view: {
-    type: String as PropType<"vertical" | "horizontal">,
-    default: "vertical",
-  },
-  page: {
-    type: Number,
-    default: 1,
-  },
-  textLayer: {
-    type: Boolean,
-    default: false,
-  },
-  smoothJump: {
-    type: Boolean,
-    default: false,
-  },
-  renderDelay: {
-    type: Number,
-    default: 50,
-  },
+);
 
-  renderOffset: {
-    type: Number,
-    default: 256,
-  },
+const emit = defineEmits<{
+  ready: [];
+  error: [error: { code: string; message: string }];
+  pageChange: [payload: { pageNumber: number; pageCount: number }];
+  attachmentDownload: [payload: VPdfAttachmentDownloadEvent];
+}>();
 
-  onProgress: {
-    type: Function,
-    default: () => {},
-  },
-});
-
-const emit = defineEmits(["update:page", "update:scale", "progress"]);
-
-const container = ref<HTMLElement>();
-const multiplier = ref(1);
-
-const slotBinds = computed(() => ({
-  numPages: totalPage,
-  progress: progress,
-  pages: pageInfo,
-  container: containerBounds,
-  currentPage: currentPage,
-  visiblePages: visiblePages,
-  render: render,
-  viewMode: viewMode,
-  changePage,
-  nextPage,
-  prevPage,
-  fitWidth,
-  fitHeight,
-  fitPage,
+const mergedOptions = computed<VPdfViewerOptions>(() => ({
+  ...props.options,
+  src: props.src ?? props.options?.src,
 }));
 
-const {
-  totalPage,
-  pageInfo,
-  containerBounds,
-  progress,
-  render,
-  currentPage,
-  visiblePages,
-  scale,
-  viewMode,
-  nextPage,
-  prevPage,
-  changePage,
-  fitWidth,
-  fitHeight,
-  fitPage,
-} = usePdfViewer(container, props);
+const options = ref<VPdfViewerOptions>(mergedOptions.value);
+watch(
+  mergedOptions,
+  (value) => {
+    options.value = value;
+  },
+  { deep: true },
+);
 
-watch(progress, (val) => {
-  props.onProgress(val);
-  emit("progress", val);
+const api = useVPdfViewer({
+  options,
+  plugins: props.plugins,
 });
 
-watch(currentPage, (val) => {
-  emit("update:page", val);
+const viewerHost = ref<HTMLElement>();
+
+provide(VPDF_VIEWER_KEY, {
+  state: api.state,
+  options: api.options,
+  controller: api.controller,
+  plugins: api.plugins,
+  pluginContext: undefined as never,
+});
+provide(VPDF_CONTROLLER_KEY, api.controller);
+provide(VPDF_STATE_KEY, api.state);
+provide(
+  VPDF_UI_HOST_KEY,
+  computed(() => props.ui),
+);
+
+const showOverlay = computed(
+  () =>
+    api.state.value.loadState === "loading" ||
+    api.state.value.loadState === "idle" ||
+    api.state.value.loadState === "error" ||
+    api.state.value.loadState === "unsupported",
+);
+
+const textLayerEnabled = computed(() => api.resolvedFeatures.value.textLayer);
+
+const topControls = computed(() =>
+  api.plugins.controlsView.value.filter(
+    (control) =>
+      control.region === "viewer-top" && isPluginItemVisible(control),
+  ),
+);
+const bottomControls = computed(() =>
+  api.plugins.controlsView.value.filter(
+    (control) =>
+      control.region === "viewer-bottom" && isPluginItemVisible(control),
+  ),
+);
+const overlayHostControls = computed(() =>
+  api.plugins.controlsView.value.filter(
+    (control) =>
+      control.region === "page-overlay-host" && isPluginItemVisible(control),
+  ),
+);
+
+const sidebarOverlayOpen = computed(() => {
+  if (api.state.value.sidebar === "none") return false;
+  return api.plugins.panelsView.value.some(isPluginItemVisible);
 });
 
-watch(scale, (val) => {
-  emit("update:scale", val);
+const PasswordFormRaw = markRaw(VPdfPasswordForm);
+
+const activeModal = computed(() => {
+  const request = api.state.value.password;
+  if (request) {
+    return {
+      key: "password",
+      component: PasswordFormRaw,
+      contentProps: { request },
+      busy: false,
+      dismissible: false,
+      restoreFocus: undefined as HTMLElement | undefined,
+      onClose: () => request.cancel(),
+    };
+  }
+  const modal = api.plugins.modalView.value;
+  if (!modal) return;
+  return {
+    key: modal.ownerId,
+    component: modal.component,
+    contentProps: pluginItemProps(modal),
+    busy: Boolean(toValue(modal.busy)),
+    dismissible: toValue(modal.dismissible) !== false,
+    restoreFocus: modal.restoreFocus,
+    onClose: () => api.plugins.dismissModal(),
+  };
 });
 
-watch([() => scale.value, () => props.scaling], (val) => {
-  // multiplier.value = Math.abs(props.scaling / scale.value);
-  // console.log(multiplier.value);
+function onKeydown(event: KeyboardEvent) {
+  const target = event.target as HTMLElement | null;
+  if (
+    target &&
+    (target.tagName === "INPUT" ||
+      target.tagName === "SELECT" ||
+      target.tagName === "TEXTAREA" ||
+      target.isContentEditable)
+  ) {
+    return;
+  }
+
+  const shortcut = api.plugins.matchShortcut(event);
+  if (shortcut) {
+    if (shortcut.preventDefault !== false) event.preventDefault();
+    void shortcut.handler(event);
+  }
+}
+
+const stopAttachmentDownload = api.plugins.on(
+  "onAttachmentDownload",
+  (payload) => {
+    emit("attachmentDownload", payload);
+  },
+);
+
+onMounted(async () => {
+  if (!viewerHost.value) return;
+  await api.mount(viewerHost.value);
+  window.addEventListener("keydown", onKeydown);
+
+  if (options.value.src) {
+    await api.controller.load(options.value.src, options.value.password);
+  }
 });
 
-defineExpose(slotBinds.value);
+onBeforeUnmount(async () => {
+  stopAttachmentDownload();
+  window.removeEventListener("keydown", onKeydown);
+  await api.destroy();
+});
+
+watch(
+  () => api.state.value.loadState,
+  (loadState) => {
+    if (loadState === "ready") emit("ready");
+  },
+);
+
+watch(
+  () => api.state.value.error,
+  (error) => {
+    if (error) emit("error", error);
+  },
+);
+
+watch(
+  () => [api.state.value.pageNumber, api.state.value.pageCount] as const,
+  ([pageNumber, pageCount]) => {
+    emit("pageChange", { pageNumber, pageCount });
+  },
+);
+
+const pageGapPx = computed(() =>
+  resolvePageGap(options.value.pageGap, api.state.value.scale),
+);
+const pageRadiusPx = computed(() =>
+  resolvePageRadius(options.value.pageRadius, api.state.value.scale),
+);
+
+const pageChromeStyle = computed(() => {
+  const style: Record<string, string> = {};
+  if (pageGapPx.value !== undefined)
+    style["--vpdf-page-gap"] = `${pageGapPx.value}px`;
+  if (pageRadiusPx.value !== undefined)
+    style["--vpdf-page-radius"] = `${pageRadiusPx.value}px`;
+  return style;
+});
+
+defineExpose({
+  controller: api.controller,
+  state: api.state,
+  plugins: api.plugins,
+});
 </script>
 
 <template>
   <div
-    ref="container"
-    class="vpdf:relative vpdf:grid vpdf:h-full vpdf:min-h-0 vpdf:w-full vpdf:min-w-0 vpdf:items-center vpdf:overflow-scroll vpdf:bg-foreground/15"
-    :class="{
-      'vpdf:grid vpdf:items-center': viewMode != 'vertical',
-    }"
+    class="vpdf-root"
+    :class="[
+      options.class,
+      {
+        'vpdf-no-text-layer': !textLayerEnabled,
+        'vpdf-has-page-gap': pageGapPx !== undefined,
+        'vpdf-has-page-radius': pageRadiusPx !== undefined,
+      },
+    ]"
+    :style="pageChromeStyle"
+    data-vpdf
   >
-    <slot v-bind="slotBinds" name="prepend" />
+    <VPdfToolbar :api="api" />
+
     <div
-      v-if="!!pdf"
-      class="vpdf:relative vpdf:mx-auto"
-      :style="{
-        width: `${containerBounds.width * multiplier}px`,
-        height: `${containerBounds.height * multiplier}px`,
-      }"
+      class="vpdf-body"
+      :class="{ 'vpdf-sidebar-overlay-open': sidebarOverlayOpen }"
     >
-      <slot v-bind="slotBinds">
-        <template v-for="vp in visiblePages" :key="vp.id">
-          <slot name="renderer" :pdf="pdf" :pageInfo="vp" :render="render">
-            <VPdfPageRenderer
-              :pdf="pdf"
-              :pageInfo="vp"
-              :scale="0.5"
-              :textLayer="textLayer"
-              :render="render"
-              :visible="visiblePages.findIndex((p) => p.page == vp.page) > -1"
-              class="vpdf:absolute"
-              :style="{
-                top: `${vp.bounds.inner.top * multiplier}px`,
-                left: `${vp.bounds.inner.left * multiplier}px`,
-                width: `${vp.viewport.width * multiplier}px`,
-                height: `${vp.viewport.height * multiplier}px`,
-              }"
+      <VPdfSidebar :api="api" />
+
+      <div class="vpdf-main">
+        <div
+          v-for="control in topControls"
+          :key="control.id"
+          class="vpdf-plugin-control"
+        >
+          <component
+            :is="control.component"
+            v-bind="pluginItemProps(control)"
+          />
+        </div>
+
+        <div ref="viewerHost" class="vpdf-viewer-host">
+          <div
+            class="vpdf-viewer-scroll"
+            :class="{ 'vpdf-smooth-jump': options.smoothJump }"
+          >
+            <div class="vpdf-viewer-pages pdfViewer" />
+          </div>
+
+          <VPdfPageOverlays
+            :container="viewerHost"
+            :overlays="api.plugins.overlaysView.value"
+          />
+
+          <div
+            v-for="control in overlayHostControls"
+            :key="control.id"
+            class="vpdf-page-overlay-host"
+          >
+            <component
+              :is="control.component"
+              v-bind="pluginItemProps(control)"
             />
-          </slot>
-        </template>
-      </slot>
+          </div>
+
+          <VPdfStatus
+            v-if="showOverlay"
+            :load-state="api.state.value.loadState"
+            :progress="api.state.value.progress"
+            :error="api.state.value.error"
+          />
+        </div>
+
+        <div
+          v-for="control in bottomControls"
+          :key="control.id"
+          class="vpdf-plugin-control"
+        >
+          <component
+            :is="control.component"
+            v-bind="pluginItemProps(control)"
+          />
+        </div>
+      </div>
     </div>
-    <slot v-bind="slotBinds" name="append" />
+
+    <VPdfModal
+      v-if="activeModal"
+      :key="activeModal.key"
+      :busy="activeModal.busy"
+      :dismissible="activeModal.dismissible"
+      :restore-focus="activeModal.restoreFocus"
+      @close="activeModal.onClose"
+    >
+      <component
+        :is="activeModal.component"
+        v-bind="activeModal.contentProps"
+        @close="activeModal.onClose"
+      />
+    </VPdfModal>
   </div>
 </template>

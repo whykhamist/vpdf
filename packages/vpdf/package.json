@@ -1,53 +1,61 @@
 {
   "name": "@whykhamist/vpdf",
-  "version": "2.0.1-alpha",
-  "files": [
-    "dist",
-    "src"
-  ],
+  "version": "3.0.0",
+  "description": "Production-ready Vue 3 PDF viewer built on PDF.js",
   "type": "module",
-  "main": "./dist/index.umd.js",
-  "module": "./dist/index.js",
-  "types": "./dist/types/index.d.ts",
+  "license": "MIT",
+  "author": "vpdf",
+  "keywords": [
+    "vue",
+    "pdf",
+    "pdf.js",
+    "pdfjs",
+    "viewer",
+    "annotations"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/vpdf.js",
+  "module": "./dist/vpdf.js",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.umd.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/vpdf.js"
     },
-    "./style.css": "./dist/assets/style.css",
-    "./src/*": "./src/*"
+    "./style.css": "./dist/vpdf.css",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "vue-tsc -b && npm run build:lib && npm run build:dts",
-    "build:lib": "vite build",
-    "build:dts": "vue-tsc --declaration --emitDeclarationOnly -p tsconfig.json"
+    "dev": "vite build --watch",
+    "build": "vite build && npm run copy-assets",
+    "copy-assets": "node ./scripts/copy-assets.mjs",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
-  "keywords": [
-    "pdf",
-    "vue",
-    "pdfjs",
-    "pdfjs-dist",
-    "viewer",
-    "tailwindcss"
-  ],
   "peerDependencies": {
-    "pdfjs-dist": "^5.2.133",
-    "vue": "^3.5.13"
+    "vue": "^3.5.0"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.12",
-    "@whykhamist/file-icons": "^1.0.2",
-    "@whykhamist/mime-types": "^1.0.3",
-    "pdfjs-dist": "^5.4.54",
-    "tailwindcss": "^4.1.12"
+    "pdfjs-dist": "6.3.289"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.1",
-    "@vue/tsconfig": "^0.8.1",
-    "prettier-plugin-tailwindcss": "^0.6.14",
-    "typescript": "~5.9.2",
-    "vite": "^7.1.3",
-    "vue-tsc": "^3.0.6"
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^22.16.5",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^26.1.0",
+    "tailwindcss": "^4.1.11",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4",
+    "vue": "^3.5.17",
+    "vue-tsc": "^3.0.3"
   }
 }

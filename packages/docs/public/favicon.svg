@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="tech-cyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0" stop-color="#00f2fe"/>
+      <stop offset="1" stop-color="#4facfe"/>
+    </linearGradient>
+    <linearGradient id="doc-grad" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="matrix(0.778653, -0.05235, -0.764833, 0.287203, 1.120035, 0.215999)">
+      <stop offset="0" stop-color="#0f172a" stop-opacity="0.98"/>
+      <stop offset="1" stop-color="#030712" stop-opacity="1"/>
+    </linearGradient>
+    <radialGradient id="v-fade-mask" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="0.65" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <mask id="v-glow-mask">
+      <rect x="-120" y="-120" width="240" height="240" fill="url(#v-fade-mask)"/>
+    </mask>
+    <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="15" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="subtle-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  <g>
+    <path d="M 70 25 L 360 25 L 430 95 L 430 475 L 70 475 Z" fill="url(#doc-grad)" stroke="#41B883" stroke-width="3.5" filter="url(#subtle-glow)"/>
+    <path d="M 360 25 L 430 95 L 360 95 Z" fill="#00f2fe" opacity="0.85"/>
+    <path d="M 360 25 L 360 95 L 430 95" fill="none" stroke="#00f2fe" stroke-width="2.5"/>
+    <g transform="matrix(4.34254, 0, 0, 4.013253, 250.000007, 234.11367)" style="">
+      <g filter="url(#neon-glow)" opacity="0.85">
+        <path d="M -35 -25 L 0 30 L 35 -25 L 18 -25 L 0 3 L -18 -25 Z" fill="#41B883"/>
+        <path d="M -11.952 -21.931 L 0.008 -3.455 L 11.968 -21.859 L 7.483 -21.872 L 2.998 -14.602 L 0.008 -19.558 L -2.982 -14.62 L -7.467 -21.917 L -11.952 -21.931 Z" fill="#00f2fe" style="stroke-width: 1;"/>
+      </g>
+      <g mask="url(#v-glow-mask)">
+        <path d="M -35 -25 L 0 30 L 35 -25 L 18 -25 L 0 3 L -18 -25 Z" fill="#41B883"/>
+        <path d="M -11.96 -21.928 L 0 -3.452 L 11.96 -21.856 L 7.475 -21.869 L 2.99 -14.599 L 0 -19.555 L -2.99 -14.617 L -7.475 -21.914 L -11.96 -21.928 Z" fill="#00f2fe" style=""/>
+      </g>
+    </g>
+    <g transform="matrix(1, 0, 0, 0.30866, 115.000003, 392.603039)" stroke-linecap="round" stroke-width="2.5" style="">
+      <line x1="0" y1="0" x2="270" y2="0" stroke="#ffffff" stroke-opacity="0.12"/>
+      <line x1="0" y1="14" x2="155" y2="14" stroke="#41B883" stroke-opacity="0.5" filter="url(#subtle-glow)"/>
+      <line x1="0" y1="28" x2="205" y2="28" stroke="url(#tech-cyan)"/>
+    </g>
+    <text x="250" y="444.242" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-size="54" font-weight="800" fill="#ffffff" letter-spacing="-1.5" style="white-space: pre;">
+
+      v<tspan fill="url(#tech-cyan)" style="font-size: 54px; word-spacing: 0px; letter-spacing: -1.5px;">pdf</tspan>
+
+    </text>
+    <circle cx="70" cy="25" r="3.5" fill="#00f2fe"/>
+    <circle cx="430" cy="475" r="3.5" fill="#41B883"/>
+  </g>
+</svg>

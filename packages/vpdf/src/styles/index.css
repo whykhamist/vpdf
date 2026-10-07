@@ -1,0 +1,926 @@
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme) prefix(vpdf);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(vpdf) source(none);
+
+@source "../components/**/*.{vue,ts}";
+@source "../plugins/**/*.{vue,ts}";
+@source "./index.css";
+
+/* Color scales (Nuxt UI pattern: semantic aliases point into these) */
+@theme static {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  --color-error-950: #450a0a;
+
+  --color-neutral-50: #f8fafc;
+  --color-neutral-100: #f1f5f9;
+  --color-neutral-200: #e2e8f0;
+  --color-neutral-300: #cbd5e1;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+  --color-neutral-950: #020617;
+}
+
+@theme inline {
+  --font-sans: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --spacing-vpdf-control: 2.75rem;
+
+  /* Semantic palette shortcuts */
+  --color-primary: var(--vpdf-primary);
+  --color-error: var(--vpdf-error);
+  --color-inverted: var(--vpdf-text-inverted);
+  --color-highlighted: var(--vpdf-text-highlighted);
+
+  /* Text */
+  --text-color-default: var(--vpdf-text);
+  --text-color-muted: var(--vpdf-text-muted);
+  --text-color-toned: var(--vpdf-text-toned);
+  --text-color-dimmed: var(--vpdf-text-dimmed);
+  --text-color-highlighted: var(--vpdf-text-highlighted);
+  --text-color-inverted: var(--vpdf-text-inverted);
+  --text-color-primary: var(--vpdf-primary);
+  --text-color-error: var(--vpdf-error);
+
+  /* Background */
+  --background-color-default: var(--vpdf-bg);
+  --background-color-muted: var(--vpdf-bg-muted);
+  --background-color-elevated: var(--vpdf-bg-elevated);
+  --background-color-accented: var(--vpdf-bg-accented);
+  --background-color-inverted: var(--vpdf-bg-inverted);
+  --background-color-primary: var(--vpdf-primary);
+
+  /* Border */
+  --border-color-default: var(--vpdf-border);
+  --border-color-muted: var(--vpdf-border-muted);
+  --border-color-accented: var(--vpdf-border-accented);
+  --border-color-inverted: var(--vpdf-border-inverted);
+
+  /* Radius (Nuxt UI pattern: base --vpdf-radius drives scale) */
+  --radius-xs: calc(var(--vpdf-radius) * 0.5);
+  --radius-sm: var(--vpdf-radius);
+  --radius-md: calc(var(--vpdf-radius) * 1.5);
+  --radius-lg: calc(var(--vpdf-radius) * 2);
+}
+
+/* ── Runtime tokens (consumer override point) ── */
+
+.vpdf-root {
+  --vpdf-primary: var(--vpdf-color-primary-600);
+  --vpdf-error: var(--vpdf-color-error-600);
+
+  --vpdf-text: var(--vpdf-color-neutral-700);
+  --vpdf-text-muted: var(--vpdf-color-neutral-500);
+  --vpdf-text-toned: var(--vpdf-color-neutral-600);
+  --vpdf-text-dimmed: var(--vpdf-color-neutral-400);
+  --vpdf-text-highlighted: var(--vpdf-color-neutral-900);
+  --vpdf-text-inverted: #ffffff;
+
+  --vpdf-bg: #ffffff;
+  --vpdf-bg-muted: var(--vpdf-color-neutral-50);
+  --vpdf-bg-elevated: var(--vpdf-color-neutral-100);
+  --vpdf-bg-accented: var(--vpdf-color-neutral-200);
+  --vpdf-bg-inverted: var(--vpdf-color-neutral-900);
+
+  --vpdf-border: var(--vpdf-color-neutral-200);
+  --vpdf-border-muted: var(--vpdf-color-neutral-200);
+  --vpdf-border-accented: var(--vpdf-color-neutral-300);
+  --vpdf-border-inverted: var(--vpdf-color-neutral-900);
+
+  --vpdf-radius: 0.5rem;
+  --spacing-vpdf-control: 2rem;
+
+  --vpdf-text-selection-color: color-mix(in srgb, AccentColor, transparent 50%);
+  --vpdf-search-highlight-color: rgb(180 0 170 / 0.25);
+  --vpdf-search-highlight-selected-color: rgb(0 100 0 / 0.25);
+
+  container-type: inline-size;
+  container-name: vpdf;
+
+  @apply vpdf:relative vpdf:box-border vpdf:flex vpdf:flex-col vpdf:w-full vpdf:h-full vpdf:min-h-96 vpdf:overflow-hidden;
+  @apply vpdf:text-default vpdf:bg-default vpdf:border vpdf:border-default vpdf:rounded-sm vpdf:font-sans;
+}
+
+.vpdf-root *,
+.vpdf-root *::before,
+.vpdf-root *::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vpdf-root * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ── Component classes (vpdf-* hooks; @apply uses prefixed Tailwind utilities) ── */
+
+.vpdf-sr-only {
+  @apply vpdf:absolute vpdf:w-px vpdf:h-px vpdf:p-0 vpdf:-m-px vpdf:overflow-hidden vpdf:whitespace-nowrap vpdf:border-0;
+  clip: rect(0, 0, 0, 0);
+}
+
+.vpdf-toolbar,
+.vpdf-searchbar {
+  @apply vpdf:flex vpdf:items-center vpdf:gap-2 vpdf:flex-wrap;
+  @apply vpdf:bg-elevated vpdf:border-b vpdf:border-default;
+}
+
+.vpdf-toolbar {
+  @apply vpdf:px-2 vpdf:py-1;
+}
+
+.vpdf-toolbar-group {
+  @apply vpdf:flex vpdf:items-center vpdf:gap-1;
+}
+
+.vpdf-toolbar-cluster {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-1;
+}
+
+.vpdf-toolbar-group-end {
+  @apply vpdf:flex vpdf:items-center vpdf:gap-1 vpdf:ms-auto;
+}
+
+.vpdf-toolbar-end-actions {
+  @apply vpdf:flex vpdf:items-center vpdf:gap-1;
+}
+
+@container vpdf (max-width: 40rem) {
+  [role="toolbar"].vpdf-toolbar {
+    flex-wrap: nowrap;
+    gap: 0.25rem;
+  }
+}
+
+.vpdf-icon {
+  @apply vpdf:inline-flex vpdf:size-4 vpdf:shrink-0 vpdf:items-center vpdf:justify-center;
+}
+
+.vpdf-icon svg {
+  @apply vpdf:block vpdf:size-full;
+}
+
+.vpdf-icon svg path:not([fill]) {
+  fill: currentColor;
+}
+
+.vpdf-icon-fallback:not(:has(svg)) {
+  @apply vpdf:text-[1.05em] vpdf:leading-none;
+}
+
+.vpdf-btn {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:justify-center vpdf:min-w-(--spacing-vpdf-control) vpdf:px-1.5 vpdf:py-1 vpdf:gap-1.5;
+  @apply vpdf:border vpdf:border-transparent vpdf:rounded-sm vpdf:bg-transparent vpdf:text-default vpdf:font-[inherit] vpdf:cursor-pointer;
+  @apply vpdf:hover:not-disabled:bg-muted;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  @apply vpdf:disabled:opacity-45 vpdf:disabled:cursor-not-allowed;
+  @apply vpdf:aria-pressed:bg-accented vpdf:aria-pressed:text-primary;
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+.vpdf-btn-primary {
+  @apply vpdf:bg-primary vpdf:text-inverted vpdf:hover:not-disabled:bg-primary-600;
+}
+
+.vpdf-btn-ghost {
+  @apply vpdf:border-default;
+}
+
+.vpdf-page-nav {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-0.5;
+}
+
+.vpdf-page-input {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-1 vpdf:select-none vpdf:tabular-nums vpdf:leading-none;
+}
+
+.vpdf-page-input:has(input:disabled) {
+  @apply vpdf:text-muted vpdf:opacity-50;
+}
+
+.vpdf-field-control {
+  @apply vpdf:relative vpdf:inline-flex vpdf:min-w-14 vpdf:bg-muted vpdf:leading-none;
+}
+
+.vpdf-field-control::before {
+  content: "";
+  @apply vpdf:absolute vpdf:inset-x-0 vpdf:top-full vpdf:h-0.5;
+  background: color-mix(in oklab, var(--vpdf-text-dimmed) 25%, transparent);
+}
+
+.vpdf-field-control::after {
+  content: "";
+  @apply vpdf:absolute vpdf:top-full vpdf:left-1/2 vpdf:h-0.5 vpdf:w-0 vpdf:-translate-x-1/2 vpdf:bg-primary vpdf:opacity-0 vpdf:transition-all;
+}
+
+.vpdf-field-control:focus-within::after {
+  @apply vpdf:w-full vpdf:opacity-100;
+}
+
+.vpdf-field-control-invalid::before,
+.vpdf-field-control-invalid::after {
+  background: var(--vpdf-error);
+}
+
+.vpdf-field-control input,
+.vpdf-field-control select {
+  @apply vpdf:w-full vpdf:min-w-0 vpdf:bg-transparent vpdf:px-2.5 vpdf:leading-none vpdf:outline-none vpdf:text-default vpdf:font-[inherit];
+}
+
+.vpdf-field-control select {
+  @apply vpdf:cursor-pointer vpdf:py-0.75 vpdf:pe-5 vpdf:bg-no-repeat vpdf:tabular-nums vpdf:appearance-none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%2364758b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-position: right 0.2rem center;
+  background-size: 0.9rem;
+}
+
+.vpdf-page-input .vpdf-field-control {
+  @apply vpdf:min-w-10 vpdf:max-w-10;
+}
+
+.vpdf-page-input .vpdf-field-control input {
+  @apply vpdf:px-1 vpdf:text-center;
+}
+
+.vpdf-zoom-select,
+.vpdf-layout-select {
+  @apply vpdf:inline-flex;
+}
+
+.vpdf-layout-select .vpdf-field-control select {
+  @apply vpdf:min-w-36;
+}
+
+.vpdf-search-field {
+  @apply vpdf:flex vpdf:min-w-48 vpdf:self-stretch;
+}
+
+.vpdf-search-field .vpdf-field-control {
+  @apply vpdf:flex vpdf:w-full vpdf:h-full;
+}
+
+.vpdf-field {
+  @apply vpdf:block vpdf:mb-4;
+}
+
+.vpdf-field .vpdf-field-control {
+  @apply vpdf:flex vpdf:w-full vpdf:py-1;
+}
+
+.vpdf-text-muted,
+.vpdf-search-count {
+  color: var(--vpdf-text-muted);
+  @apply vpdf:text-sm;
+}
+
+.vpdf-search-count-error {
+  color: var(--vpdf-error);
+}
+
+.vpdf-dropdown {
+  @apply vpdf:relative;
+}
+
+.vpdf-dropdown-panel {
+  @apply vpdf:absolute vpdf:inset-e-0 vpdf:z-35 vpdf:mt-1 vpdf:min-w-44 vpdf:p-1;
+  @apply vpdf:rounded-sm vpdf:border vpdf:border-default vpdf:bg-elevated;
+  @apply vpdf:shadow-[0_12px_28px_rgb(15_23_42/0.18)];
+}
+
+.vpdf-search-options-menu {
+  @apply vpdf:flex vpdf:min-w-52 vpdf:flex-col vpdf:gap-0.5;
+}
+
+.vpdf-checkbox {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-2 vpdf:cursor-pointer;
+}
+
+.vpdf-card {
+  @apply vpdf:flex vpdf:flex-col vpdf:min-h-0 vpdf:min-w-0;
+  @apply vpdf:divide-y vpdf:divide-default;
+  @apply vpdf:w-[min(24rem,100%)] vpdf:rounded-sm vpdf:bg-elevated vpdf:border vpdf:border-default;
+  @apply vpdf:shadow-[0_16px_40px_rgb(15_23_42/0.2)];
+}
+
+.vpdf-card-footer,
+.vpdf-card-header {
+  @apply vpdf:flex vpdf:items-center vpdf:gap-2 vpdf:px-3 vpdf:py-2;
+}
+
+.vpdf-card-body {
+  @apply vpdf:flex-auto vpdf:overflow-auto vpdf:px-3 vpdf:py-2;
+}
+
+.vpdf-card-title {
+  @apply vpdf:text-lg vpdf:text-highlighted vpdf:font-semibold;
+}
+
+.vpdf-card-footer {
+  @apply vpdf:justify-end;
+}
+
+.vpdf-search-option {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-(--spacing-vpdf-control) vpdf:items-center vpdf:gap-2 vpdf:px-2.5;
+  @apply vpdf:rounded-sm vpdf:text-sm vpdf:text-default vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-muted;
+}
+
+.vpdf-body {
+  @apply vpdf:relative vpdf:flex vpdf:flex-1 vpdf:min-h-0;
+}
+
+@media (max-width: 1024px) {
+  .vpdf-sidebar-overlay-open .vpdf-main,
+  .vpdf-sidebar-overlay-open .vpdf-main * {
+    pointer-events: none !important;
+  }
+}
+
+.vpdf-sidebar-shell {
+  @apply vpdf:flex vpdf:min-h-0 vpdf:max-[1024px]:absolute vpdf:max-[1024px]:inset-0 vpdf:max-[1024px]:z-30;
+  @apply vpdf:max-[1024px]:pointer-events-auto;
+}
+
+.vpdf-sidebar-backdrop {
+  @apply vpdf:hidden vpdf:max-[1024px]:block vpdf:max-[1024px]:absolute vpdf:max-[1024px]:inset-0;
+  @apply vpdf:max-[1024px]:bg-neutral-900/45 vpdf:max-[1024px]:pointer-events-auto;
+}
+
+.vpdf-sidebar {
+  @apply vpdf:relative vpdf:z-1 vpdf:flex vpdf:flex-col vpdf:w-[min(18rem,42vw)] vpdf:border-e vpdf:border-default vpdf:bg-elevated;
+  @apply vpdf:max-[1024px]:h-full vpdf:max-[1024px]:w-[min(18rem,85vw)];
+  @apply vpdf:max-[1024px]:shadow-[0_16px_40px_rgb(15_23_42/0.2)];
+}
+
+.vpdf-sidebar-enter-active .vpdf-sidebar-backdrop,
+.vpdf-sidebar-leave-active .vpdf-sidebar-backdrop {
+  @apply vpdf:max-[1024px]:transition-opacity vpdf:max-[1024px]:duration-200;
+}
+
+.vpdf-sidebar-enter-active .vpdf-sidebar,
+.vpdf-sidebar-leave-active .vpdf-sidebar {
+  @apply vpdf:max-[1024px]:transition-transform vpdf:max-[1024px]:duration-200;
+}
+
+.vpdf-sidebar-enter-from .vpdf-sidebar-backdrop,
+.vpdf-sidebar-leave-to .vpdf-sidebar-backdrop {
+  @apply vpdf:max-[1024px]:opacity-0;
+}
+
+.vpdf-sidebar-enter-from .vpdf-sidebar,
+.vpdf-sidebar-leave-to .vpdf-sidebar {
+  @apply vpdf:max-[1024px]:-translate-x-full vpdf:max-[1024px]:rtl:translate-x-full;
+}
+
+.vpdf-sidebar-tabs {
+  @apply vpdf:flex vpdf:gap-1 vpdf:p-2 vpdf:border-b vpdf:border-default vpdf:overflow-x-auto;
+}
+
+.vpdf-sidebar-tab {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-1.5 vpdf:min-h-8 vpdf:px-3 vpdf:border-0 vpdf:rounded-sm vpdf:bg-transparent vpdf:text-default vpdf:cursor-pointer vpdf:whitespace-nowrap;
+  @apply vpdf:aria-selected:bg-accented vpdf:aria-selected:text-primary;
+}
+
+.vpdf-sidebar-body {
+  @apply vpdf:flex-1 vpdf:overflow-auto vpdf:p-3;
+}
+
+.vpdf-thumbnails {
+  @apply vpdf:grid vpdf:gap-2 vpdf:items-center;
+  grid-template-columns: repeat(var(--vpdf-thumb-cols, 2), minmax(0, 1fr));
+}
+
+.vpdf-thumb {
+  @apply vpdf:flex vpdf:flex-col vpdf:items-stretch  vpdf:min-h-11 vpdf:p-1 vpdf:border vpdf:border-default vpdf:rounded-sm vpdf:bg-muted vpdf:text-default vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-accented;
+  @apply vpdf:aria-[current=page]:outline-2 vpdf:aria-[current=page]:outline-dashed vpdf:aria-[current=page]:outline-primary vpdf:aria-[current=page]:outline-offset-1;
+}
+
+.vpdf-thumb-canvas-wrap {
+  @apply vpdf:relative vpdf:flex vpdf:w-full vpdf:items-center vpdf:justify-center vpdf:overflow-hidden vpdf:rounded-sm vpdf:bg-elevated;
+  min-height: 4.5rem;
+}
+
+.vpdf-thumb-canvas {
+  @apply vpdf:block vpdf:max-w-full vpdf:h-auto;
+}
+
+.vpdf-thumb-xfa {
+  @apply vpdf:relative vpdf:block vpdf:max-w-full vpdf:overflow-hidden vpdf:pointer-events-none vpdf:bg-white;
+}
+
+.vpdf-thumb-skeleton {
+  @apply vpdf:absolute vpdf:inset-0 vpdf:bg-accented;
+  animation: vpdf-thumb-pulse 1.2s ease-in-out infinite;
+}
+
+.vpdf-thumb-error {
+  @apply vpdf:absolute vpdf:inset-0 vpdf:flex vpdf:items-center vpdf:justify-center vpdf:p-1 vpdf:text-center vpdf:text-xs;
+  color: var(--vpdf-text-muted);
+}
+
+.vpdf-thumb-label {
+  @apply vpdf:block vpdf:min-h-5 vpdf:pt-1.5 vpdf:text-xs vpdf:text-center;
+  color: var(--vpdf-text-muted);
+}
+
+@keyframes vpdf-thumb-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.vpdf-outline-list {
+  @apply vpdf:m-0 vpdf:ps-2 vpdf:pe-0 vpdf:py-0 vpdf:list-none;
+}
+
+.vpdf-outline-list .vpdf-outline-list {
+  margin-inline-start: calc(var(--spacing-vpdf-control) / 2);
+  padding-inline-start: 1rem;
+}
+
+.vpdf-outline-node {
+  border-inline-start: 1px solid var(--vpdf-border);
+  @apply vpdf:m-0;
+}
+
+.vpdf-outline-row {
+  @apply vpdf:flex vpdf:min-w-0 vpdf:items-center;
+}
+
+.vpdf-outline-toggle {
+  @apply vpdf:inline-flex vpdf:shrink-0 vpdf:items-center vpdf:justify-center vpdf:p-1.5;
+  @apply vpdf:border-0 vpdf:rounded-sm vpdf:bg-transparent vpdf:text-muted vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-muted;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+.vpdf-outline-toggle-spacer {
+  @apply vpdf:inline-block vpdf:shrink-0 vpdf:min-w-(--spacing-vpdf-control) vpdf:min-h-(--spacing-vpdf-control);
+}
+
+.vpdf-outline-item {
+  @apply vpdf:flex vpdf:flex-1 vpdf:min-w-0 vpdf:min-h-(--spacing-vpdf-control) vpdf:items-center vpdf:px-2 vpdf:py-1.5;
+  @apply vpdf:border-0 vpdf:rounded-sm vpdf:bg-transparent vpdf:text-default vpdf:text-start vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-muted vpdf:hover:underline;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+.vpdf-attachment {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-10 vpdf:items-center vpdf:justify-between vpdf:gap-2 vpdf:px-2 vpdf:py-1.5;
+  @apply vpdf:border-0 vpdf:rounded-sm vpdf:bg-transparent vpdf:text-default vpdf:text-start vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-muted;
+}
+
+.vpdf-attachment-name {
+  @apply vpdf:flex vpdf:min-w-0 vpdf:flex-1 vpdf:items-center vpdf:gap-2;
+}
+
+.vpdf-attachment-name > span {
+  @apply vpdf:min-w-0 vpdf:truncate;
+}
+
+.vpdf-main {
+  @apply vpdf:relative vpdf:flex vpdf:flex-1 vpdf:flex-col vpdf:min-w-0 vpdf:bg-muted;
+}
+
+.vpdf-viewer-host {
+  @apply vpdf:relative vpdf:flex-1 vpdf:min-h-0;
+}
+
+.vpdf-viewer-scroll {
+  @apply vpdf:absolute vpdf:inset-0 vpdf:overflow-auto;
+  touch-action: pan-x pan-y;
+}
+
+.vpdf-viewer-scroll.vpdf-smooth-jump {
+  @apply vpdf:scroll-smooth vpdf:motion-reduce:scroll-auto;
+}
+
+.vpdf-viewer-scroll.vpdf-single-page {
+  scroll-behavior: auto;
+}
+
+.vpdf-viewer-pages {
+  /* Grow with a zoomed page, but keep width:auto so Fill width (wrapped) can wrap. */
+  @apply vpdf:box-border vpdf:min-w-min vpdf:py-4 vpdf:px-4;
+}
+
+.vpdf-root.vpdf-has-page-gap .pdfViewer {
+  --page-margin: 0 auto var(--vpdf-page-gap);
+  --spreadHorizontalWrapped-margin-LR: 0;
+}
+
+.vpdf-root.vpdf-has-page-gap
+  .pdfViewer:is(.scrollHorizontal, .scrollWrapped)
+  .page,
+.vpdf-root.vpdf-has-page-gap .spread .page {
+  margin-inline: 0 var(--vpdf-page-gap);
+}
+
+.vpdf-root.vpdf-has-page-radius .pdfViewer .page {
+  --page-border: 0px solid transparent;
+  border: 1px solid var(--vpdf-border);
+  box-shadow: 3px 4px 8px rgb(15 23 42 / 0.08);
+  border-radius: var(--vpdf-page-radius);
+  /* Match pdf.js: overflow:visible. Hidden clips editor chrome and makes
+     scrollIntoView scroll the page instead of transferring to a neighbor. */
+  overflow: visible;
+  background-clip: border-box;
+}
+
+.vpdf-root.vpdf-has-page-radius
+  .pdfViewer
+  .page
+  :is(.textLayer, .annotationLayer) {
+  border-radius: inherit;
+  overflow: visible;
+  clip-path: inset(0 round var(--vpdf-page-radius));
+}
+
+.vpdf-root.vpdf-has-page-radius .pdfViewer .page .canvasWrapper {
+  border-radius: inherit;
+  overflow: visible;
+}
+
+.vpdf-root.vpdf-has-page-radius .pdfViewer .page .canvasWrapper canvas {
+  /* Round the page bitmap only. DrawLayer SVGs are siblings in the
+     wrapper and must stay unclipped so ink can paint onto a neighbor. */
+  border-radius: inherit;
+}
+
+.vpdf-root.vpdf-has-page-radius .pdfViewer .page .annotationEditorLayer {
+  border-radius: inherit;
+  overflow: visible;
+}
+
+.vpdf-virtual-track {
+  position: relative;
+  width: 100%;
+}
+
+.vpdf-viewer-scroll.vpdf-single-page .vpdf-viewer-pages {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-width: min-content;
+  padding-block: 0;
+}
+
+.vpdf-root .textLayer {
+  --highlight-bg-color: var(--vpdf-search-highlight-color);
+  --highlight-selected-bg-color: var(--vpdf-search-highlight-selected-color);
+}
+
+.vpdf-root .textLayer .highlight {
+  --highlight-bg-color: var(--vpdf-search-highlight-color);
+  --highlight-selected-bg-color: var(--vpdf-search-highlight-selected-color);
+}
+
+.vpdf-root .textLayer ::selection,
+.vpdf-root .textLayer ::-moz-selection {
+  background: rgba(0 0 255 / 0.25);
+  background: var(--vpdf-text-selection-color);
+  color: transparent;
+}
+
+.vpdf-root .textLayer.selectionRendering ::selection,
+.vpdf-root .textLayer.selectionRendering ::-moz-selection,
+.vpdf-root .textLayer br::selection,
+.vpdf-root .textLayer br::-moz-selection {
+  background: transparent;
+  color: transparent;
+}
+
+.vpdf-no-text-layer .textLayer,
+.vpdf-no-text-layer .textLayer * {
+  pointer-events: none !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: default !important;
+}
+
+.vpdf-no-text-layer .vpdf-viewer-scroll,
+.vpdf-no-text-layer .vpdf-viewer-pages {
+  user-select: none;
+}
+
+.vpdf-status {
+  @apply vpdf:absolute vpdf:inset-0 vpdf:z-2 vpdf:grid vpdf:place-content-center vpdf:gap-2 vpdf:p-6 vpdf:text-center;
+  @apply vpdf:bg-default/88;
+}
+
+.vpdf-status-error {
+  @apply vpdf:text-error;
+}
+
+.vpdf-spinner {
+  @apply vpdf:size-8 vpdf:mx-auto vpdf:border-2 vpdf:border-default vpdf:border-t-primary vpdf:rounded-full vpdf:animate-spin;
+}
+
+.vpdf-dialog-backdrop {
+  @apply vpdf:absolute vpdf:inset-0 vpdf:z-40 vpdf:flex vpdf:items-center vpdf:justify-center;
+  @apply vpdf:bg-neutral-900/45;
+}
+
+.vpdf-dialog {
+  @apply vpdf:flex vpdf:flex-col vpdf:min-h-0 vpdf:w-auto vpdf:max-w-full vpdf:p-0 vpdf:border-0 vpdf:max-h-[min(32rem,calc(100%-2rem))] vpdf:overflow-hidden vpdf:bg-transparent vpdf:shadow-none;
+}
+
+.vpdf-dialog-desc {
+  @apply vpdf:m-0 vpdf:mb-4 vpdf:text-muted;
+}
+
+.vpdf-dialog-actions {
+  @apply vpdf:flex vpdf:justify-end vpdf:gap-2;
+}
+
+.vpdf-dialog-properties {
+  @apply vpdf:max-h-full vpdf:min-h-0 vpdf:min-w-[min(28rem,calc(100cqi-2rem))];
+}
+
+.vpdf-dialog-properties .vpdf-card-title {
+  @apply vpdf:text-base;
+}
+
+.vpdf-dialog-properties .vpdf-card-header,
+.vpdf-dialog-properties .vpdf-card-footer,
+.vpdf-dialog-properties .vpdf-card-body {
+  @apply vpdf:px-2.5 vpdf:py-1.5;
+}
+
+.vpdf-dialog-properties .vpdf-card-body {
+  @apply vpdf:min-h-0;
+}
+
+.vpdf-dialog-properties .vpdf-dialog-desc {
+  @apply vpdf:mb-2 vpdf:text-sm;
+}
+
+.vpdf-dialog-meta {
+  @apply vpdf:grid vpdf:m-0;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+}
+
+.vpdf-dialog-meta-row {
+  @apply vpdf:grid vpdf:gap-0.5 vpdf:px-1 vpdf:py-1.5;
+  @apply vpdf:border-b vpdf:border-muted;
+}
+
+.vpdf-dialog-meta dt {
+  @apply vpdf:text-xs vpdf:font-medium;
+  color: var(--vpdf-text-muted);
+}
+
+.vpdf-dialog-meta dd {
+  @apply vpdf:m-0 vpdf:min-w-0 vpdf:wrap-break-word vpdf:text-sm vpdf:text-highlighted;
+}
+
+.vpdf-plugin-control {
+  @apply vpdf:border-b vpdf:border-default;
+}
+
+.vpdf-overflow {
+  @apply vpdf:relative;
+}
+
+.vpdf-overflow-item {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-(--spacing-vpdf-control) vpdf:items-center vpdf:gap-1.5 vpdf:px-2.5;
+  @apply vpdf:border-0 vpdf:rounded-sm vpdf:bg-transparent vpdf:text-start vpdf:text-default vpdf:font-[inherit] vpdf:cursor-pointer;
+  @apply vpdf:hover:not-disabled:bg-muted;
+  @apply vpdf:disabled:opacity-45 vpdf:disabled:cursor-not-allowed;
+}
+
+.vpdf-overflow-control {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-(--spacing-vpdf-control) vpdf:flex-col vpdf:items-stretch vpdf:px-1;
+}
+
+.vpdf-toolbar-compact-only {
+  @apply vpdf:flex vpdf:flex-col;
+}
+
+.vpdf-overflow .vpdf-dropdown-panel {
+  @apply vpdf:min-w-[min(18rem,calc(100cqi-1rem))];
+}
+
+.vpdf-overflow .vpdf-toolbar-cluster {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-(--spacing-vpdf-control) vpdf:items-center vpdf:gap-1 vpdf:px-1.5;
+}
+
+.vpdf-overflow .vpdf-zoom-select,
+.vpdf-overflow .vpdf-layout-select {
+  @apply vpdf:min-w-0 vpdf:flex-1;
+}
+
+.vpdf-overflow .vpdf-zoom-select .vpdf-field-control,
+.vpdf-overflow .vpdf-layout-select .vpdf-field-control {
+  @apply vpdf:w-full;
+}
+
+.vpdf-overflow .vpdf-annotation-params {
+  @apply vpdf:static vpdf:mt-1 vpdf:min-w-0 vpdf:w-full vpdf:shadow-none;
+}
+
+.vpdf-annotation-tool {
+  @apply vpdf:relative;
+}
+
+.vpdf-annotation-tool-label {
+  @apply vpdf:hidden;
+}
+
+.vpdf-overflow .vpdf-annotation-tool {
+  @apply vpdf:w-full;
+}
+
+.vpdf-overflow .vpdf-annotation-tool > .vpdf-btn {
+  @apply vpdf:w-full vpdf:justify-start vpdf:min-h-(--spacing-vpdf-control) vpdf:px-2.5;
+}
+
+.vpdf-overflow .vpdf-annotation-tool-label {
+  @apply vpdf:inline;
+}
+
+.vpdf-annotation-params {
+  @apply vpdf:absolute vpdf:inset-e-0 vpdf:z-30 vpdf:mt-1 vpdf:flex vpdf:min-w-52 vpdf:flex-col vpdf:gap-2 vpdf:p-2;
+  @apply vpdf:rounded-sm vpdf:border vpdf:border-default vpdf:bg-elevated;
+  @apply vpdf:shadow-[0_12px_28px_rgb(15_23_42/0.18)];
+}
+
+.vpdf-highlight-swatches {
+  --spacing-vpdf-highlight-swatch: 1.75rem;
+  @apply vpdf:flex vpdf:flex-wrap vpdf:min-w-max vpdf:items-center vpdf:gap-1;
+}
+
+.vpdf-highlight-swatch {
+  @apply vpdf:size-(--spacing-vpdf-highlight-swatch) vpdf:shrink-0 vpdf:cursor-pointer vpdf:rounded-full vpdf:border vpdf:border-default vpdf:p-0;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  background: var(--vpdf-swatch, transparent);
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+.vpdf-highlight-swatch[aria-selected="true"] {
+  outline: 2px solid var(--vpdf-primary);
+  outline-offset: 2px;
+}
+
+.vpdf-page-overlay-host {
+  @apply vpdf:pointer-events-none vpdf:absolute vpdf:inset-0 vpdf:z-1;
+}
+
+.vpdf-page-overlay-host > * {
+  pointer-events: auto;
+}
+
+.vpdf-page-overlays {
+  @apply vpdf:pointer-events-none vpdf:absolute vpdf:inset-0 vpdf:z-3;
+}
+
+.vpdf-page-overlays > * {
+  pointer-events: auto;
+}
+
+/* Native PDF.js editor chrome: hide default buttons, keep resizers, theme tokens */
+.vpdf-root {
+  --outline-color: var(--vpdf-primary);
+  --resizer-bg-color: var(--vpdf-primary);
+  --resizer-size: 0.75rem;
+}
+
+.vpdf-root
+  .annotationEditorLayer
+  :is(
+    .freeTextEditor,
+    .inkEditor,
+    .stampEditor,
+    .highlightEditor,
+    .signatureEditor
+  )
+  > .editToolbar {
+  height: auto;
+  min-height: var(--spacing-vpdf-control);
+  width: max-content;
+  min-width: max-content;
+  max-width: min(100%, 22rem);
+  padding: 0.25rem;
+  box-sizing: border-box;
+  --editor-toolbar-height: auto;
+  --editor-toolbar-bg-color: var(--vpdf-bg-elevated);
+  --editor-toolbar-fg-color: var(--vpdf-text);
+  --editor-toolbar-border-color: var(--vpdf-border);
+  --editor-toolbar-shadow: 0 12px 28px rgb(15 23 42 / 0.18);
+}
+
+.vpdf-root
+  .annotationEditorLayer
+  :is(
+    .freeTextEditor,
+    .inkEditor,
+    .stampEditor,
+    .highlightEditor,
+    .signatureEditor
+  )
+  > .editToolbar
+  > .buttons {
+  display: none;
+}
+
+.vpdf-annotation-editor {
+  @apply vpdf:flex vpdf:flex-wrap vpdf:items-center vpdf:gap-1;
+  @apply vpdf:text-default;
+}
+
+.vpdf-annotation-editor .vpdf-btn {
+  @apply vpdf:px-1.5 vpdf:py-1;
+}
+
+.vpdf-annotation-editor .vpdf-icon,
+.vpdf-annotation-editor .vpdf-icon svg {
+  @apply vpdf:block vpdf:size-4;
+}
+
+.vpdf-annotation-editor-control {
+  @apply vpdf:inline-flex vpdf:items-center vpdf:gap-1.5 vpdf:px-1;
+  @apply vpdf:text-sm vpdf:text-muted;
+}
+
+.vpdf-annotation-editor input[type="color"],
+.vpdf-annotation-params input[type="color"] {
+  @apply vpdf:size-(--spacing-vpdf-control) vpdf:cursor-pointer vpdf:rounded-sm vpdf:border vpdf:border-default vpdf:bg-transparent vpdf:p-0.5;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+.vpdf-annotation-editor input[type="range"],
+.vpdf-annotation-params input[type="range"] {
+  @apply vpdf:min-w-24 vpdf:flex-1 vpdf:cursor-pointer;
+  @apply vpdf:focus-visible:outline-2 vpdf:focus-visible:outline-offset-2;
+  accent-color: var(--vpdf-primary);
+  outline-color: color-mix(in oklab, var(--vpdf-primary) 25%, transparent);
+}
+
+@media screen and (forced-colors: active) {
+  .vpdf-root {
+    --outline-color: CanvasText;
+    --resizer-bg-color: ButtonText;
+  }
+
+  .vpdf-root .textLayer .highlight {
+    --highlight-bg-color: transparent;
+    --highlight-selected-bg-color: transparent;
+  }
+
+  .vpdf-root
+    .annotationEditorLayer
+    :is(
+      .freeTextEditor,
+      .inkEditor,
+      .stampEditor,
+      .highlightEditor,
+      .signatureEditor
+    )
+    > .editToolbar {
+    --editor-toolbar-bg-color: ButtonFace;
+    --editor-toolbar-fg-color: ButtonText;
+    --editor-toolbar-border-color: ButtonText;
+    --editor-toolbar-shadow: none;
+  }
+
+  .vpdf-annotation-params {
+    --vpdf-bg-elevated: ButtonFace;
+    --vpdf-text: ButtonText;
+    --vpdf-border: ButtonText;
+  }
+
+  .vpdf-highlight-swatch {
+    forced-color-adjust: none;
+  }
+}
