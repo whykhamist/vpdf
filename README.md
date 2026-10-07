@@ -19,6 +19,8 @@ Host-app install and API docs: [`packages/vpdf`](packages/vpdf/README.md). Opt-i
 
 Full site: [`packages/docs`](packages/docs/README.md). Local: `npm run docs:dev` → http://localhost:5174/vpdf/. GitHub Pages publishes from `main` to `/vpdf/`.
 
+Release notes: [HISTORY.md](HISTORY.md).
+
 ## Quick start
 
 ```bash
