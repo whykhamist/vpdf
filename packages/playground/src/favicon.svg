@@ -1,0 +1,127 @@
+<svg
+  width="512"
+  height="512"
+  viewBox="0 0 512 512"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <defs>
+    <linearGradient id="bg" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#41B883"/>
+      <stop offset="1" stop-color="#35495E"/>
+    </linearGradient>
+
+    <linearGradient id="page" x1="128" y1="80" x2="384" y2="432" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#EDF5F2"/>
+    </linearGradient>
+
+    <filter id="shadow" x="72" y="56" width="368" height="408" filterUnits="userSpaceOnUse">
+      <feDropShadow
+        dx="0"
+        dy="14"
+        stdDeviation="18"
+        flood-color="#17242D"
+        flood-opacity="0.28"
+      />
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <!-- Document -->
+  <g filter="url(#shadow)">
+    <path
+      d="
+        M144 72
+        H306
+        L392 158
+        V408
+        C392 426 378 440 360 440
+        H144
+        C126 440 112 426 112 408
+        V104
+        C112 86 126 72 144 72Z
+      "
+      fill="url(#page)"
+    />
+
+    <!-- Page fold -->
+    <path
+      d="M306 72V136C306 148 316 158 328 158H392L306 72Z"
+      fill="#D9EAE5"
+    />
+  </g>
+
+  <!-- V / document mark -->
+  <path
+    d="M160 188L222 320L256 253L290 320L352 188"
+    stroke="#41B883"
+    stroke-width="28"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Document lines -->
+  <path
+    d="M160 356H215"
+    stroke="#35495E"
+    stroke-width="9"
+    stroke-linecap="round"
+    opacity="0.45"
+  />
+
+  <path
+    d="M297 356H352"
+    stroke="#35495E"
+    stroke-width="9"
+    stroke-linecap="round"
+    opacity="0.45"
+  />
+
+  <!-- Plugin nodes -->
+  <g>
+    <circle cx="106" cy="206" r="18" fill="#FFFFFF"/>
+    <circle cx="406" cy="206" r="18" fill="#FFFFFF"/>
+
+    <circle cx="106" cy="206" r="8" fill="#41B883"/>
+    <circle cx="406" cy="206" r="8" fill="#41B883"/>
+
+    <path
+      d="M124 206H142"
+      stroke="#FFFFFF"
+      stroke-width="6"
+      stroke-linecap="round"
+      opacity="0.8"
+    />
+
+    <path
+      d="M370 206H388"
+      stroke="#FFFFFF"
+      stroke-width="6"
+      stroke-linecap="round"
+      opacity="0.8"
+    />
+  </g>
+
+  <!-- Plugin connector nodes -->
+  <g opacity="0.9">
+    <circle cx="256" cy="54" r="12" fill="#FFFFFF"/>
+    <circle cx="256" cy="458" r="12" fill="#FFFFFF"/>
+
+    <path
+      d="M256 66V82"
+      stroke="#FFFFFF"
+      stroke-width="5"
+      stroke-linecap="round"
+    />
+
+    <path
+      d="M256 430V446"
+      stroke="#FFFFFF"
+      stroke-width="5"
+      stroke-linecap="round"
+    />
+  </g>
+</svg>

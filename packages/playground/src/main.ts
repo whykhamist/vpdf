@@ -1,13 +1,8 @@
-import { createApp } from "vue";
-import App from "./app.vue";
-import router from "./router";
-import "./assets/style.css";
+import { createApp } from 'vue'
+import VPdf from '@whykhamist/vpdf'
+import App from './App.vue'
+import './style.css'
 
-const init = async () => {
-  const app = createApp(App);
-  app.use(router);
-
-  app.mount("#app");
-};
-
-init();
+const app = createApp(App)
+app.use(VPdf)
+app.mount('#app')

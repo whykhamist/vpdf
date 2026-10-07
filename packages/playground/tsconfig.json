@@ -1,11 +1,25 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.node.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@whykhamist/vpdf": ["../vpdf/src/index.ts"],
+      "@whykhamist/vpdf/*": ["../vpdf/src/*"],
+      "@whykhamist/vpdf-plugin-page-layout": ["../plugin-page-layout/src/index.ts"],
+      "@whykhamist/vpdf-plugin-print": ["../plugin-print/src/index.ts"],
+      "@whykhamist/vpdf-plugin-open": ["../plugin-open/src/index.ts"],
+      "@whykhamist/vpdf-plugin-iconify": ["../plugin-iconify/src/index.ts"],
+      "@whykhamist/vpdf-plugin-xfa-thumbnail-raster": ["../plugin-xfa-thumbnail-raster/src/index.ts"]
     }
-  ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.vue",
+    "vite.config.ts",
+    "playwright.config.ts"
+  ],
+  "exclude": ["dist", "node_modules"]
 }

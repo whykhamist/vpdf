@@ -1,60 +1,45 @@
-import { fileURLToPath, URL } from "node:url";
-import { defineConfig, mergeConfig } from "vite";
-import vueJsx from "@vitejs/plugin-vue-jsx";
-// import vueDevTools from "vite-plugin-vue-devtools";
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-import viteCommon from "../../vite.config";
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'node:path'
 
-// https://vite.dev/config/
-export default mergeConfig(
-  viteCommon,
-  defineConfig({
-    base: "/vpdf/",
-    plugins: [
-      vueJsx(),
-      // vueDevTools(),
-      AutoImport({
-        imports: ["vue", "vue-router"],
-        include: [
-          /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
-          /\.vue$/,
-          /\.vue\?vue/, // .vue
-          /\.md$/, // .md
-        ],
-        vueTemplate: true,
-        dts: true,
-        dirs: ["./src/**/*"],
-      }),
-      Components({
-        dts: true,
-        include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-        resolvers: [
-          (name) => {
-            // Where `componentName` is always CapitalCase
-            if (["VPdf", "VPdfPage", "VPdfViewer"].includes(name)) {
-              return { name, from: "@whykhamist/vpdf" };
-            }
-          },
-        ],
-      }),
+export default defineConfig({
+  plugins: [vue(), tailwindcss()],
+  resolve: {
+    alias: {
+      '@': resolve(import.meta.dirname, 'src'),
+      '@whykhamist/vpdf': resolve(import.meta.dirname, '../vpdf/src/index.ts'),
+      '@whykhamist/vpdf-plugin-page-layout': resolve(
+        import.meta.dirname,
+        '../plugin-page-layout/src/index.ts',
+      ),
+      '@whykhamist/vpdf-plugin-print': resolve(import.meta.dirname, '../plugin-print/src/index.ts'),
+      '@whykhamist/vpdf-plugin-open': resolve(import.meta.dirname, '../plugin-open/src/index.ts'),
+      '@whykhamist/vpdf-plugin-iconify': resolve(import.meta.dirname, '../plugin-iconify/src/index.ts'),
+      '@whykhamist/vpdf-plugin-xfa-thumbnail-raster': resolve(
+        import.meta.dirname,
+        '../plugin-xfa-thumbnail-raster/src/index.ts',
+      ),
+    },
+  },
+  server: {
+    port: 5173,
+    fs: {
+      allow: ['../..'],
+    },
+  },
+  optimizeDeps: {
+    exclude: [
+      '@whykhamist/vpdf',
+      '@whykhamist/vpdf-plugin-page-layout',
+      '@whykhamist/vpdf-plugin-print',
+      '@whykhamist/vpdf-plugin-open',
+      '@whykhamist/vpdf-plugin-iconify',
+      '@whykhamist/vpdf-plugin-xfa-thumbnail-raster',
     ],
-    server: {
-      open: true,
-      host: true,
-      port: 8090,
-    },
-    resolve: {
-      alias: {
-        "@": fileURLToPath(new URL("./src", import.meta.url)),
-        "@files": fileURLToPath(new URL("../../files", import.meta.url)),
-        "@whykhamist/vpdf": fileURLToPath(
-          new URL("../vpdf/src", import.meta.url),
-        ),
-      },
-    },
-    build: {
-      outDir: "../../docs",
-    },
-  }),
-);
+    include: ['pdfjs-dist/legacy/build/pdf.mjs', 'pdfjs-dist/legacy/web/pdf_viewer.mjs'],
+  },
+  worker: {
+    format: 'es',
+  },
+})

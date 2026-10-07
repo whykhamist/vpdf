@@ -1,0 +1,26 @@
+{
+  "name": "@vpdf/docs",
+  "private": true,
+  "version": "3.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev --open",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "dependencies": {
+    "@whykhamist/vpdf": "*",
+    "@whykhamist/vpdf-plugin-iconify": "*",
+    "@whykhamist/vpdf-plugin-open": "*",
+    "@whykhamist/vpdf-plugin-page-layout": "*",
+    "@whykhamist/vpdf-plugin-print": "*",
+    "@whykhamist/vpdf-plugin-xfa-thumbnail-raster": "*",
+    "vue": "^3.5.17"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "mermaid": "^11.17.2",
+    "tailwindcss": "^4.1.11",
+    "vitepress": "2.0.0-alpha.19"
+  }
+}

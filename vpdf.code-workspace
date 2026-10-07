@@ -1,0 +1,72 @@
+{
+  "folders": [
+    {
+      "name": "vpdf",
+      "path": ".",
+    },
+  ],
+
+  "settings": {
+    "task.allowAutomaticTasks": "off",
+    "tailwindCSS.experimental.classRegex": [
+      ["ui:\\s*{([^)]*)\\s*}", "[\"'`]([^\"'`]*).*?[\"'`]"],
+      ["ui:\\s*{([^)]*)\\s*}", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
+      ["/\\*\\s?ui\\s?\\*/\\s*{([^;]*)}", ":\\s*[\"'`]([^\"'`]*).*?[\"'`]"],
+    ],
+    "tailwindCSS.classAttributes": [
+      "class",
+      "className",
+      "ngClass",
+      "ui",
+      "active-class",
+      "inactive-class",
+
+      "enter-from-class",
+      "leave-to-class",
+      "enter-active-clas",
+      "leave-active-class",
+      "enter-to-class",
+      "leave-from-class",
+    ],
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "DEV",
+        "type": "shell",
+        "command": "npm run dev",
+        "windows": {
+          "command": "npm run dev",
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new",
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+        },
+        "problemMatcher": [],
+      },
+
+      {
+        "label": "Docs",
+        "type": "shell",
+        "command": "npm run docs:dev",
+        "windows": {
+          "command": "npm run docs:dev",
+        },
+        "group": "none",
+        "presentation": {
+          "reveal": "always",
+          "panel": "new",
+        },
+        "runOptions": {
+          "runOn": "folderOpen",
+        },
+        "problemMatcher": [],
+      },
+    ],
+  },
+}
