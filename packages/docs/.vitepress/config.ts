@@ -40,10 +40,51 @@ const workspacePkgs = [
   "@whykhamist/vpdf-plugin-xfa-thumbnail-raster",
 ] as const;
 
+const docsSiteDescription =
+  "Vue 3 PDF viewer built on PDF.js, with plugins, theming, and opt-in packages.";
+const docsPublicOrigin = "https://whykhamist.github.io/vpdf";
+
+function collapseUrlSlashes(url: string): string {
+  return url.replace(/\\/g, "/").replace(/([^:]\/)\/+/g, "$1");
+}
+
+function normalizeLlmsPage<T extends { path: string; url: string; llmUrl: string; content: string }>(
+  page: T,
+): T {
+  const path = collapseUrlSlashes(page.path);
+  page.path = path.startsWith("/") ? path : `/${path}`;
+
+  page.url = collapseUrlSlashes(page.url);
+  page.llmUrl = collapseUrlSlashes(page.llmUrl);
+
+  if (page.path.endsWith(".md")) {
+    page.llmUrl = `${docsPublicOrigin}${page.path}`;
+  }
+
+  page.content = page.content.replace(
+    /^(URL|LLMS_URL): (.*)$/gm,
+    (line, key: string) => {
+      if (key === "URL") return `URL: ${JSON.stringify(page.url)}`;
+      if (key === "LLMS_URL") return `LLMS_URL: ${JSON.stringify(page.llmUrl)}`;
+      return line;
+    },
+  );
+  return page;
+}
+
+function llmsMarkdownIndex(
+  pages: { path: string; title: string; llmUrl: string }[],
+): string {
+  return pages
+    .filter((p) => p.path.replace(/\\/g, "/").endsWith(".md"))
+    .sort((a, b) => a.llmUrl.localeCompare(b.llmUrl))
+    .map((p) => `- [${p.title}](${p.llmUrl})`)
+    .join("\n");
+}
+
 export default defineConfig({
   title: "vpdf",
-  description:
-    "Vue 3 PDF viewer built on PDF.js, with plugins, theming, and opt-in packages.",
+  description: docsSiteDescription,
   lang: "en-US",
   base: "/vpdf/",
   cleanUrls: true,
@@ -61,6 +102,14 @@ export default defineConfig({
         href: "/vpdf/favicon.svg",
         sizes: "any",
         type: "image/svg+xml",
+      },
+    ],
+    [
+      "link",
+      {
+        rel: "describedby",
+        href: `${docsPublicOrigin}/llms.txt`,
+        type: "text/markdown",
       },
     ],
   ],
@@ -86,7 +135,37 @@ export default defineConfig({
       tailwindcss(),
       copyPdfjsPublicAssets(),
       llmstxtPlugin({
-        hostname: "https://whykhamist.github.io/vpdf",
+        hostname: docsPublicOrigin,
+        ignore: ["README.md", "index.md"],
+        llmsFile: {
+          indexTOC: "only-llms",
+        },
+        transform: ({ page, pages }) => {
+          normalizeLlmsPage(page);
+
+          if (page.path.replace(/\\/g, "/") === "/llms.txt") {
+            for (const p of pages) {
+              if (p !== page) normalizeLlmsPage(p);
+            }
+
+            page.content = `# vpdf
+
+> ${docsSiteDescription}
+
+Use the links below to fetch markdown versions of documentation pages.
+
+## Docs
+
+${llmsMarkdownIndex(pages)}
+
+## Optional
+
+- [Full documentation dump](${docsPublicOrigin}/llms-full.txt): Every guide and plugin page in one file
+`;
+          }
+
+          return page;
+        },
       }),
     ],
     resolve: {
@@ -179,6 +258,7 @@ export default defineConfig({
             { text: "Quick start", link: "/guide/quick-start" },
             { text: "Assets and workers", link: "/guide/assets" },
             { text: "SSR and Nuxt", link: "/guide/ssr" },
+            { text: "llms.txt for agents", link: "/guide/llms" },
           ],
         },
         {
