@@ -15,6 +15,7 @@
     "@whykhamist/vpdf-plugin-page-layout": "*",
     "@whykhamist/vpdf-plugin-print": "*",
     "@whykhamist/vpdf-plugin-xfa-thumbnail-raster": "*",
+    "vitepress-plugin-llmstxt": "^0.5.2",
     "vue": "^3.5.17"
   },
   "devDependencies": {
