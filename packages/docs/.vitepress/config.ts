@@ -4,6 +4,7 @@ import { dirname, join, resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import type { Plugin } from "vite";
 import { defineConfig } from "vitepress";
+import llmstxtPlugin from "vitepress-plugin-llmstxt";
 
 const packagesRoot = resolve(import.meta.dirname, "../..");
 const repoRoot = resolve(packagesRoot, "..");
@@ -81,7 +82,13 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [tailwindcss(), copyPdfjsPublicAssets()],
+    plugins: [
+      tailwindcss(),
+      copyPdfjsPublicAssets(),
+      llmstxtPlugin({
+        hostname: "https://whykhamist.github.io/vpdf",
+      }),
+    ],
     resolve: {
       alias: {
         "@whykhamist/vpdf/style.css": resolve(
@@ -156,7 +163,10 @@ export default defineConfig({
           { text: "Print", link: "/plugins/print" },
           { text: "Page layout", link: "/plugins/page-layout" },
           { text: "Iconify", link: "/plugins/iconify" },
-          { text: "XFA thumbnail raster", link: "/plugins/xfa-thumbnail-raster" },
+          {
+            text: "XFA thumbnail raster",
+            link: "/plugins/xfa-thumbnail-raster",
+          },
         ],
       },
     ],
@@ -249,7 +259,10 @@ export default defineConfig({
             { text: "Print", link: "/plugins/print" },
             { text: "Page layout", link: "/plugins/page-layout" },
             { text: "Iconify", link: "/plugins/iconify" },
-            { text: "XFA thumbnail raster", link: "/plugins/xfa-thumbnail-raster" },
+            {
+              text: "XFA thumbnail raster",
+              link: "/plugins/xfa-thumbnail-raster",
+            },
           ],
         },
       ],
