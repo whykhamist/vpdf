@@ -1,0 +1,160 @@
+name: "🐛 Bug Report"
+description: Report a reproducible bug in vpdf
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve **@whykhamist/vpdf**!
+
+        Please search existing issues first. Avoid sharing private PDFs,
+        access tokens, or other sensitive information.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checklist
+      options:
+        - label: I have searched existing issues for duplicates.
+          required: true
+        - label: I have checked the documentation.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Bug description
+      description: Describe what went wrong.
+      placeholder: "The viewer fails to render pages when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Provide a minimal, reproducible example.
+      placeholder: |
+        1. Configure VPdfViewer with...
+        2. Load a PDF using...
+        3. Perform...
+        4. Observe the error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What should happen instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: What happens instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: PDF source type
+      description: How is the PDF supplied to vpdf?
+      options:
+        - URL
+        - File
+        - Blob
+        - ArrayBuffer
+        - Uint8Array
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: vpdf_version
+    attributes:
+      label: "@whykhamist/vpdf version"
+      placeholder: "e.g. 1.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: vue_version
+    attributes:
+      label: Vue version
+      placeholder: "e.g. 3.5.x"
+    validations:
+      required: false
+
+  - type: input
+    id: pdfjs_version
+    attributes:
+      label: pdfjs-dist version
+      placeholder: "e.g. 6.3.289"
+    validations:
+      required: false
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Browser, browser version, OS, and bundler.
+      placeholder: "e.g. Chrome 140, Windows 11, Vite"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - PDF rendering
+        - Loading and network requests
+        - Worker or asset configuration
+        - Toolbar or viewer UI
+        - Navigation, zoom, or page layout
+        - Search
+        - Annotations
+        - Plugins
+        - Printing or downloading
+        - Accessibility or keyboard shortcuts
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Minimal configuration
+      description: Include relevant viewer options, plugin registration, and asset URLs. Remove secrets.
+      render: typescript
+      placeholder: |
+        import { VPdfViewer } from "@whykhamist/vpdf";
+
+        // Relevant viewer configuration
+    validations:
+      required: false
+
+  - type: textarea
+    id: console
+    attributes:
+      label: Console errors and network failures
+      description: Include relevant errors, HTTP status codes, and response headers if applicable.
+      render: text
+      placeholder: Paste sanitized logs here.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Screenshots, a minimal reproduction link, or a sanitized sample PDF.
+      placeholder: Add any other relevant details.
+    validations:
+      required: false
