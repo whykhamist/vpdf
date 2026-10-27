@@ -1,8 +1,10 @@
-# Release notes
+# @whykhamist/vpdf
+
+Core viewer changelog. Plugin packages have their own pages.
 
 ## 3.0.0
 
-First stable release. It replaces `2.0.1-alpha`. The viewer is a PDF.js 6 shell with a plugin API, and the 2.x component props do not carry over.
+2026-10-07. First stable release. It replaces `2.0.1-alpha`. The viewer is a PDF.js 6 shell with a plugin API, and the 2.x component props do not carry over.
 
 ### Highlights
 
@@ -16,18 +18,7 @@ First stable release. It replaces `2.0.1-alpha`. The viewer is a PDF.js 6 shell 
 - Styles stay inside `.vpdf-root`. Override `--vpdf-*` tokens for a custom palette. Core ships one light palette.
 - ESM package with TypeScript types. Import `@whykhamist/vpdf/style.css` once.
 
-### Packages
-
-| Package | Version |
-| --- | --- |
-| `@whykhamist/vpdf` | 3.0.0 |
-| `@whykhamist/vpdf-plugin-open` | 3.0.0 |
-| `@whykhamist/vpdf-plugin-print` | 3.0.0 |
-| `@whykhamist/vpdf-plugin-page-layout` | 3.0.0 |
-| `@whykhamist/vpdf-plugin-iconify` | 3.0.0 |
-| `@whykhamist/vpdf-plugin-xfa-thumbnail-raster` | 3.0.0 |
-
-Open, print, page layout, Iconify, and XFA thumbnail raster are separate installs. Putting a package in `node_modules` does nothing until its factory is in `plugins.plugins`.
+Open, print, page layout, Iconify, and XFA thumbnail raster shipped in the same line as separate installs. See the [changelog index](/changelog/).
 
 ### Upgrade from 2.x
 
@@ -66,9 +57,9 @@ import "@whykhamist/vpdf/style.css";
 | Top-level props (`scale`, `textLayer`, `workerSrc`, `password`, `smoothJump`) | `options` on the viewer |
 | `scale={-1\|-2\|-3}` for fit page / width / height | `"page-fit"`, `"page-width"`, `"page-height"` |
 | `textLayer` default `false` | `features.textLayer` default `true` |
-| `view="horizontal"` on the viewer | `@whykhamist/vpdf-plugin-page-layout` |
+| `view="horizontal"` on the viewer | [`@whykhamist/vpdf-plugin-page-layout`](/changelog/page-layout) |
 | Shade tokens (`--vpdf-color-foreground-500`, `.vpdf-dark`) | Semantic tokens (`--vpdf-text`, `--vpdf-bg`, …) on `.vpdf-root` |
-| Icon font CSS variables | `@whykhamist/vpdf-plugin-iconify`, or your own icon renderer |
+| Icon font CSS variables | [`@whykhamist/vpdf-plugin-iconify`](/changelog/iconify), or your own icon renderer |
 | `pdfjs-dist` peer `^5.2.133` | Direct dependency pinned to `6.3.289` |
 | UMD `require` and `./src/*` export | ESM only (`dist/vpdf.js`) |
 
@@ -85,3 +76,23 @@ Vue stays at `^3.5`. Initialize the viewer on the client (`onMounted` or `<Clien
 ### Still out of core
 
 Annotation JSON import/export, comment authoring beyond the PDF.js editors, digital signatures, and XFA editing.
+
+## 2.0.1-alpha
+
+2025-09-02. Updated the `style.css` export mapping in `package.json`.
+
+## 2.0.0-alpha
+
+2025-09-02.
+
+- Tailwind 4 with a class prefix, shade tokens (50–950) for background, foreground, primary, secondary, accent, positive, and negative, CSS variables for colors and icons.
+- Layout change that offsets some menu items to the bottom.
+- `scale` on `VPdf` for initial load, including negative fit modes: `-1` fit page, `-2` fit width, `-3` fit height, plus additional hidden scale factors.
+
+## 1.0.2-alpha
+
+2025-03-11. Published with no release notes.
+
+## 1.0.1-alpha
+
+2025-03-11. Published with no release notes.

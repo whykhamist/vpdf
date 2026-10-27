@@ -233,6 +233,7 @@ ${llmsMarkdownIndex(pages)}
       { text: "Guide", link: "/guide/installation" },
       { text: "Plugins", link: "/plugins/overview" },
       { text: "Examples", link: "/examples/load-files" },
+      { text: "Changelog", link: "/changelog/" },
       { text: "Types", link: "/guide/types" },
       {
         text: "Packages",
@@ -359,6 +360,23 @@ ${llmsMarkdownIndex(pages)}
               link: "/examples/custom-editor",
             },
             { text: "Custom themes", link: "/examples/custom-themes" },
+          ],
+        },
+      ],
+      "/changelog/": [
+        {
+          text: "Changelog",
+          items: [
+            { text: "Overview", link: "/changelog/" },
+            { text: "Core", link: "/changelog/vpdf" },
+            { text: "Open", link: "/changelog/open" },
+            { text: "Print", link: "/changelog/print" },
+            { text: "Page layout", link: "/changelog/page-layout" },
+            { text: "Iconify", link: "/changelog/iconify" },
+            {
+              text: "XFA thumbnail raster",
+              link: "/changelog/xfa-thumbnail-raster",
+            },
           ],
         },
       ],

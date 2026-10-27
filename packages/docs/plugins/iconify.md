@@ -1,6 +1,6 @@
 # Iconify plugin
 
-Package: `@whykhamist/vpdf-plugin-iconify` (`3.0.0`).
+Package: `@whykhamist/vpdf-plugin-iconify` (`3.0.0`). [Changelog](/changelog/iconify).
 
 Replaces viewer UI icons with Iconify SVGs. Lucide icons (toolbar slots) and vscode-icons file-type glyphs (attachments) are bundled locally.
 

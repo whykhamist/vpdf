@@ -1,6 +1,6 @@
 # XFA thumbnail raster plugin
 
-Package: `@whykhamist/vpdf-plugin-xfa-thumbnail-raster` (`3.0.0`).
+Package: `@whykhamist/vpdf-plugin-xfa-thumbnail-raster` (`3.0.0`). [Changelog](/changelog/xfa-thumbnail-raster).
 
 Rasterizes **XFA** sidebar thumbnails with `html2canvas`. Non-XFA pages still use PDF.js canvas rendering.
 

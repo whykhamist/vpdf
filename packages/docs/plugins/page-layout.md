@@ -1,6 +1,6 @@
 # Page layout plugin
 
-Package: `@whykhamist/vpdf-plugin-page-layout` (`3.0.0`).
+Package: `@whykhamist/vpdf-plugin-page-layout` (`3.0.0`). [Changelog](/changelog/page-layout).
 
 Adds a toolbar `<select>` that maps onto PDF.js `scrollMode` / `spreadMode`. **No** `toolbar.*` flag is required — the control shows whenever the plugin is registered and enabled.
 

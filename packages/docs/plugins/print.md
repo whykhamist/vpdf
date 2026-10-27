@@ -1,6 +1,6 @@
 # Print plugin
 
-Package: `@whykhamist/vpdf-plugin-print` (`3.0.0`).
+Package: `@whykhamist/vpdf-plugin-print` (`3.0.0`). [Changelog](/changelog/print).
 
 Peers: `@whykhamist/vpdf`, `vue@^3.5`, `pdfjs-dist@6.3.289`.
 
