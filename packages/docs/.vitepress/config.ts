@@ -48,9 +48,9 @@ function collapseUrlSlashes(url: string): string {
   return url.replace(/\\/g, "/").replace(/([^:]\/)\/+/g, "$1");
 }
 
-function normalizeLlmsPage<T extends { path: string; url: string; llmUrl: string; content: string }>(
-  page: T,
-): T {
+function normalizeLlmsPage<
+  T extends { path: string; url: string; llmUrl: string; content: string },
+>(page: T): T {
   const path = collapseUrlSlashes(page.path);
   page.path = path.startsWith("/") ? path : `/${path}`;
 
@@ -233,6 +233,7 @@ ${llmsMarkdownIndex(pages)}
       { text: "Guide", link: "/guide/installation" },
       { text: "Plugins", link: "/plugins/overview" },
       { text: "Examples", link: "/examples/load-files" },
+      { text: "Changelog", link: "/changelog/" },
       { text: "Types", link: "/guide/types" },
       {
         text: "Packages",
@@ -362,10 +363,29 @@ ${llmsMarkdownIndex(pages)}
           ],
         },
       ],
+      "/changelog/": [
+        {
+          text: "Changelog",
+          items: [{ text: "VPDF", link: "/changelog/" }],
+        },
+        {
+          text: "Plugins",
+          items: [
+            { text: "Open", link: "/changelog/open" },
+            { text: "Print", link: "/changelog/print" },
+            { text: "Page layout", link: "/changelog/page-layout" },
+            { text: "Iconify", link: "/changelog/iconify" },
+            {
+              text: "XFA thumbnail raster",
+              link: "/changelog/xfa-thumbnail-raster",
+            },
+          ],
+        },
+      ],
     },
-    // footer: {
-    //   message: "MIT Licensed. Built on PDF.js.",
-    //   copyright: "vpdf",
-    // },
+    footer: {
+      message: "MIT Licensed. Built on PDF.js.",
+      copyright: "vpdf",
+    },
   },
 });

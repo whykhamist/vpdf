@@ -1,6 +1,6 @@
 # Open plugin
 
-Package: `@whykhamist/vpdf-plugin-open` (`3.0.0`).
+Package: `@whykhamist/vpdf-plugin-open` (`3.0.0`). [Changelog](/changelog/open).
 
 Adds a toolbar control that loads a local PDF with `controller.load(file)`.
 
