@@ -6,13 +6,13 @@ Import from `@whykhamist/vpdf`:
 
 - `VPdfButton` — `variant`: `ghost` (default), `outline`, `solid`
 - `VPdfInput` — `v-model`, optional `invalid`
-- `VPdfSelect` — `v-model`, default slot for `<option>` / `<optgroup>`
+- `VPdfSelect` — `v-model`, default slot for `<option>` / `<optgroup>` (custom listbox; the slot still feeds a hidden native `<select>`)
 - `VPdfCheckbox` — `v-model` boolean, `label` or default slot
 - `VPdfDropdownMenu` — default slot `{ open, toggle, close }`, `#content`
 - `VPdfCard` — `title`, slots `header` / `title` / default / `footer`
 - `VPdfModal` — default slot, `dismissible` (default `true`), `busy`, `restoreFocus`
 
-Inputs and selects use a filled field with an underline that expands on focus (same treatment as the page number field).
+Inputs and the select trigger use a filled field with an underline that expands on focus (same treatment as the page number field).
 
 ## Replace a component
 

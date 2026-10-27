@@ -249,15 +249,46 @@
 }
 
 .vpdf-field-control input,
-.vpdf-field-control select {
+.vpdf-select-trigger {
   @apply vpdf:w-full vpdf:min-w-0 vpdf:bg-transparent vpdf:px-2.5 vpdf:leading-none vpdf:outline-none vpdf:text-default vpdf:font-[inherit];
 }
 
-.vpdf-field-control select {
-  @apply vpdf:cursor-pointer vpdf:py-0.75 vpdf:pe-5 vpdf:bg-no-repeat vpdf:tabular-nums vpdf:appearance-none;
+.vpdf-select-native {
+  @apply vpdf:absolute vpdf:h-px vpdf:w-px vpdf:overflow-hidden vpdf:opacity-0 vpdf:pointer-events-none;
+}
+
+.vpdf-select-trigger {
+  @apply vpdf:cursor-pointer vpdf:py-0.75 vpdf:pe-5 vpdf:bg-no-repeat vpdf:tabular-nums vpdf:appearance-none vpdf:bg-default vpdf:text-default vpdf:text-start vpdf:border-0;
+  @apply vpdf:disabled:opacity-45 vpdf:disabled:cursor-not-allowed;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'%3E%3Cpath d='M4 6l4 4 4-4' stroke='%2364758b' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-position: right 0.2rem center;
   background-size: 0.9rem;
+}
+
+.vpdf-select-panel {
+  @apply vpdf:absolute vpdf:top-full vpdf:inset-s-0 vpdf:z-35 vpdf:mt-1 vpdf:w-max vpdf:min-w-full vpdf:p-1;
+  @apply vpdf:rounded-sm vpdf:border vpdf:border-default vpdf:bg-elevated;
+  @apply vpdf:shadow-[0_12px_28px_rgb(15_23_42/0.18)];
+}
+
+.vpdf-select-group {
+  color: var(--vpdf-text-muted);
+  @apply vpdf:px-1.5 vpdf:py-1 vpdf:text-xs;
+}
+
+.vpdf-select-option {
+  @apply vpdf:flex vpdf:w-full vpdf:min-h-(--spacing-vpdf-control) vpdf:items-center vpdf:px-2.5;
+  @apply vpdf:rounded-sm vpdf:text-sm vpdf:text-default vpdf:cursor-pointer;
+  @apply vpdf:hover:bg-muted;
+  @apply vpdf:aria-selected:bg-accented vpdf:aria-selected:text-primary;
+}
+
+.vpdf-select-option[data-active="true"] {
+  @apply vpdf:bg-muted;
+}
+
+.vpdf-select-option[aria-disabled="true"] {
+  @apply vpdf:opacity-45 vpdf:cursor-not-allowed vpdf:hover:bg-transparent;
 }
 
 .vpdf-page-input .vpdf-field-control {
@@ -273,7 +304,7 @@
   @apply vpdf:inline-flex;
 }
 
-.vpdf-layout-select .vpdf-field-control select {
+.vpdf-layout-select .vpdf-select-trigger {
   @apply vpdf:min-w-36;
 }
 
@@ -740,8 +771,18 @@
   @apply vpdf:min-w-0 vpdf:flex-1;
 }
 
+.vpdf-zoom-select .vpdf-select {
+  @apply vpdf:min-w-24;
+}
+
+.vpdf-overflow .vpdf-zoom-select .vpdf-select-panel {
+  @apply vpdf:max-h-80 vpdf:overflow-y-auto;
+}
+
 .vpdf-overflow .vpdf-zoom-select .vpdf-field-control,
-.vpdf-overflow .vpdf-layout-select .vpdf-field-control {
+.vpdf-overflow .vpdf-layout-select .vpdf-field-control,
+.vpdf-overflow .vpdf-zoom-select .vpdf-select-trigger,
+.vpdf-overflow .vpdf-layout-select .vpdf-select-trigger {
   @apply vpdf:w-full;
 }
 
