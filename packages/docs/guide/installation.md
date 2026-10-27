@@ -1,6 +1,6 @@
 # Installation
 
-`@whykhamist/vpdf` is a Vue 3 PDF viewer built on PDF.js. It ships as ESM with TypeScript types and a dedicated stylesheet scoped to `.vpdf-root`. Version `3.0.0`. [Changelog](/changelog/vpdf).
+`@whykhamist/vpdf` is a Vue 3 PDF viewer built on PDF.js. It ships as ESM with TypeScript types and a dedicated stylesheet scoped to `.vpdf-root`. Version `3.0.0`. [Changelog](/changelog/).
 
 ## Requirements
 
