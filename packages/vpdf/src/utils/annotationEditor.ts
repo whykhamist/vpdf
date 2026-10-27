@@ -165,6 +165,13 @@ export const ANNOTATION_HIGHLIGHT_COLORS = [
   { name: 'Red', value: '#FF4F5F' },
 ] as const
 
+/** PDF.js `annotationEditorHighlightColors`: `name=#RRGGBB` pairs. */
+export function annotationEditorHighlightColors(): string {
+  return ANNOTATION_HIGHLIGHT_COLORS.map(
+    (color) => `${color.name.toLowerCase()}=${color.value}`,
+  ).join(',')
+}
+
 export const ANNOTATION_EDITOR_FONT_SIZE = { min: 5, max: 100, step: 1, default: 10 } as const
 export const ANNOTATION_EDITOR_HIGHLIGHT_THICKNESS = { min: 8, max: 24, step: 1, default: 12 } as const
 export const ANNOTATION_EDITOR_INK_THICKNESS = { min: 1, max: 20, step: 1, default: 1 } as const

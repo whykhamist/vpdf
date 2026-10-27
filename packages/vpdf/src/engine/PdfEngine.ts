@@ -32,6 +32,7 @@ import {
   PDFJS_TO_EDITOR_MODE,
 } from "../utils/defaults";
 import {
+  annotationEditorHighlightColors,
   annotationParamsFromPdfjs,
   asAnnotationEditorKind,
   createInitialAnnotationEditorUi,
@@ -220,6 +221,7 @@ export class PdfEngine {
         EDITOR_MODE_TO_PDFJS[
           this.getOptions().annotationEditorMode ?? "none"
         ] ?? 0,
+      annotationEditorHighlightColors: annotationEditorHighlightColors(),
       imageResourcesPath: assets.imageResourcesPath,
     });
   }
