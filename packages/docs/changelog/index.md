@@ -1,6 +1,6 @@
 # v3.0.1
 
-Released on [unreleased]
+Released on October 28, 2026
 
 ## ✏️ Changed
 
