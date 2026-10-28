@@ -366,7 +366,43 @@ ${llmsMarkdownIndex(pages)}
       "/changelog/": [
         {
           text: "Changelog",
-          items: [{ text: "VPDF", link: "/changelog/" }],
+          items: [
+            { text: "v3.0.1", link: "/changelog/" },
+            { text: "v3.0.0", link: "/changelog/vpdf/v3/3.0.0" },
+
+            {
+              text: "v2",
+              collapsed: true,
+              items: [
+                {
+                  text: "v2.0.1-alpha",
+                  link: "/changelog/vpdf/v2/2.0.1-alpha",
+                },
+                {
+                  text: "v2.0.0-alpha",
+                  link: "/changelog/vpdf/v2/2.0.0-alpha",
+                },
+              ],
+            },
+            {
+              text: "v1",
+              collapsed: true,
+              items: [
+                {
+                  text: "v1.0.2-alpha",
+                  link: "/changelog/vpdf/v1/1.0.2-alpha",
+                },
+                {
+                  text: "v1.0.1-alpha",
+                  link: "/changelog/vpdf/v1/1.0.1-alpha",
+                },
+                {
+                  text: "v1.0.0-alpha",
+                  link: "/changelog/vpdf/v1/1.0.0-alpha",
+                },
+              ],
+            },
+          ],
         },
         {
           text: "Plugins",

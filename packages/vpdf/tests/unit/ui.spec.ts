@@ -60,9 +60,12 @@ describe('UI primitives', () => {
     const select = mount(VPdfSelect, {
       props: { modelValue: 'one', 'onUpdate:modelValue': onSelect },
       slots: { default: () => [h('option', { value: 'one' }, 'One'), h('option', { value: 'two' }, 'Two')] },
+      attachTo: document.body,
     })
-    await select.get('select').setValue('two')
+    await select.get('.vpdf-select-trigger').trigger('click')
+    await select.findAll('[role="option"]')[1]!.trigger('mousedown')
     expect(onSelect).toHaveBeenCalledWith('two')
+    select.unmount()
 
     const onCheck = vi.fn()
     const checkbox = mount(VPdfCheckbox, {
@@ -73,6 +76,28 @@ describe('UI primitives', () => {
 
     expect(mount(ButtonDefault, { props: { variant: 'solid' } }).classes()).toContain('vpdf-btn-primary')
     expect(mount(ButtonDefault, { props: { variant: 'outline' } }).classes()).toContain('vpdf-btn-ghost')
+  })
+
+  it('selects from the keyboard and closes on Escape', async () => {
+    const onSelect = vi.fn()
+    const select = mount(VPdfSelect, {
+      props: { modelValue: 'one', 'onUpdate:modelValue': onSelect },
+      slots: { default: () => [h('option', { value: 'one' }, 'One'), h('option', { value: 'two' }, 'Two')] },
+      attachTo: document.body,
+    })
+    const trigger = select.get('.vpdf-select-trigger')
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    expect(select.find('[role="listbox"]').exists()).toBe(true)
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    await trigger.trigger('keydown', { key: 'Enter' })
+    expect(onSelect).toHaveBeenCalledWith('two')
+    expect(select.find('[role="listbox"]').exists()).toBe(false)
+
+    await trigger.trigger('keydown', { key: 'ArrowDown' })
+    expect(select.find('[role="listbox"]').exists()).toBe(true)
+    await trigger.trigger('keydown', { key: 'Escape' })
+    expect(select.find('[role="listbox"]').exists()).toBe(false)
+    select.unmount()
   })
 
   it('opens and closes a dropdown from outside click', async () => {

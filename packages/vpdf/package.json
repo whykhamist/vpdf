@@ -1,10 +1,15 @@
 {
   "name": "@whykhamist/vpdf",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Production-ready Vue 3 PDF viewer built on PDF.js",
   "type": "module",
   "license": "MIT",
-  "author": "vpdf",
+  "author": "whykhamist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whykhamist/vpdf.git"
+  },
+  "homepage": "https://whykhamist.github.io/vpdf",
   "keywords": [
     "vue",
     "pdf",

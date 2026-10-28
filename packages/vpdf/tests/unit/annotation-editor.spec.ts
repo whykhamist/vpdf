@@ -11,6 +11,7 @@ import {
   ANNOTATION_EDITOR_INK_THICKNESS,
   ANNOTATION_EDITOR_OPACITY,
   ANNOTATION_HIGHLIGHT_COLORS,
+  annotationEditorHighlightColors,
   annotationParamsFromPdfjs,
   colorInputValue,
   findVisibleAnnotationEditorToolbar,
@@ -90,6 +91,19 @@ describe('annotation editor mapping', () => {
       { type: PDFJS_EDITOR_PARAMS.HIGHLIGHT_THICKNESS, value: 8 },
     ])
     expect(pdfjsCommandsForParams('stamp', { color: '#000' })).toEqual([])
+  })
+
+  it('gives PDF.js a highlight palette so color lookup cannot throw', () => {
+    const pairs = new Map(
+      annotationEditorHighlightColors().split(',').map((pair) => {
+        const [name, color] = pair.split('=').map((part) => part.trim())
+        return [name, color.toUpperCase()] as const
+      }),
+    )
+    const names = new Map([...pairs].map(([name, color]) => [color, name]))
+    expect(names.get('#FFFF98')).toBe('yellow')
+    expect(names.get('#112233') || '#112233').toBe('#112233')
+    expect(pairs.size).toBe(ANNOTATION_HIGHLIGHT_COLORS.length)
   })
 
   it('normalizes color input values', () => {
