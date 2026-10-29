@@ -1,9 +1,15 @@
 {
   "name": "@whykhamist/vpdf-plugin-print",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Opt-in print plugin for @whykhamist/vpdf",
   "type": "module",
   "license": "MIT",
+  "author": "whykhamist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whykhamist/vpdf.git"
+  },
+  "homepage": "https://whykhamist.github.io/vpdf/plugins/xfa-thumbnail-raster",
   "files": [
     "dist"
   ],
@@ -22,7 +28,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@whykhamist/vpdf": "3.0.0",
+    "@whykhamist/vpdf": "^3.0.0",
     "vue": "^3.5.0"
   },
   "devDependencies": {

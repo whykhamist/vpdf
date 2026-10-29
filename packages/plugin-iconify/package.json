@@ -1,9 +1,15 @@
 {
   "name": "@whykhamist/vpdf-plugin-iconify",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Opt-in Iconify icon renderer for @whykhamist/vpdf",
   "type": "module",
   "license": "MIT",
+  "author": "whykhamist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whykhamist/vpdf.git"
+  },
+  "homepage": "https://whykhamist.github.io/vpdf/plugins/iconify",
   "files": [
     "dist"
   ],
@@ -23,7 +29,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "@whykhamist/vpdf": "3.0.0",
+    "@whykhamist/vpdf": "^3.0.0",
     "vue": "^3.5.0"
   },
   "dependencies": {
