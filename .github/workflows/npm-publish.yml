@@ -3,22 +3,42 @@ name: Stage packages on npm
 on:
   workflow_dispatch:
     inputs:
-      package:
-        description: Package to stage for npm review
-        type: choice
-        default: all
-        options:
-          - all
-          - "@whykhamist/vpdf"
-          - "@whykhamist/vpdf-plugin-page-layout"
-          - "@whykhamist/vpdf-plugin-print"
-          - "@whykhamist/vpdf-plugin-open"
-          - "@whykhamist/vpdf-plugin-iconify"
-          - "@whykhamist/vpdf-plugin-xfa-thumbnail-raster"
+      all:
+        description: Stage all packages
+        type: boolean
+        default: false
+      vpdf:
+        description: "@whykhamist/vpdf"
+        type: boolean
+        default: false
+      page_layout:
+        description: "@whykhamist/vpdf-plugin-page-layout"
+        type: boolean
+        default: false
+      print:
+        description: "@whykhamist/vpdf-plugin-print"
+        type: boolean
+        default: false
+      open:
+        description: "@whykhamist/vpdf-plugin-open"
+        type: boolean
+        default: false
+      iconify:
+        description: "@whykhamist/vpdf-plugin-iconify"
+        type: boolean
+        default: false
+      xfa_thumbnail_raster:
+        description: "@whykhamist/vpdf-plugin-xfa-thumbnail-raster"
+        type: boolean
+        default: false
+
+  release:
+    types: [published]
 
 jobs:
   stage-npm:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -37,61 +57,87 @@ jobs:
       - name: Build and stage packages
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
-          SELECTED: ${{ github.event_name == 'release' && 'all' || inputs.package }}
+          IS_RELEASE: ${{ github.event_name == 'release' }}
+          SELECT_ALL: ${{ inputs.all }}
+          SELECT_VPDF: ${{ inputs.vpdf }}
+          SELECT_PAGE_LAYOUT: ${{ inputs.page_layout }}
+          SELECT_PRINT: ${{ inputs.print }}
+          SELECT_OPEN: ${{ inputs.open }}
+          SELECT_ICONIFY: ${{ inputs.iconify }}
+          SELECT_XFA: ${{ inputs.xfa_thumbnail_raster }}
+        shell: bash
         run: |
           set -euo pipefail
 
           stage_pkg() {
             local workspace="$1"
             local directory="$2"
+
             echo "::group::Build ${workspace}"
             npm run build -w "${workspace}"
             echo "::endgroup::"
+
             echo "::group::Stage ${workspace}"
             (cd "${directory}" && npm stage publish --access public)
             echo "::endgroup::"
           }
 
-          build_vpdf_if_needed() {
-            if [ "${SELECTED}" != "@whykhamist/vpdf" ] && [ "${SELECTED}" != "all" ]; then
-              npm run build -w @whykhamist/vpdf
-            fi
-          }
+          # On GitHub release, stage only the main library.
+          if [[ "${IS_RELEASE}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf packages/vpdf
+            exit 0
+          fi
 
-          case "${SELECTED}" in
-            all)
-              stage_pkg @whykhamist/vpdf packages/vpdf
-              stage_pkg @whykhamist/vpdf-plugin-page-layout packages/plugin-page-layout
-              stage_pkg @whykhamist/vpdf-plugin-print packages/plugin-print
-              stage_pkg @whykhamist/vpdf-plugin-open packages/plugin-open
-              stage_pkg @whykhamist/vpdf-plugin-iconify packages/plugin-iconify
-              stage_pkg @whykhamist/vpdf-plugin-xfa-thumbnail-raster packages/plugin-xfa-thumbnail-raster
-              ;;
-            "@whykhamist/vpdf")
-              stage_pkg @whykhamist/vpdf packages/vpdf
-              ;;
-            "@whykhamist/vpdf-plugin-page-layout")
-              build_vpdf_if_needed
-              stage_pkg @whykhamist/vpdf-plugin-page-layout packages/plugin-page-layout
-              ;;
-            "@whykhamist/vpdf-plugin-print")
-              build_vpdf_if_needed
-              stage_pkg @whykhamist/vpdf-plugin-print packages/plugin-print
-              ;;
-            "@whykhamist/vpdf-plugin-open")
-              build_vpdf_if_needed
-              stage_pkg @whykhamist/vpdf-plugin-open packages/plugin-open
-              ;;
-            "@whykhamist/vpdf-plugin-iconify")
-              build_vpdf_if_needed
-              stage_pkg @whykhamist/vpdf-plugin-iconify packages/plugin-iconify
-              ;;
-            "@whykhamist/vpdf-plugin-xfa-thumbnail-raster")
-              build_vpdf_if_needed
-              stage_pkg @whykhamist/vpdf-plugin-xfa-thumbnail-raster packages/plugin-xfa-thumbnail-raster
-              ;;
-            *)
-              echo "Unknown package: ${SELECTED}"
-              exit 1
-              ;;
-          esac
+          # Validate manual package selection.
+          if [[ "${SELECT_ALL}" != "true" ]] &&
+             [[ "${SELECT_VPDF}" != "true" ]] &&
+             [[ "${SELECT_PAGE_LAYOUT}" != "true" ]] &&
+             [[ "${SELECT_PRINT}" != "true" ]] &&
+             [[ "${SELECT_OPEN}" != "true" ]] &&
+             [[ "${SELECT_ICONIFY}" != "true" ]] &&
+             [[ "${SELECT_XFA}" != "true" ]]; then
+            echo "Error: Select at least one package to stage."
+            exit 1
+          fi
+
+          # Build the base library if any selected plugin needs it.
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_PAGE_LAYOUT}" == "true" ]] ||
+             [[ "${SELECT_PRINT}" == "true" ]] ||
+             [[ "${SELECT_OPEN}" == "true" ]] ||
+             [[ "${SELECT_ICONIFY}" == "true" ]] ||
+             [[ "${SELECT_XFA}" == "true" ]]; then
+            npm run build -w @whykhamist/vpdf
+          fi
+
+          # Stage the main library if selected.
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_VPDF}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf packages/vpdf
+          fi
+
+          # Stage selected plugins.
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_PAGE_LAYOUT}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf-plugin-page-layout packages/plugin-page-layout
+          fi
+
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_PRINT}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf-plugin-print packages/plugin-print
+          fi
+
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_OPEN}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf-plugin-open packages/plugin-open
+          fi
+
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_ICONIFY}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf-plugin-iconify packages/plugin-iconify
+          fi
+
+          if [[ "${SELECT_ALL}" == "true" ]] ||
+             [[ "${SELECT_XFA}" == "true" ]]; then
+            stage_pkg @whykhamist/vpdf-plugin-xfa-thumbnail-raster packages/plugin-xfa-thumbnail-raster
+          fi
