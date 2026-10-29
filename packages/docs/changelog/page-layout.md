@@ -1,10 +1,20 @@
-# @whykhamist/vpdf-plugin-page-layout
+# vpdf-plugin-page-layout
 
-[Page layout plugin](/plugins/page-layout) changelog. Peer: `@whykhamist/vpdf@3.0.0`.
+> [@whykhamist/vpdf-plugin-page-layout](/plugins/page-layout)
 
-## 3.0.0
+## v3.0.1
 
-2026-10-07. First published version.
+> Released on October 29, 2026
+
+### ✏️ Changed
+
+- Updated the peer dependency version requirement in `package.json` from `3.0.0` to `^3.0.0` to allow compatible minor and patch versions.
+
+## v3.0.0
+
+> Released on October 7, 2026
+
+### 🎉 First published version.
 
 - Factory: `createPageLayoutPlugin` (`VPdfPageLayoutPlugin` alias).
 - Plugin id: `page-layout`.
