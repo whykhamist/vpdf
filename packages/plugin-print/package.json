@@ -4,6 +4,12 @@
   "description": "Opt-in print plugin for @whykhamist/vpdf",
   "type": "module",
   "license": "MIT",
+  "author": "whykhamist",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whykhamist/vpdf.git"
+  },
+  "homepage": "https://whykhamist.github.io/vpdf/plugins/xfa-thumbnail-raster",
   "files": [
     "dist"
   ],
