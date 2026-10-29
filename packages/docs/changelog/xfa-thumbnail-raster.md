@@ -1,10 +1,20 @@
-# @whykhamist/vpdf-plugin-xfa-thumbnail-raster
+# vpdf-plugin-xfa-thumbnail-raster
 
-[XFA thumbnail raster plugin](/plugins/xfa-thumbnail-raster) changelog. Peer: `@whykhamist/vpdf@3.0.0`.
+> [@whykhamist/vpdf-plugin-xfa-thumbnail-raster](/plugins/xfa-thumbnail-raster)
 
-## 3.0.0
+## v3.0.1
 
-2026-10-07. First published version.
+> Released on October 29, 2026
+
+### ✏️ Changed
+
+- Updated the peer dependency version requirement in `package.json` from `3.0.0` to `^3.0.0` to allow compatible minor and patch versions.
+
+## v3.0.0
+
+> Released on October 7, 2026
+
+### 🎉 First published version.
 
 - Factory: `createXfaThumbnailRasterPlugin` (`VPdfXfaThumbnailRasterPlugin` alias).
 - Plugin id: `vpdf.xfa-thumbnail-raster`.

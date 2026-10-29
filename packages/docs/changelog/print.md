@@ -1,10 +1,20 @@
-# @whykhamist/vpdf-plugin-print
+# vpdf-plugin-print
 
-[Print plugin](/plugins/print) changelog. Peer: `@whykhamist/vpdf@3.0.0`.
+> [@whykhamist/vpdf-plugin-print](/plugins/print)
 
-## 3.0.0
+## v3.0.1
 
-2026-10-07. First published version.
+> Released on October 29, 2026
+
+### ✏️ Changed
+
+- Updated the peer dependency version requirement in `package.json` from `3.0.0` to `^3.0.0` to allow compatible minor and patch versions.
+
+## v3.0.0
+
+> Released on October 7, 2026
+
+### 🎉 First published version.
 
 - Factory: `VPdfPrintPlugin` only (no `createPrintPlugin` alias).
 - Plugin id: `vpdf.print`.
